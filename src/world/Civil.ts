@@ -6,7 +6,7 @@ export class Civil extends Phaser.Sprite
         super(group.game, x, y, key, 0);
 
         this.anchor.setTo(.5, .5);
-        //this.scale.setTo(1.5, 1.5);
+        this.scale.setTo(2, 2);
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
 
