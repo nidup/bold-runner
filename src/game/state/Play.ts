@@ -1,7 +1,9 @@
 
+import {Civil} from "../../world/Civil";
+
 export default class Play extends Phaser.State
 {
-    private debug: boolean = false;
+    private debug: boolean = true;
 
     public create()
     {
@@ -18,6 +20,14 @@ export default class Play extends Phaser.State
         interfaceLayer.name = 'Interface';
         console.log(this.game.rnd.state());
 
+        const civil1 = new Civil(unitLayer, 100, 100, 'civil1');
+        civil1.animations.play('walk');
+
+        const civil2 = new Civil(unitLayer, 180, 100, 'civil1');
+        civil2.animations.play('shot');
+
+        const civil3 = new Civil(unitLayer, 260, 100, 'civil1');
+        civil3.animations.play('die');
     }
 
     public update()
@@ -27,21 +37,6 @@ export default class Play extends Phaser.State
     public render()
     {
         if (this.debug) {
-            /*
-            // TODO: try https://github.com/samme/phaser-plugin-debug-arcade-physics ?
-            // this.game.debug.body(this.vehicles.get(1));
-            // this.game.debug.bodyInfo(this.vehicles.get(1), 240, 410);
-            const game = this.game;
-            this.vehicles.all().map(function(vehicle: Vehicle) {
-                game.debug.body(vehicle);
-            });
-            this.buildings.all().map(function(building: Building) {
-                game.debug.body(building);
-            });
-            this.items.all().map(function(item: Item) {
-                game.debug.body(item);
-            });
-            */
             this.game.debug.text(
                 "FPS: "  + this.game.time.fps + " ",
                 2,

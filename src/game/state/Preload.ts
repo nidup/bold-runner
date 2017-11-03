@@ -12,7 +12,7 @@ export default class Preload extends Phaser.State {
 
     public create ()
     {
-        this.game.state.start('Menu'); // TODO: shortcuts "Menu" state :)
+        this.game.state.start('Play'); // TODO: shortcuts "Menu" state :)
     }
 
     private loadAudio()
@@ -29,9 +29,8 @@ export default class Preload extends Phaser.State {
 
     private loadGameImages()
     {
-        this.load.spritesheet('walk', 'assets/sprites/mini-walker.png', 16, 16);
-        this.load.spritesheet('shoot', 'assets/sprites/mini-shooter.png', 16, 16);
-        this.load.spritesheet('die', 'assets/sprites/mini-dying.png', 16, 16);
+        this.load.spritesheet('civil1', 'assets/sprites/civil1.png', 16, 16);
+
     }
 
     private loadUIImages()

@@ -1,5 +1,5 @@
 
-export class Jojo extends Phaser.Sprite
+export class Civil extends Phaser.Sprite
 {
     constructor(group: Phaser.Group, x: number, y: number, key: string)
     {
@@ -10,6 +10,8 @@ export class Jojo extends Phaser.Sprite
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
 
-        this.animations.add(key, null, 4, true);
+        this.animations.add('walk', [6, 7, 8, 9], 4, true);
+        this.animations.add('shot', [0, 1, 2, 3, 4, 5], 4, true);
+        this.animations.add('die', [10, 11, 12, 13, 14, 15, 16, 17], 4, true);
     }
 }
