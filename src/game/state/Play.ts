@@ -65,7 +65,7 @@ export default class Play extends Phaser.State
             this.street.civils().add(new Civil(charactersLayer, randX, randY, 'civil1'));
         }
 
-        this.hero = new Hero(charactersLayer, this.street.minX(), this.street.maxY(), 'cop', this.street);
+        this.hero = new Hero(charactersLayer, this.street.minX(), this.street.maxY(), 'hero', this.street);
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.hero);
