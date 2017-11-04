@@ -1,5 +1,7 @@
 
 import {Cop} from "../../world/Cop";
+import {Street} from "../../world/Street";
+import {Hero} from "../../world/Hero";
 
 export default class Play extends Phaser.State
 {
@@ -8,7 +10,8 @@ export default class Play extends Phaser.State
     private background: Phaser.TileSprite;
     private buildings: Phaser.TileSprite;
     private cursors: Phaser.CursorKeys;
-    private hero: Cop;
+    private hero: Hero;
+    private street: Street;
 
     public create()
     {
@@ -56,25 +59,30 @@ export default class Play extends Phaser.State
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        this.hero = new Cop(charactersLayer, 400, civilPositionY, 'cop');
-        this.hero.animations.play('idle');
+        this.street = new Street();
+        this.street.cops().add(new Cop(charactersLayer, 400, civilPositionY, 'cop'));
+
+        this.hero = new Hero(charactersLayer, 600, civilPositionY, 'cop');
+
+        this.game.world.setBounds(0, 0, 1600, 800);
+        this.game.camera.follow(this.hero);
     }
 
     public update()
     {
         this.hero.move(this.cursors);
+        this.street.cops().all().map(function(cop: Cop) {
+            cop.patrol();
+        });
 
         const skyParallaxSpeed = 0.03;
         this.sky.tilePosition.x -= skyParallaxSpeed;
 
         const backgroundParallaxSpeed = 0.05;
-        const buildingsParallaxSpeed = 0.2;
         if (this.hero.movingToTheRight()) {
             this.background.tilePosition.x -= backgroundParallaxSpeed;
-            this.buildings.tilePosition.x -= buildingsParallaxSpeed;
         } else if (this.hero.movingToTheLeft()) {
             this.background.tilePosition.x += backgroundParallaxSpeed;
-            this.buildings.tilePosition.x += buildingsParallaxSpeed;
         }
     }
 
@@ -88,6 +96,8 @@ export default class Play extends Phaser.State
                 "#00ff00"
             );
             this.game.debug.body(this.hero);
+            this.game.debug.cameraInfo(this.game.camera, 32, 32);
+
         }
     }
 }
