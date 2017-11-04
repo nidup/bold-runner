@@ -46,23 +46,17 @@ export default class Play extends Phaser.State
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
 
-        const civilPositionY = 570;
-        /*
-        const civil1 = new Civil(charactersLayer, 100, civilPositionY, 'civil1');
-        civil1.animations.play('walk');
-
-        const civil2 = new Civil(charactersLayer, 180, civilPositionY, 'civil1');
-        civil2.animations.play('shot');
-
-        const civil3 = new Civil(charactersLayer, 260, civilPositionY, 'civil1');
-        civil3.animations.play('die');*/
-
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.street = new Street();
-        this.street.cops().add(new Cop(charactersLayer, 400, civilPositionY, 'cop'));
 
-        this.hero = new Hero(charactersLayer, 600, civilPositionY, 'cop');
+        for (let indCop = 1; indCop < 20; indCop++) {
+            let randX = this.game.rnd.integerInRange(this.street.minX(), this.street.maxX());
+            let randY = this.game.rnd.integerInRange(this.street.minY(), this.street.maxY());
+            this.street.cops().add(new Cop(charactersLayer, randX, randY, 'cop'));
+        }
+
+        this.hero = new Hero(charactersLayer, this.street.minX(), this.street.maxY(), 'cop', this.street);
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.hero);

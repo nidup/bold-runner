@@ -14,4 +14,24 @@ export class Street
     {
         return this.copRepository;
     }
+
+    minY(): number
+    {
+        return 570;
+    }
+
+    maxY(): number
+    {
+        return 750;
+    }
+
+    minX(): number
+    {
+        return 20;
+    }
+
+    maxX(): number
+    {
+        return 1560;
+    }
 }

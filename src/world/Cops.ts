@@ -15,6 +15,13 @@ export class Cops
         return this.items;
     }
 
+    public allAlive(): Cop[]
+    {
+        return this.items.filter(function (cop: Cop) {
+            return cop.health > 0;
+        });
+    }
+
     public add(cop: Cop): void
     {
         this.items.push(cop);

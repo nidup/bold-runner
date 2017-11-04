@@ -1,9 +1,12 @@
 
+import {CopBrain} from "./CopBrain";
+import {Config} from "../game/Config";
+
 export class Cop extends Phaser.Sprite
 {
     public body: Phaser.Physics.Arcade.Body;
-    private speed: number = 150;
-    private scaleRatio = 2;
+    private brain: CopBrain;
+    private dead: boolean = false;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string)
     {
@@ -12,55 +15,31 @@ export class Cop extends Phaser.Sprite
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
 
-        this.scale.setTo(this.scaleRatio, this.scaleRatio);
+        this.inputEnabled = true;
+        this.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         this.anchor.setTo(0.5, 0.5);
+
         this.body.setCircle(9, 7, 8);
+        this.body.allowGravity = false;
+        this.body.collideWorldBounds = true;
 
         this.animations.add('idle', [0, 1, 2, 3, 4], 4, true);
         this.animations.add('walk', [5, 6, 7, 8, 9, 10, 11, 12, 13], 8, true);
         this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
         this.animations.add('shot', [21, 22, 23, 24, 25, 26], 12, false);
+
+        this.brain = new CopBrain(this);
     }
 
-    patrol () {
-        this.body.velocity.x = 0;
-        this.body.velocity.y = 0;
-
-        this.animations.play('idle');
-
-        /*
-        this.scale.x = -this.scaleRatio;
-        this.body.velocity.x = -this.speed;
-        this.animations.play('walk');
-*/
-        /*
-        if (cursors.left.isDown) {
-
-
-        } else if (cursors.right.isDown) {
-            this.scale.x = this.scaleRatio;
-            this.body.velocity.x = this.speed;
-            this.animations.play('walk');
-
-        } else if (cursors.up.isDown) {
-            this.body.velocity.y = -this.speed;
-            this.animations.play('walk');
-
-        } else if (cursors.down.isDown) {
-            this.body.velocity.y = this.speed;
-            this.animations.play('walk');
-
-        } else {
-        }*/
-    }
-
-    movingToTheRight(): boolean
+    patrol ()
     {
-        return this.body.velocity.x > 0;
+        if (!this.dead) {
+            this.brain.think();
+        }
     }
 
-    movingToTheLeft(): boolean
+    die ()
     {
-        return this.body.velocity.x < 0;
+        this.dead = true;
     }
 }
