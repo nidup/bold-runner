@@ -2,6 +2,7 @@
 import {Cop} from "../../world/Cop";
 import {Street} from "../../world/Street";
 import {Hero} from "../../world/Hero";
+import {Civil} from "../../world/Civil";
 
 export default class Play extends Phaser.State
 {
@@ -50,10 +51,18 @@ export default class Play extends Phaser.State
 
         this.street = new Street();
 
-        for (let indCop = 1; indCop < 20; indCop++) {
+        const nbCops = 10;
+        for (let indCop = 1; indCop < nbCops; indCop++) {
             let randX = this.game.rnd.integerInRange(this.street.minX(), this.street.maxX());
             let randY = this.game.rnd.integerInRange(this.street.minY(), this.street.maxY());
             this.street.cops().add(new Cop(charactersLayer, randX, randY, 'cop'));
+        }
+
+        const nbCivil = 30;
+        for (let indCiv = 1; indCiv < nbCivil; indCiv++) {
+            let randX = this.game.rnd.integerInRange(this.street.minX(), this.street.maxX());
+            let randY = this.game.rnd.integerInRange(this.street.minY(), this.street.maxY());
+            this.street.civils().add(new Civil(charactersLayer, randX, randY, 'civil1'));
         }
 
         this.hero = new Hero(charactersLayer, this.street.minX(), this.street.maxY(), 'cop', this.street);
@@ -65,8 +74,13 @@ export default class Play extends Phaser.State
     public update()
     {
         this.hero.move(this.cursors);
+
         this.street.cops().all().map(function(cop: Cop) {
             cop.patrol();
+        });
+
+        this.street.civils().all().map(function(civil: Civil) {
+            civil.walk();
         });
 
         const skyParallaxSpeed = 0.03;

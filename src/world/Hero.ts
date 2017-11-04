@@ -1,6 +1,7 @@
 
 import {Street} from "./Street";
 import {Cop} from "./Cop";
+import {Civil} from "./Civil";
 
 export class Hero extends Phaser.Sprite
 {
@@ -82,6 +83,17 @@ export class Hero extends Phaser.Sprite
             function(cop: Cop, bullet: Phaser.Bullet) {
                 bullet.kill();
                 cop.health = 0;
+            },
+            null,
+            this
+        );
+
+        this.game.physics.arcade.overlap(
+            this.weapon.bullets,
+            this.street.civils().allAlive(),
+            function(civil: Civil, bullet: Phaser.Bullet) {
+                bullet.kill();
+                civil.health = 0;
             },
             null,
             this
