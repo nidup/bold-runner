@@ -1,12 +1,14 @@
 
-import {Civil} from "../../world/Civil";
+import {Cop} from "../../world/Cop";
 
 export default class Play extends Phaser.State
 {
-    private debug: boolean = true;
+    private debug: boolean = false;
     private sky: Phaser.TileSprite;
     private background: Phaser.TileSprite;
     private buildings: Phaser.TileSprite;
+    private cursors: Phaser.CursorKeys;
+    private hero: Cop;
 
     public create()
     {
@@ -15,6 +17,7 @@ export default class Play extends Phaser.State
         }
         this.game.stage.backgroundColor = '#000000';
 
+        const tileSpriteRatio = 2;
         const width = 1600;
         const height = 1200;
         const heightPosition = -400;
@@ -22,17 +25,17 @@ export default class Play extends Phaser.State
         const skyLayer = this.game.add.group();
         skyLayer.name = 'Sky';
         this.sky = this.game.add.tileSprite(0,heightPosition,width,height,'sky',0, skyLayer);
-        this.sky.tileScale.set(2, 2);
+        this.sky.tileScale.set(tileSpriteRatio, tileSpriteRatio);
 
         const backgroundLayer = this.game.add.group();
         backgroundLayer.name = 'Background';
         this.background = this.game.add.tileSprite(0,heightPosition,width,height,'background',0, backgroundLayer);
-        this.background.tileScale.set(2, 2);
+        this.background.tileScale.set(tileSpriteRatio, tileSpriteRatio);
 
         const buildingsLayer = this.game.add.group();
         buildingsLayer.name = 'Buildings';
         this.buildings = this.game.add.tileSprite(0,heightPosition,width,height,'buildings',0, buildingsLayer);
-        this.buildings.tileScale.set(2, 2);
+        this.buildings.tileScale.set(tileSpriteRatio, tileSpriteRatio);
 
         const charactersLayer = this.game.add.group();
         charactersLayer.name = 'Characters';
@@ -40,8 +43,8 @@ export default class Play extends Phaser.State
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
 
-        const civilPositionY = 650;
-
+        const civilPositionY = 570;
+        /*
         const civil1 = new Civil(charactersLayer, 100, civilPositionY, 'civil1');
         civil1.animations.play('walk');
 
@@ -49,14 +52,30 @@ export default class Play extends Phaser.State
         civil2.animations.play('shot');
 
         const civil3 = new Civil(charactersLayer, 260, civilPositionY, 'civil1');
-        civil3.animations.play('die');
+        civil3.animations.play('die');*/
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.hero = new Cop(charactersLayer, 400, civilPositionY, 'cop');
+        this.hero.animations.play('idle');
     }
 
     public update()
     {
-        this.sky.tilePosition.x -= 0.02;
-        this.background.tilePosition.x -= 0.05;
-        this.buildings.tilePosition.x -= 0.2;
+        this.hero.move(this.cursors);
+
+        const skyParallaxSpeed = 0.03;
+        this.sky.tilePosition.x -= skyParallaxSpeed;
+
+        const backgroundParallaxSpeed = 0.05;
+        const buildingsParallaxSpeed = 0.2;
+        if (this.hero.movingToTheRight()) {
+            this.background.tilePosition.x -= backgroundParallaxSpeed;
+            this.buildings.tilePosition.x -= buildingsParallaxSpeed;
+        } else if (this.hero.movingToTheLeft()) {
+            this.background.tilePosition.x += backgroundParallaxSpeed;
+            this.buildings.tilePosition.x += buildingsParallaxSpeed;
+        }
     }
 
     public render()
@@ -68,6 +87,7 @@ export default class Play extends Phaser.State
                 14,
                 "#00ff00"
             );
+            this.game.debug.body(this.hero);
         }
     }
 }

@@ -13,12 +13,11 @@ class SimpleGame extends Phaser.Game {
             1200,
             800,
             Phaser.CANVAS,
-            "content",
+            'content',
             null
         );
 
         this.antialias = false;
-
         this.state.add('Boot', Boot);
         this.state.add('Preload', Preload);
         this.state.add('Menu', Menu);
