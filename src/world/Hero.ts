@@ -58,7 +58,7 @@ export class Hero extends Phaser.Sprite
             this.animations.play('walk');
             this.weapon.fireAngle = 0;
 
-        } else if (cursors.up.isDown) {
+        } else if (cursors.up.isDown && (this.street.minY() + 10) <= this.position.y ) {
             this.body.velocity.y = -this.speed;
             this.animations.play('walk');
 
