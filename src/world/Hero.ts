@@ -16,6 +16,8 @@ export class Hero extends Phaser.Sprite
     private street: Street;
     private aggressiveRating : number = 0;
     private dead: boolean = false;
+    private moneyAmount: number = 0;
+    private gunAmount: number = 0;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
     {
@@ -90,9 +92,23 @@ export class Hero extends Phaser.Sprite
         return this.dead;
     }
 
+    money(): number
+    {
+        return this.moneyAmount;
+    }
+
+    gunAmno(): number
+    {
+        return this.gunAmount;
+    }
+
     pick(item: PickableItem)
     {
-        console.log('pick '+item.key);
+        if (item.key === 'Money') {
+            this.moneyAmount++;
+        } else if (item.key === 'Gun') {
+            this.gunAmount++;
+        }
         item.kill();
     }
 

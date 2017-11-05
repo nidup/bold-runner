@@ -2,6 +2,7 @@
 import {Street} from "../../world/Street";
 import {Citizen} from "../../world/Citizen";
 import {Cop} from "../../world/Cop";
+import {Inventory} from "../../ui/Inventory";
 
 export default class Play extends Phaser.State
 {
@@ -42,12 +43,13 @@ export default class Play extends Phaser.State
         this.characterLayer = this.game.add.group();
         this.characterLayer.name = 'Characters';
 
-        const interfaceLayer = this.game.add.group();
-        interfaceLayer.name = 'Interface';
-
         const nbCops = 10;
         const nbCitizens = 30;
         this.street = new Street(this.characterLayer, nbCops, nbCitizens);
+
+        const interfaceLayer = this.game.add.group();
+        interfaceLayer.name = 'Interface';
+        new Inventory(interfaceLayer, 600, 0, 'ui', this.street.player());
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.street.player());
