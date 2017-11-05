@@ -1,6 +1,7 @@
 
 import {Config} from "../game/Config";
 import {CitizenBrain} from "./CitizenBrain";
+import {Street} from "./Street";
 
 export class Citizen extends Phaser.Sprite
 {
@@ -8,7 +9,7 @@ export class Citizen extends Phaser.Sprite
     private brain: CitizenBrain;
     private dead: boolean = false;
 
-    constructor(group: Phaser.Group, x: number, y: number, key: string)
+    constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
     {
         super(group.game, x, y, key, 0);
 
@@ -25,9 +26,10 @@ export class Citizen extends Phaser.Sprite
 
         this.animations.add('idle', [0, 1, 2, 3, 4], 4, true);
         this.animations.add('walk', [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
+        this.animations.add('run', [5, 6, 7, 8, 9, 10, 11, 12, 13], 24, true);
         this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
 
-        this.brain = new CitizenBrain(this);
+        this.brain = new CitizenBrain(this, street);
     }
 
     update()

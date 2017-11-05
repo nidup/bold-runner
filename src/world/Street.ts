@@ -25,7 +25,7 @@ export class Street
         for (let indCiv = 0; indCiv < nbCitizens; indCiv++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
-            this.citizens().add(new Citizen(characterGroup, randX, randY, 'citizen1'));
+            this.citizens().add(new Citizen(characterGroup, randX, randY, 'citizen1', this));
         }
 
         this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this);
