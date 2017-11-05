@@ -43,8 +43,8 @@ export default class Play extends Phaser.State
         interfaceLayer.name = 'Interface';
 
         const nbCops = 10;
-        const nbCivil = 30;
-        this.street = new Street(charactersLayer, nbCops, nbCivil);
+        const nbCitizens = 30;
+        this.street = new Street(charactersLayer, nbCops, nbCitizens);
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.street.player());

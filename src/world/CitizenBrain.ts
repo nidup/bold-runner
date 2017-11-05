@@ -3,11 +3,11 @@ import {StackFSM} from "../ai/fsm/StackFSM";
 import {State} from "../ai/fsm/State";
 import {Cop} from "./Cop";
 import {Config} from "../game/Config";
-import {Civil} from "./Civil";
+import {Citizen} from "./Citizen";
 
-export class CivilBrain
+export class CitizenBrain
 {
-    private host: Civil;
+    private host: Citizen;
     private fsm: StackFSM;
     private left = -1;
     private right = 1;
@@ -15,12 +15,12 @@ export class CivilBrain
     private speed: number = 50;
     private energy: number;
 
-    public constructor(civil: Civil)
+    public constructor(citizen: Citizen)
     {
         this.fsm = new StackFSM();
-        this.host = civil;
+        this.host = citizen;
         this.fsm.pushState(new State('walk', this.walk));
-        this.directionX = civil.game.rnd.sign();
+        this.directionX = citizen.game.rnd.sign();
         this.energy = this.randEnergy();
     }
 

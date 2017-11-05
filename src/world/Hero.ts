@@ -1,7 +1,7 @@
 
 import {Street} from "./Street";
 import {Cop} from "./Cop";
-import {Civil} from "./Civil";
+import {Citizen} from "./Citizen";
 import {Gun} from "./Weapon/Gun";
 
 export class Hero extends Phaser.Sprite
@@ -54,10 +54,10 @@ export class Hero extends Phaser.Sprite
         );
 
         this.gun.bulletHits(
-            this.street.civils().allAlive(),
-            function(civil: Civil, bullet: Phaser.Bullet) {
+            this.street.citizens().allAlive(),
+            function(citizen: Citizen, bullet: Phaser.Bullet) {
                 bullet.kill();
-                civil.health = 0;
+                citizen.health = 0;
             }
         );
     }

@@ -1,20 +1,20 @@
 
 import {Cops} from "./Cops";
 import {Cop} from "./Cop";
-import {Civils} from "./Civils";
-import {Civil} from "./Civil";
+import {Citizens} from "./Citizens";
+import {Citizen} from "./Citizen";
 import {Hero} from "./Hero";
 
 export class Street
 {
     private copRepository: Cops;
-    private civilRepository: Civils;
+    private citizenRepository: Citizens;
     private hero: Hero;
 
     constructor(characterGroup: Phaser.Group, nbCops: number, nbCitizens: number)
     {
         this.copRepository = new Cops();
-        this.civilRepository = new Civils();
+        this.citizenRepository = new Citizens();
 
         for (let indCop = 0; indCop < nbCops; indCop++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
@@ -25,7 +25,7 @@ export class Street
         for (let indCiv = 0; indCiv < nbCitizens; indCiv++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
-            this.civils().add(new Civil(characterGroup, randX, randY, 'civil1'));
+            this.citizens().add(new Citizen(characterGroup, randX, randY, 'citizen1'));
         }
 
         this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this);
@@ -41,9 +41,9 @@ export class Street
         return this.copRepository;
     }
 
-    civils(): Civils
+    citizens(): Citizens
     {
-        return this.civilRepository;
+        return this.citizenRepository;
     }
 
     minY(): number

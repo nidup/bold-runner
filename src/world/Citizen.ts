@@ -1,11 +1,11 @@
 
 import {Config} from "../game/Config";
-import {CivilBrain} from "./CivilBrain";
+import {CitizenBrain} from "./CitizenBrain";
 
-export class Civil extends Phaser.Sprite
+export class Citizen extends Phaser.Sprite
 {
     public body: Phaser.Physics.Arcade.Body;
-    private brain: CivilBrain;
+    private brain: CitizenBrain;
     private dead: boolean = false;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string)
@@ -27,7 +27,7 @@ export class Civil extends Phaser.Sprite
         this.animations.add('walk', [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
         this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
 
-        this.brain = new CivilBrain(this);
+        this.brain = new CitizenBrain(this);
     }
 
     update()

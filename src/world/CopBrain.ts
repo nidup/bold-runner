@@ -5,7 +5,7 @@ import {Cop} from "./Cop";
 import {Config} from "../game/Config";
 import {Street} from "./Street";
 import {Gun} from "./Weapon/Gun";
-import {Civil} from "./Civil";
+import {Citizen} from "./Citizen";
 
 export class CopBrain
 {
@@ -49,10 +49,10 @@ export class CopBrain
             }
         );
         this.gun.bulletHits(
-            this.street.civils().allAlive(),
-            function(civil: Civil, bullet: Phaser.Bullet) {
+            this.street.citizens().allAlive(),
+            function(citizen: Citizen, bullet: Phaser.Bullet) {
                 bullet.kill();
-                civil.health = 0;
+                citizen.health = 0;
             }
         );
     }
