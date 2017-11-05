@@ -3,6 +3,7 @@ import {Street} from "./Street";
 import {Cop} from "./Cop";
 import {Citizen} from "./Citizen";
 import {Gun} from "./Weapon/Gun";
+import {PickableItem} from "./PickableItem";
 
 export class Hero extends Phaser.Sprite
 {
@@ -87,6 +88,12 @@ export class Hero extends Phaser.Sprite
     isDead(): boolean
     {
         return this.dead;
+    }
+
+    pick(item: PickableItem)
+    {
+        console.log('pick '+item.key);
+        item.kill();
     }
 
     private move()

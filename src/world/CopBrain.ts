@@ -7,6 +7,7 @@ import {Street} from "./Street";
 import {Gun} from "./Weapon/Gun";
 import {Citizen} from "./Citizen";
 import {Hero} from "./Hero";
+import {PickableItem} from "./PickableItem";
 
 export class CopBrain
 {
@@ -20,13 +21,15 @@ export class CopBrain
     private energy: number;
     private gun: Gun;
     private street: Street;
+    private group: Phaser.Group;
 
-    public constructor(cop: Cop, gun: Gun, street: Street)
+    public constructor(cop: Cop, gun: Gun, street: Street, group: Phaser.Group)
     {
         this.fsm = new StackFSM();
         this.host = cop;
         this.gun = gun;
         this.street = street;
+        this.group = group;
         this.fsm.pushState(new State('patrol', this.patrol));
         this.turnToARandomDirection();
         this.recoverARandomEnergy();
@@ -137,6 +140,7 @@ export class CopBrain
         this.host.body.velocity.y = 0;
         this.host.animations.play('die');
         this.host.die();
+        new PickableItem(this.group, this.host.x, this.host.y, 'Gun', this.street.player());
     }
 
     private turnToTheRight()

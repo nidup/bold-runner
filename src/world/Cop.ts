@@ -31,7 +31,7 @@ export class Cop extends Phaser.Sprite
         this.animations.add('shot', [21, 22, 23, 24, 25, 26], 12, false);
 
         const gun = new Gun(group, this);
-        this.brain = new CopBrain(this, gun, street);
+        this.brain = new CopBrain(this, gun, street, group);
     }
 
     update()
