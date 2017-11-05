@@ -14,6 +14,7 @@ export class Hero extends Phaser.Sprite
     private spaceKey: Phaser.Key;
     private street: Street;
     private aggressiveRating : number = 0;
+    private dead: boolean = false;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
     {
@@ -24,6 +25,7 @@ export class Hero extends Phaser.Sprite
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
 
+        this.inputEnabled = true;
         this.scale.setTo(this.scaleRatio, this.scaleRatio);
         this.anchor.setTo(0.5, 0.5);
         this.body.setCircle(9, 7, 8);
@@ -43,23 +45,28 @@ export class Hero extends Phaser.Sprite
 
     public update()
     {
-        this.move();
+        if (this.health <= 0) {
+            this.die();
 
-        this.gun.bulletHits(
-            this.street.cops().allAlive(),
-            function(cop: Cop, bullet: Phaser.Bullet) {
-                bullet.kill();
-                cop.health = 0;
-            }
-        );
+        } else {
+            this.move();
 
-        this.gun.bulletHits(
-            this.street.citizens().allAlive(),
-            function(citizen: Citizen, bullet: Phaser.Bullet) {
-                bullet.kill();
-                citizen.health = 0;
-            }
-        );
+            this.gun.bulletHits(
+                this.street.cops().allAlive(),
+                function(cop: Cop, bullet: Phaser.Bullet) {
+                    bullet.kill();
+                    cop.health = 0;
+                }
+            );
+
+            this.gun.bulletHits(
+                this.street.citizens().allAlive(),
+                function(citizen: Citizen, bullet: Phaser.Bullet) {
+                    bullet.kill();
+                    citizen.health = 0;
+                }
+            );
+        }
     }
 
     movingToTheRight(): boolean
@@ -75,6 +82,11 @@ export class Hero extends Phaser.Sprite
     isAggressive(): boolean
     {
         return this.aggressiveRating > 0;
+    }
+
+    isDead(): boolean
+    {
+        return this.dead;
     }
 
     private move()
@@ -118,5 +130,18 @@ export class Hero extends Phaser.Sprite
         this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
             this.aggressiveRating--;
         }, this);
+    }
+
+    private die()
+    {
+        if (!this.dead) {
+            this.dead = true;
+            this.body.velocity.x = 0;
+            this.body.velocity.y = 0;
+            this.animations.play('die');
+            this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
+                this.game.state.start('Play');
+            }, this);
+        }
     }
 }

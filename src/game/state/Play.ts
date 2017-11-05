@@ -1,5 +1,7 @@
 
 import {Street} from "../../world/Street";
+import {Citizen} from "../../world/Citizen";
+import {Cop} from "../../world/Cop";
 
 export default class Play extends Phaser.State
 {
@@ -76,5 +78,16 @@ export default class Play extends Phaser.State
             this.game.debug.cameraInfo(this.game.camera, 32, 32);
 
         }
+    }
+
+    public shutdown()
+    {
+        this.sky.destroy();
+        this.background.destroy();
+        this.buildings.destroy();
+        this.street.player().destroy();
+        this.street.citizens().all().map(function(citizen: Citizen) { citizen.destroy()});
+        this.street.cops().all().map(function(cop: Cop) { cop.destroy()});
+        this.street = null;
     }
 }

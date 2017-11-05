@@ -6,6 +6,7 @@ import {Config} from "../game/Config";
 import {Street} from "./Street";
 import {Gun} from "./Weapon/Gun";
 import {Citizen} from "./Citizen";
+import {Hero} from "./Hero";
 
 export class CopBrain
 {
@@ -55,6 +56,13 @@ export class CopBrain
                 citizen.health = 0;
             }
         );
+        this.gun.bulletHits(
+            this.street.player(),
+            function(hero: Hero, bullet: Phaser.Bullet) {
+                bullet.kill();
+                hero.health = 0;
+            }
+        );
     }
 
     public patrol = () =>
@@ -63,7 +71,7 @@ export class CopBrain
             this.fsm.pushState(new State('dying', this.dying));
         }
 
-        if (this.playerIsCloseAndAggressive()) {
+        if (this.playerIsCloseAndAliveAndAggressive()) {
             this.fsm.pushState(new State('attack', this.attack));
         }
 
@@ -92,7 +100,7 @@ export class CopBrain
             this.fsm.pushState(new State('dying', this.dying));
         }
 
-        if (this.playerIsCloseAndAggressive()) {
+        if (this.playerIsCloseAndAliveAndAggressive()) {
             this.fsm.pushState(new State('attack', this.attack));
         }
 
@@ -110,7 +118,7 @@ export class CopBrain
             this.fsm.pushState(new State('dying', this.dying));
         }
 
-        if (this.playerIsClose()) {
+        if (this.playerIsCloseAndAlive()) {
             this.turnToThePlayer();
             this.host.body.velocity.x = 0;
             this.host.body.velocity.y = 0;
@@ -171,15 +179,15 @@ export class CopBrain
         this.energy = this.host.game.rnd.integerInRange(50, 5000);
     }
 
-    private playerIsCloseAndAggressive(): boolean
+    private playerIsCloseAndAliveAndAggressive(): boolean
     {
-        return this.street.player().isAggressive() && this.playerIsClose();
+        return this.street.player().isAggressive() && this.playerIsCloseAndAlive();
     }
 
-    private playerIsClose(): boolean
+    private playerIsCloseAndAlive(): boolean
     {
         const player = this.street.player();
 
-        return Phaser.Math.distance(player.x, player.y, this.host.x, this.host.y) < this.attackScope;
+        return !player.isDead() && Phaser.Math.distance(player.x, player.y, this.host.x, this.host.y) < this.attackScope;
     }
 }
