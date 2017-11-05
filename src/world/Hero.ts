@@ -10,7 +10,8 @@ export class Hero extends Phaser.Sprite
     private speed: number = 150;
     private scaleRatio = 2;
     private gun: Gun;
-    private spaceKey;
+    private cursors: Phaser.CursorKeys;
+    private spaceKey: Phaser.Key;
     private street: Street;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
@@ -33,47 +34,16 @@ export class Hero extends Phaser.Sprite
         this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
         this.animations.add('shot', [21, 22, 23, 24, 25, 26], 12, false);
 
+        this.cursors = this.game.input.keyboard.createCursorKeys();
         this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
         this.gun = new Gun(group, this);
     }
 
-    move (cursors: Phaser.CursorKeys)
-    {
-        this.body.velocity.x = 0;
-        this.body.velocity.y = 0;
-
-        if (cursors.left.isDown) {
-            this.scale.x = -this.scaleRatio;
-            this.body.velocity.x = -this.speed;
-            this.animations.play('walk');
-            this.gun.turnToTheLeft();
-
-        } else if (cursors.right.isDown) {
-            this.scale.x = this.scaleRatio;
-            this.body.velocity.x = this.speed;
-            this.animations.play('walk');
-            this.gun.turnToTheRight();
-
-        } else if (cursors.up.isDown && (this.street.minY() + 10) <= this.position.y ) {
-            this.body.velocity.y = -this.speed;
-            this.animations.play('walk');
-
-        } else if (cursors.down.isDown) {
-            this.body.velocity.y = this.speed;
-            this.animations.play('walk');
-
-        } else if (this.spaceKey.isDown) {
-            this.animations.play('shot');
-            this.gun.fire();
-
-        } else {
-            this.animations.play('idle');
-        }
-    }
-
     public update()
     {
+        this.move();
+
         this.gun.bulletHits(
             this.street.cops().allAlive(),
             function(cop: Cop, bullet: Phaser.Bullet) {
@@ -89,6 +59,40 @@ export class Hero extends Phaser.Sprite
                 civil.health = 0;
             }
         );
+    }
+
+    private move()
+    {
+        this.body.velocity.x = 0;
+        this.body.velocity.y = 0;
+
+        if (this.cursors.left.isDown) {
+            this.scale.x = -this.scaleRatio;
+            this.body.velocity.x = -this.speed;
+            this.animations.play('walk');
+            this.gun.turnToTheLeft();
+
+        } else if (this.cursors.right.isDown) {
+            this.scale.x = this.scaleRatio;
+            this.body.velocity.x = this.speed;
+            this.animations.play('walk');
+            this.gun.turnToTheRight();
+
+        } else if (this.cursors.up.isDown && (this.street.minY() + 10) <= this.position.y ) {
+            this.body.velocity.y = -this.speed;
+            this.animations.play('walk');
+
+        } else if (this.cursors.down.isDown) {
+            this.body.velocity.y = this.speed;
+            this.animations.play('walk');
+
+        } else if (this.spaceKey.isDown) {
+            this.animations.play('shot');
+            this.gun.fire();
+
+        } else {
+            this.animations.play('idle');
+        }
     }
 
     movingToTheRight(): boolean

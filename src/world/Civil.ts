@@ -30,14 +30,14 @@ export class Civil extends Phaser.Sprite
         this.brain = new CivilBrain(this);
     }
 
-    walk ()
+    update()
     {
         if (!this.dead) {
             this.brain.think();
         }
     }
 
-    die ()
+    die()
     {
         this.dead = true;
     }

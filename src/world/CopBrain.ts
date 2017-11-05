@@ -20,6 +20,12 @@ export class CopBrain
         this.host = cop;
         this.fsm.pushState(new State('patrol', this.patrol));
         this.directionX = cop.game.rnd.sign();
+        if (this.directionX === -1) {
+            this.host.getGun().turnToTheLeft();
+        } else {
+            this.host.getGun().turnToTheRight();
+        }
+
         this.energy = this.randEnergy();
     }
 
@@ -36,9 +42,11 @@ export class CopBrain
 
         if (this.host.body.blocked.left && this.directionX === this.left) {
             this.directionX = this.right;
+            this.host.getGun().turnToTheRight();
         }
         if (this.host.body.blocked.right && this.directionX === this.right) {
             this.directionX = this.left;
+            this.host.getGun().turnToTheLeft();
         }
 
         if (this.directionX === this.left) {

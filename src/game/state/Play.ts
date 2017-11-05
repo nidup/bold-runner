@@ -1,8 +1,5 @@
 
-import {Cop} from "../../world/Cop";
 import {Street} from "../../world/Street";
-import {Hero} from "../../world/Hero";
-import {Civil} from "../../world/Civil";
 
 export default class Play extends Phaser.State
 {
@@ -10,8 +7,6 @@ export default class Play extends Phaser.State
     private sky: Phaser.TileSprite;
     private background: Phaser.TileSprite;
     private buildings: Phaser.TileSprite;
-    private cursors: Phaser.CursorKeys;
-    private hero: Hero;
     private street: Street;
 
     public create()
@@ -47,49 +42,23 @@ export default class Play extends Phaser.State
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
 
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        this.street = new Street();
-
         const nbCops = 10;
-        for (let indCop = 1; indCop < nbCops; indCop++) {
-            let randX = this.game.rnd.integerInRange(this.street.minX(), this.street.maxX());
-            let randY = this.game.rnd.integerInRange(this.street.minY(), this.street.maxY());
-            this.street.cops().add(new Cop(charactersLayer, randX, randY, 'cop'));
-        }
-
         const nbCivil = 30;
-        for (let indCiv = 1; indCiv < nbCivil; indCiv++) {
-            let randX = this.game.rnd.integerInRange(this.street.minX(), this.street.maxX());
-            let randY = this.game.rnd.integerInRange(this.street.minY(), this.street.maxY());
-            this.street.civils().add(new Civil(charactersLayer, randX, randY, 'civil1'));
-        }
-
-        this.hero = new Hero(charactersLayer, this.street.minX(), this.street.maxY(), 'hero', this.street);
+        this.street = new Street(charactersLayer, nbCops, nbCivil);
 
         this.game.world.setBounds(0, 0, 1600, 800);
-        this.game.camera.follow(this.hero);
+        this.game.camera.follow(this.street.player());
     }
 
     public update()
     {
-        this.hero.move(this.cursors);
-
-        this.street.cops().all().map(function(cop: Cop) {
-            cop.patrol();
-        });
-
-        this.street.civils().all().map(function(civil: Civil) {
-            civil.walk();
-        });
-
         const skyParallaxSpeed = 0.03;
         this.sky.tilePosition.x -= skyParallaxSpeed;
 
         const backgroundParallaxSpeed = 0.05;
-        if (this.hero.movingToTheRight()) {
+        if (this.street.player().movingToTheRight()) {
             this.background.tilePosition.x -= backgroundParallaxSpeed;
-        } else if (this.hero.movingToTheLeft()) {
+        } else if (this.street.player().movingToTheLeft()) {
             this.background.tilePosition.x += backgroundParallaxSpeed;
         }
     }
@@ -103,7 +72,7 @@ export default class Play extends Phaser.State
                 14,
                 "#00ff00"
             );
-            this.game.debug.body(this.hero);
+            this.game.debug.body(this.street.player());
             this.game.debug.cameraInfo(this.game.camera, 32, 32);
 
         }
