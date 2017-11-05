@@ -10,6 +10,7 @@ export default class Play extends Phaser.State
     private background: Phaser.TileSprite;
     private buildings: Phaser.TileSprite;
     private street: Street;
+    private characterLayer: Phaser.Group;
 
     public create()
     {
@@ -38,15 +39,15 @@ export default class Play extends Phaser.State
         this.buildings = this.game.add.tileSprite(0,heightPosition,width,height,'buildings',0, buildingsLayer);
         this.buildings.tileScale.set(tileSpriteRatio, tileSpriteRatio);
 
-        const charactersLayer = this.game.add.group();
-        charactersLayer.name = 'Characters';
+        this.characterLayer = this.game.add.group();
+        this.characterLayer.name = 'Characters';
 
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
 
         const nbCops = 10;
         const nbCitizens = 30;
-        this.street = new Street(charactersLayer, nbCops, nbCitizens);
+        this.street = new Street(this.characterLayer, nbCops, nbCitizens);
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.street.player());
@@ -63,6 +64,8 @@ export default class Play extends Phaser.State
         } else if (this.street.player().movingToTheLeft()) {
             this.background.tilePosition.x += backgroundParallaxSpeed;
         }
+
+        this.characterLayer.sort('y', Phaser.Group.SORT_ASCENDING);
     }
 
     public render()
