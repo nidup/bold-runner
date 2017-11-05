@@ -29,7 +29,7 @@ export class Citizen extends Phaser.Sprite
         this.animations.add('run', [5, 6, 7, 8, 9, 10, 11, 12, 13], 24, true);
         this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
 
-        this.brain = new CitizenBrain(this, street);
+        this.brain = new CitizenBrain(this, street, group);
     }
 
     update()

@@ -5,6 +5,7 @@ import {Cop} from "./Cop";
 import {Config} from "../game/Config";
 import {Citizen} from "./Citizen";
 import {Street} from "./Street";
+import {PickableItem} from "./PickableItem";
 
 export class CitizenBrain
 {
@@ -19,12 +20,14 @@ export class CitizenBrain
     private visionScope: number = 200;
     private energy: number;
     private street: Street;
+    private group: Phaser.Group;
 
-    public constructor(citizen: Citizen, street: Street)
+    public constructor(citizen: Citizen, street: Street, group: Phaser.Group)
     {
         this.fsm = new StackFSM();
         this.host = citizen;
         this.street = street;
+        this.group = group;
         this.fsm.pushState(new State('walk', this.walk));
         this.changeToWalkSpeed();
         this.turnToARandomDirection();
@@ -118,6 +121,7 @@ export class CitizenBrain
         this.host.body.velocity.y = 0;
         this.host.animations.play('die');
         this.host.die();
+        new PickableItem(this.group, this.host.x, this.host.y, 'Money', this.street.player());
     }
 
     private changeToWalkSpeed()
