@@ -2,13 +2,14 @@
 import {Street} from "./Street";
 import {Cop} from "./Cop";
 import {Civil} from "./Civil";
+import {Gun} from "./Weapon/Gun";
 
 export class Hero extends Phaser.Sprite
 {
     public body: Phaser.Physics.Arcade.Body;
     private speed: number = 150;
     private scaleRatio = 2;
-    private weapon: Phaser.Weapon;
+    private gun: Gun;
     private spaceKey;
     private street: Street;
 
@@ -34,11 +35,7 @@ export class Hero extends Phaser.Sprite
 
         this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-        this.weapon = group.game.add.weapon(-1, 'Bullet', 14, group);
-        this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-        this.weapon.bulletSpeed = 600;
-        this.weapon.fireRate = 600;
-        this.weapon.trackSprite(this, 0, -8, false);
+        this.gun = new Gun(group, this);
     }
 
     move (cursors: Phaser.CursorKeys)
@@ -50,13 +47,13 @@ export class Hero extends Phaser.Sprite
             this.scale.x = -this.scaleRatio;
             this.body.velocity.x = -this.speed;
             this.animations.play('walk');
-            this.weapon.fireAngle = 180;
+            this.gun.turnToTheLeft();
 
         } else if (cursors.right.isDown) {
             this.scale.x = this.scaleRatio;
             this.body.velocity.x = this.speed;
             this.animations.play('walk');
-            this.weapon.fireAngle = 0;
+            this.gun.turnToTheRight();
 
         } else if (cursors.up.isDown && (this.street.minY() + 10) <= this.position.y ) {
             this.body.velocity.y = -this.speed;
@@ -68,7 +65,7 @@ export class Hero extends Phaser.Sprite
 
         } else if (this.spaceKey.isDown) {
             this.animations.play('shot');
-            this.weapon.fire();
+            this.gun.fire();
 
         } else {
             this.animations.play('idle');
@@ -77,26 +74,20 @@ export class Hero extends Phaser.Sprite
 
     public update()
     {
-        this.game.physics.arcade.overlap(
-            this.weapon.bullets,
+        this.gun.bulletHits(
             this.street.cops().allAlive(),
             function(cop: Cop, bullet: Phaser.Bullet) {
                 bullet.kill();
                 cop.health = 0;
-            },
-            null,
-            this
+            }
         );
 
-        this.game.physics.arcade.overlap(
-            this.weapon.bullets,
+        this.gun.bulletHits(
             this.street.civils().allAlive(),
             function(civil: Civil, bullet: Phaser.Bullet) {
                 bullet.kill();
                 civil.health = 0;
-            },
-            null,
-            this
+            }
         );
     }
 
