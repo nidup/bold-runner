@@ -13,6 +13,7 @@ export class Hero extends Phaser.Sprite
     private cursors: Phaser.CursorKeys;
     private spaceKey: Phaser.Key;
     private street: Street;
+    private aggressiveRating : number = 0;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
     {
@@ -61,6 +62,21 @@ export class Hero extends Phaser.Sprite
         );
     }
 
+    movingToTheRight(): boolean
+    {
+        return this.body.velocity.x > 0;
+    }
+
+    movingToTheLeft(): boolean
+    {
+        return this.body.velocity.x < 0;
+    }
+
+    isAggressive(): boolean
+    {
+        return this.aggressiveRating > 0;
+    }
+
     private move()
     {
         this.body.velocity.x = 0;
@@ -87,21 +103,20 @@ export class Hero extends Phaser.Sprite
             this.animations.play('walk');
 
         } else if (this.spaceKey.isDown) {
-            this.animations.play('shot');
-            this.gun.fire();
+            this.attack();
 
         } else {
             this.animations.play('idle');
         }
     }
 
-    movingToTheRight(): boolean
+    private attack()
     {
-        return this.body.velocity.x > 0;
-    }
-
-    movingToTheLeft(): boolean
-    {
-        return this.body.velocity.x < 0;
+        this.animations.play('shot');
+        this.gun.fire();
+        this.aggressiveRating++;
+        this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
+            this.aggressiveRating--;
+        }, this);
     }
 }

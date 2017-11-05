@@ -9,8 +9,6 @@ export class Cop extends Phaser.Sprite
     public body: Phaser.Physics.Arcade.Body;
     private brain: CopBrain;
     private dead: boolean = false;
-    private gun: Gun;
-    private street: Street;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
     {
@@ -32,10 +30,8 @@ export class Cop extends Phaser.Sprite
         this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
         this.animations.add('shot', [21, 22, 23, 24, 25, 26], 12, false);
 
-        this.street = street;
-
-        this.gun = new Gun(group, this);
-        this.brain = new CopBrain(this);
+        const gun = new Gun(group, this);
+        this.brain = new CopBrain(this, gun, street);
     }
 
     update()
@@ -48,10 +44,5 @@ export class Cop extends Phaser.Sprite
     die()
     {
         this.dead = true;
-    }
-
-    getGun(): Gun
-    {
-        return this.gun;
     }
 }
