@@ -52,12 +52,11 @@ export class CitizenBrain
             this.fsm.pushState(new State('resting', this.resting));
 
         } else {
+            this.changeToWalkSpeed();
             if (this.host.body.blocked.left && this.directionX === this.left) {
-                this.changeToWalkSpeed();
                 this.turnToTheRight();
             }
             if (this.host.body.blocked.right && this.directionX === this.right) {
-                this.changeToWalkSpeed();
                 this.turnToTheLeft();
             }
 
@@ -83,6 +82,7 @@ export class CitizenBrain
             if (this.energy > 1000) {
                 this.recoverARandomEnergy();
                 this.changeToWalkSpeed();
+                this.turnToARandomDirection();
                 this.fsm.popState();
             }
         }
