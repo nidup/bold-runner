@@ -133,7 +133,9 @@ export class Hero extends Phaser.Sprite
     {
         this.animations.play('shot');
         this.gun.fire();
-        this.aggressiveRating++;
+        this.game.time.events.add(Phaser.Timer.SECOND * 0.5, function () {
+            this.aggressiveRating++;
+        }, this);
         this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
             this.aggressiveRating--;
         }, this);
