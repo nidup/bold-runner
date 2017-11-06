@@ -140,7 +140,11 @@ export class CopBrain
         this.host.body.velocity.y = 0;
         this.host.animations.play('die');
         this.host.die();
-        new PickableItem(this.group, this.host.x, this.host.y, 'Gun', this.street.player());
+        if (this.host.key === 'cop') {
+            new PickableItem(this.group, this.host.x, this.host.y, 'Gun', this.street.player());
+        } else {
+            new PickableItem(this.group, this.host.x, this.host.y, 'ShotGun', this.street.player());
+        }
     }
 
     private turnToTheRight()

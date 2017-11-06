@@ -6,6 +6,7 @@ export class Inventory extends Phaser.Sprite
 {
     private player: Hero;
     private gunText: Phaser.BitmapText;
+    private shotgunText: Phaser.BitmapText;
     private moneyText: Phaser.BitmapText;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, player: Hero)
@@ -29,8 +30,17 @@ export class Inventory extends Phaser.Sprite
         this.gunText = this.game.add.bitmapText(gunX - 40, gunY + 30, 'carrier-command','0', 10);
         this.gunText.fixedToCamera = true;
 
-        const moneyX = 1130;
-        const moneyY = 45;
+        const shotgunX = 1130;
+        const shotgunY = 45;
+        const shotgunSprite = group.game.add.sprite(shotgunX, shotgunY, 'ShotGun', 1, group);
+        shotgunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+        shotgunSprite.fixedToCamera = true;
+
+        this.shotgunText = this.game.add.bitmapText(shotgunX - 40, shotgunY + 30, 'carrier-command','0', 10);
+        this.shotgunText.fixedToCamera = true;
+
+        const moneyX = 1020;
+        const moneyY = 115;
         const moneySprite = group.game.add.sprite(moneyX, moneyY, 'Money', 1, group);
         moneySprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         moneySprite.fixedToCamera = true;
@@ -43,5 +53,6 @@ export class Inventory extends Phaser.Sprite
     {
         this.moneyText.setText(""+this.player.money());
         this.gunText.setText(""+this.player.gunAmno());
+        this.shotgunText.setText(""+this.player.shotgunAmno());
     }
 }
