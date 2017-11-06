@@ -19,7 +19,7 @@ export class Street
         for (let indCop = 0; indCop < nbCops; indCop++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
-            let randShotgun = characterGroup.game.rnd.integerInRange(1, 4);
+            let randShotgun = characterGroup.game.rnd.integerInRange(1, 1);
             let key = randShotgun === 1 ? 'cop-shotgun' : 'cop';
             this.cops().add(new Cop(characterGroup, randX, randY, key, this));
         }
