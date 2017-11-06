@@ -27,7 +27,7 @@ export class Inventory extends Phaser.Sprite
         gunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         gunSprite.fixedToCamera = true;
 
-        this.gunText = this.game.add.bitmapText(gunX - 40, gunY + 30, 'carrier-command','0', 10);
+        this.gunText = this.game.add.bitmapText(gunX - 40, gunY + 30, 'carrier-command','0', 10, group);
         this.gunText.fixedToCamera = true;
 
         const shotgunX = 1130;
@@ -36,7 +36,7 @@ export class Inventory extends Phaser.Sprite
         shotgunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         shotgunSprite.fixedToCamera = true;
 
-        this.shotgunText = this.game.add.bitmapText(shotgunX - 40, shotgunY + 30, 'carrier-command','0', 10);
+        this.shotgunText = this.game.add.bitmapText(shotgunX - 40, shotgunY + 30, 'carrier-command','0', 10, group);
         this.shotgunText.fixedToCamera = true;
 
         const moneyX = 1020;
@@ -45,7 +45,7 @@ export class Inventory extends Phaser.Sprite
         moneySprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         moneySprite.fixedToCamera = true;
 
-        this.moneyText = this.game.add.bitmapText(moneyX - 40, moneyY + 30, 'carrier-command','0', 10);
+        this.moneyText = this.game.add.bitmapText(moneyX - 40, moneyY + 30, 'carrier-command','0', 10, group);
         this.moneyText.fixedToCamera = true;
     }
 

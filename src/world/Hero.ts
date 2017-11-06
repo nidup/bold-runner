@@ -4,26 +4,32 @@ import {Cop} from "./Cop";
 import {Citizen} from "./Citizen";
 import {Gun} from "./Weapon/Gun";
 import {PickableItem} from "./PickableItem";
+import {ShotGun} from "./Weapon/ShotGun";
+import {BaseGun} from "./Weapon/BaseGun";
 
 export class Hero extends Phaser.Sprite
 {
     public body: Phaser.Physics.Arcade.Body;
     private speed: number = 150;
     private scaleRatio = 2;
+    private currentGun: BaseGun;
     private gun: Gun;
+    private shotgun: ShotGun;
     private cursors: Phaser.CursorKeys;
-    private spaceKey: Phaser.Key;
+    private shotKey: Phaser.Key;
+    private switchKey: Phaser.Key;
+    private switching: boolean = false;
     private street: Street;
     private aggressiveRating : number = 0;
     private dead: boolean = false;
     private moneyAmount: number = 0;
     private gunAmount: number = 0;
     private shotgunAmount: number = 0;
+    private currentGunAnim: string = 'gun';
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
     {
         super(group.game, x, y, key, 0);
-
         this.street = street;
 
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
@@ -36,15 +42,23 @@ export class Hero extends Phaser.Sprite
         this.body.allowGravity = false;
         this.body.collideWorldBounds = true;
 
-        this.animations.add('idle', [0, 1, 2, 3, 4], 4, true);
-        this.animations.add('walk', [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
-        this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
-        this.animations.add('shot', [21, 22, 23, 24, 25, 26], 12, false);
+        this.animations.add('idle-gun', [0, 1, 2, 3, 4], 4, true);
+        this.animations.add('walk-gun', [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
+        this.animations.add('die-gun', [14, 15, 16, 17, 18, 19, 20], 12, false);
+        this.animations.add('shot-gun', [21, 22, 23, 24, 25, 26], 12, false);
+
+        this.animations.add('idle-shotgun', [27, 28, 29, 30, 31], 4, true);
+        this.animations.add('walk-shotgun', [32, 33, 34, 35, 36, 37, 38, 39, 40], 12, true);
+        this.animations.add('die-shotgun', [41, 42, 43, 44, 45, 46, 47], 12, false);
+        this.animations.add('shot-shotgun', [48, 49, 50, 51, 52, 53], 6, false);
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
-        this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.shotKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.switchKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
 
         this.gun = new Gun(group, this);
+        this.shotgun = new ShotGun(group, this);
+        this.switchToGun();
     }
 
     public update()
@@ -55,7 +69,7 @@ export class Hero extends Phaser.Sprite
         } else {
             this.move();
 
-            this.gun.bulletHits(
+            this.currentGun.bulletHits(
                 this.street.cops().allAlive(),
                 function(cop: Cop, bullet: Phaser.Bullet) {
                     bullet.kill();
@@ -63,7 +77,7 @@ export class Hero extends Phaser.Sprite
                 }
             );
 
-            this.gun.bulletHits(
+            this.currentGun.bulletHits(
                 this.street.citizens().allAlive(),
                 function(citizen: Citizen, bullet: Phaser.Bullet) {
                     bullet.kill();
@@ -108,6 +122,27 @@ export class Hero extends Phaser.Sprite
         return this.shotgunAmount;
     }
 
+    switchToOtherGun()
+    {
+        if (this.currentGunAnim === 'gun' && this.shotgunAmount > 0) {
+            this.switchToShotGun();
+        } else {
+            this.switchToGun();
+        }
+    }
+
+    switchToShotGun()
+    {
+        this.currentGunAnim = 'shotgun';
+        this.currentGun = this.shotgun;
+    }
+
+    switchToGun()
+    {
+        this.currentGunAnim = 'gun';
+        this.currentGun = this.gun;
+    }
+
     pick(item: PickableItem)
     {
         if (item.key === 'Money') {
@@ -115,6 +150,9 @@ export class Hero extends Phaser.Sprite
         } else if (item.key === 'Gun') {
             this.gunAmount++;
         } else if (item.key === 'ShotGun') {
+            if (this.shotgunAmount === 0) {
+                this.switchToShotGun();
+            }
             this.shotgunAmount++;
         }
         item.kill();
@@ -128,35 +166,42 @@ export class Hero extends Phaser.Sprite
         if (this.cursors.left.isDown) {
             this.scale.x = -this.scaleRatio;
             this.body.velocity.x = -this.speed;
-            this.animations.play('walk');
+            this.animations.play('walk-'+this.currentGunAnim);
             this.gun.turnToTheLeft();
+            this.shotgun.turnToTheLeft();
 
         } else if (this.cursors.right.isDown) {
             this.scale.x = this.scaleRatio;
             this.body.velocity.x = this.speed;
-            this.animations.play('walk');
+            this.animations.play('walk-'+this.currentGunAnim);
             this.gun.turnToTheRight();
+            this.shotgun.turnToTheRight();
 
         } else if (this.cursors.up.isDown && (this.street.minY() + 10) <= this.position.y ) {
             this.body.velocity.y = -this.speed;
-            this.animations.play('walk');
+            this.animations.play('walk-'+this.currentGunAnim);
 
         } else if (this.cursors.down.isDown) {
             this.body.velocity.y = this.speed;
-            this.animations.play('walk');
+            this.animations.play('walk-'+this.currentGunAnim);
 
-        } else if (this.spaceKey.isDown) {
+        } else if (this.shotKey.isDown) {
             this.attack();
 
+        } else if (this.switchKey.isDown && !this.switching) {
+            this.switching = true;
+            this.switchToOtherGun();
+            this.switching = false;
+
         } else {
-            this.animations.play('idle');
+            this.animations.play('idle-'+this.currentGunAnim);
         }
     }
 
     private attack()
     {
-        this.animations.play('shot');
-        this.gun.fire();
+        this.animations.play('shot-'+this.currentGunAnim);
+        this.currentGun.fire();
         this.game.time.events.add(Phaser.Timer.SECOND * 0.5, function () {
             this.aggressiveRating++;
         }, this);
@@ -171,7 +216,7 @@ export class Hero extends Phaser.Sprite
             this.dead = true;
             this.body.velocity.x = 0;
             this.body.velocity.y = 0;
-            this.animations.play('die');
+            this.animations.play('die-'+this.currentGunAnim);
             this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
                 this.game.state.start('Play');
             }, this);

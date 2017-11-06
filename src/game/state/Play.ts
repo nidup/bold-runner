@@ -50,6 +50,9 @@ export default class Play extends Phaser.State
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
         new Inventory(interfaceLayer, 600, 0, 'ui', this.street.player());
+        const tutorial = 'Arrows to move, space to shot, S to switch weapon';
+        const gunText = this.game.add.bitmapText(120, 30, 'carrier-command',tutorial, 10, interfaceLayer);
+        gunText.fixedToCamera = true;
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.street.player());

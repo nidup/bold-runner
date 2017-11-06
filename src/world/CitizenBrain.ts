@@ -121,7 +121,10 @@ export class CitizenBrain
         this.host.body.velocity.y = 0;
         this.host.animations.play('die');
         this.host.die();
-        new PickableItem(this.group, this.host.x, this.host.y, 'Money', this.street.player());
+        let randMoney = this.group.game.rnd.integerInRange(1, 3);
+        if (randMoney === 1) {
+            new PickableItem(this.group, this.host.x, this.host.y, 'Money', this.street.player());
+        }
     }
 
     private changeToWalkSpeed()
