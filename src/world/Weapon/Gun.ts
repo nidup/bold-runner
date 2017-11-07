@@ -9,7 +9,8 @@ export class Gun implements BaseGun
     constructor(group: Phaser.Group, owner: Phaser.Sprite)
     {
         this.weapon = group.game.add.weapon(-1, 'Bullet', 14, group);
-        this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+        this.weapon.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+        this.weapon.bulletKillDistance = 600;
         this.weapon.bulletSpeed = 600;
         this.weapon.fireRate = 600;
         this.weapon.trackSprite(owner, 0, -8, false);
