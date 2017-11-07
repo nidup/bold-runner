@@ -6,6 +6,7 @@ import {Gun} from "./Weapon/Gun";
 import {PickableItem} from "./PickableItem";
 import {ShotGun} from "./Weapon/ShotGun";
 import {BaseGun} from "./Weapon/BaseGun";
+import {BackBag} from "./BackBag";
 
 export class Hero extends Phaser.Sprite
 {
@@ -25,7 +26,7 @@ export class Hero extends Phaser.Sprite
     private moneyAmount: number = 0;
     private currentGunAnim: string = 'gun';
 
-    constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
+    constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag)
     {
         super(group.game, x, y, key, 0);
         this.street = street;
@@ -54,8 +55,9 @@ export class Hero extends Phaser.Sprite
         this.shotKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.switchKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
 
-        this.gun = new Gun(group, this, 100);
-        this.shotgun = new ShotGun(group, this, 0);
+        this.gun = new Gun(group, this, backbag.gunAmno());
+        this.shotgun = new ShotGun(group, this, backbag.shotgunAmno());
+        this.moneyAmount = backbag.money();
         this.switchToGun();
     }
 

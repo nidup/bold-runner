@@ -5,6 +5,7 @@ import {Citizens} from "./Citizens";
 import {Citizen} from "./Citizen";
 import {Hero} from "./Hero";
 import {Level} from "./Level";
+import {BackBag} from "./BackBag";
 
 export class Street
 {
@@ -12,7 +13,7 @@ export class Street
     private citizenRepository: Citizens;
     private hero: Hero;
 
-    constructor(characterGroup: Phaser.Group, level: Level)
+    constructor(characterGroup: Phaser.Group, level: Level, backbag: BackBag)
     {
         this.copRepository = new Cops();
         this.citizenRepository = new Citizens();
@@ -31,7 +32,7 @@ export class Street
             this.citizens().add(new Citizen(characterGroup, randX, randY, 'citizen1', this));
         }
 
-        this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this);
+        this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this, backbag);
     }
 
     isEmpty(): boolean

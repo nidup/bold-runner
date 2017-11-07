@@ -4,6 +4,7 @@ import {Citizen} from "../../world/Citizen";
 import {Cop} from "../../world/Cop";
 import {Inventory} from "../../ui/Inventory";
 import {Level} from "../../world/Level";
+import {BackBag} from "../../world/BackBag";
 
 export default class Play extends Phaser.State
 {
@@ -16,10 +17,12 @@ export default class Play extends Phaser.State
     private levelText: Phaser.BitmapText;
     private levelNumber: number = 1;
     private switchingLevel: boolean = false;
+    private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'money': number} = null;
 
-    public init (level = 1)
+    public init (level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'money': 0})
     {
         this.levelNumber = level;
+        this.previousInventory = previousInventory;
         this.switchingLevel = false;
     }
 
@@ -62,7 +65,8 @@ export default class Play extends Phaser.State
         const levelsData = JSON.parse(this.game.cache.getText('levels'));
         const levelData = levelsData[this.levelNumber - 1];
         const level = new Level(this.levelNumber, levelData);
-        this.street = new Street(this.characterLayer, level);
+        const backbag = new BackBag(this.previousInventory);
+        this.street = new Street(this.characterLayer, level, backbag);
         this.levelText.setText("Level " + level.number());
 
         new Inventory(interfaceLayer, 600, 0, 'ui', this.street.player());
@@ -128,7 +132,17 @@ export default class Play extends Phaser.State
             this.levelNumber++;
             this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
                 if (this.levelNumber <= lastLevelNumber) {
-                    this.game.state.start('Play', true, false, this.levelNumber);
+                    this.game.state.start(
+                        'Play',
+                        true,
+                        false,
+                        this.levelNumber,
+                        {
+                            'gunAmno': this.street.player().gunAmno(),
+                            'shotgunAmno': this.street.player().shotgunAmno(),
+                            'money': this.street.player().money()
+                        }
+                    );
                 } else {
                     this.game.state.start('Menu');
                 }
