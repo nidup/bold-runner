@@ -23,8 +23,6 @@ export class Hero extends Phaser.Sprite
     private aggressiveRating : number = 0;
     private dead: boolean = false;
     private moneyAmount: number = 0;
-    private gunAmount: number = 0;
-    private shotgunAmount: number = 0;
     private currentGunAnim: string = 'gun';
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
@@ -56,8 +54,8 @@ export class Hero extends Phaser.Sprite
         this.shotKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.switchKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
 
-        this.gun = new Gun(group, this);
-        this.shotgun = new ShotGun(group, this);
+        this.gun = new Gun(group, this, 100);
+        this.shotgun = new ShotGun(group, this, 0);
         this.switchToGun();
     }
 
@@ -114,17 +112,17 @@ export class Hero extends Phaser.Sprite
 
     gunAmno(): number
     {
-        return this.gunAmount;
+        return this.gun.amno();
     }
 
     shotgunAmno(): number
     {
-        return this.shotgunAmount;
+        return this.shotgun.amno();
     }
 
     switchToOtherGun()
     {
-        if (this.currentGunAnim === 'gun' && this.shotgunAmount > 0) {
+        if (this.currentGunAnim === 'gun' && this.shotgunAmno() > 0) {
             this.switchToShotGun();
         } else {
             this.switchToGun();
@@ -146,14 +144,15 @@ export class Hero extends Phaser.Sprite
     pick(item: PickableItem)
     {
         if (item.key === 'Money') {
-            this.moneyAmount++;
+            const randAmount = this.game.rnd.integerInRange(2, 50);
+            this.moneyAmount = this.moneyAmount + randAmount;
         } else if (item.key === 'Gun') {
-            this.gunAmount++;
+            this.gun.reload(20);
         } else if (item.key === 'ShotGun') {
-            if (this.shotgunAmount === 0) {
+            if (this.shotgunAmno() === 0) {
                 this.switchToShotGun();
             }
-            this.shotgunAmount++;
+            this.shotgun.reload(6);
         }
         item.kill();
     }
@@ -202,6 +201,9 @@ export class Hero extends Phaser.Sprite
     {
         this.animations.play('shot-'+this.currentGunAnim);
         this.currentGun.fire();
+        if (this.currentGun === this.shotgun && this.shotgunAmno() === 0) {
+            this.switchToGun();
+        }
         this.game.time.events.add(Phaser.Timer.SECOND * 0.5, function () {
             this.aggressiveRating++;
         }, this);

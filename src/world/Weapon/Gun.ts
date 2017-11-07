@@ -5,9 +5,12 @@ export class Gun implements BaseGun
 {
     private game: Phaser.Game;
     private weapon: Phaser.Weapon;
+    private amnoAmount: number;
 
-    constructor(group: Phaser.Group, owner: Phaser.Sprite)
+    constructor(group: Phaser.Group, owner: Phaser.Sprite, amno: number = 10000)
     {
+        this.game = group.game;
+        this.amnoAmount = amno;
         this.weapon = group.game.add.weapon(-1, 'Bullet', 14, group);
         this.weapon.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
         this.weapon.bulletKillDistance = 600;
@@ -15,7 +18,12 @@ export class Gun implements BaseGun
         this.weapon.fireRate = 600;
         this.weapon.trackSprite(owner, 0, -8, false);
         this.weapon.fireAngle = 0;
-        this.game = group.game;
+        this.weapon.onFire.add(
+            function () {
+                this.amnoAmount--;
+            },
+            this
+        );
     }
 
     public fire()
@@ -47,5 +55,15 @@ export class Gun implements BaseGun
             null,
             this
         );
+    }
+
+    public amno(): number
+    {
+        return this.amnoAmount;
+    }
+
+    public reload(amount: number)
+    {
+        this.amnoAmount = this.amnoAmount + amount;
     }
 }

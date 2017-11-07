@@ -6,4 +6,6 @@ export interface BaseGun
     turnToTheRight();
     bullets();
     bulletHits(targets, overlapCallback);
+    amno(): number;
+    reload(amount: number);
 }
