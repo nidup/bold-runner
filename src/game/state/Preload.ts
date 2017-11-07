@@ -4,10 +4,9 @@ export default class Preload extends Phaser.State {
     public preload ()
     {
         this.loadAudio();
-        this.loadTilemap();
-        this.loadTileImages();
+        this.loadLevels();
         this.loadGameImages();
-        this.loadUIImages();
+        this.loadFonts();
     }
 
     public create ()
@@ -19,12 +18,9 @@ export default class Preload extends Phaser.State {
     {
     }
 
-    private loadTilemap()
+    private loadLevels()
     {
-    }
-
-    private loadTileImages()
-    {
+        this.load.text('levels', 'assets/data/levels.json');
     }
 
     private loadGameImages()
@@ -43,7 +39,7 @@ export default class Preload extends Phaser.State {
         this.load.spritesheet('Money', 'assets/sprites/money.png', 20, 20);
     }
 
-    private loadUIImages()
+    private loadFonts()
     {
         this.load.bitmapFont('carrier-command', 'assets/fonts/carrier_command.png', 'assets/fonts/carrier_command.xml');
     }

@@ -3,6 +3,7 @@ import {Street} from "../../world/Street";
 import {Citizen} from "../../world/Citizen";
 import {Cop} from "../../world/Cop";
 import {Inventory} from "../../ui/Inventory";
+import {Level} from "../../world/Level";
 
 export default class Play extends Phaser.State
 {
@@ -12,6 +13,15 @@ export default class Play extends Phaser.State
     private buildings: Phaser.TileSprite;
     private street: Street;
     private characterLayer: Phaser.Group;
+    private levelText: Phaser.BitmapText;
+    private levelNumber: number = 1;
+    private switchingLevel: boolean = false;
+
+    public init (level = 1)
+    {
+        this.levelNumber = level;
+        this.switchingLevel = false;
+    }
 
     public create()
     {
@@ -43,16 +53,22 @@ export default class Play extends Phaser.State
         this.characterLayer = this.game.add.group();
         this.characterLayer.name = 'Characters';
 
-        const nbCops = 10;
-        const nbCitizens = 30;
-        this.street = new Street(this.characterLayer, nbCops, nbCitizens);
-
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
+
+        this.levelText = this.game.add.bitmapText(500, 200, 'carrier-command', '', 20, interfaceLayer);
+        this.levelText.fixedToCamera = true;
+
+        const levelsData = JSON.parse(this.game.cache.getText('levels'));
+        const levelData = levelsData[this.levelNumber - 1];
+        const level = new Level(this.levelNumber, levelData);
+        this.street = new Street(this.characterLayer, level);
+        this.levelText.setText("Level " + level.number());
+
         new Inventory(interfaceLayer, 600, 0, 'ui', this.street.player());
         const tutorial = 'Arrows to move, space to shot, S to switch weapon';
-        const gunText = this.game.add.bitmapText(120, 30, 'carrier-command',tutorial, 10, interfaceLayer);
-        gunText.fixedToCamera = true;
+        const tutorialText = this.game.add.bitmapText(120, 30, 'carrier-command', tutorial, 10, interfaceLayer);
+        tutorialText.fixedToCamera = true;
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.street.player());
@@ -60,6 +76,10 @@ export default class Play extends Phaser.State
 
     public update()
     {
+        if (this.street.isEmpty()) {
+            this.nextLevel();
+        }
+
         const skyParallaxSpeed = 0.03;
         this.sky.tilePosition.x -= skyParallaxSpeed;
 
@@ -97,5 +117,22 @@ export default class Play extends Phaser.State
         this.street.citizens().all().map(function(citizen: Citizen) { citizen.destroy()});
         this.street.cops().all().map(function(cop: Cop) { cop.destroy()});
         this.street = null;
+    }
+
+    public nextLevel()
+    {
+        if (this.switchingLevel === false) {
+            this.switchingLevel = true;
+            const levelsData = JSON.parse(this.game.cache.getText('levels'));
+            const lastLevelNumber = levelsData.length;
+            this.levelNumber++;
+            this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
+                if (this.levelNumber <= lastLevelNumber) {
+                    this.game.state.start('Play', true, false, this.levelNumber);
+                } else {
+                    this.game.state.start('Menu');
+                }
+            }, this);
+        }
     }
 }

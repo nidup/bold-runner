@@ -1,0 +1,18 @@
+[
+  {
+    "cops": 2,
+    "citizens": 5
+  },
+  {
+    "cops": 5,
+    "citizens": 10
+  },
+  {
+    "cops": 10,
+    "citizens": 30
+  },
+  {
+    "cops": 30,
+    "citizens": 30
+  }
+]

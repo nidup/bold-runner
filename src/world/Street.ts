@@ -4,6 +4,7 @@ import {Cop} from "./Cop";
 import {Citizens} from "./Citizens";
 import {Citizen} from "./Citizen";
 import {Hero} from "./Hero";
+import {Level} from "./Level";
 
 export class Street
 {
@@ -11,12 +12,12 @@ export class Street
     private citizenRepository: Citizens;
     private hero: Hero;
 
-    constructor(characterGroup: Phaser.Group, nbCops: number, nbCitizens: number)
+    constructor(characterGroup: Phaser.Group, level: Level)
     {
         this.copRepository = new Cops();
         this.citizenRepository = new Citizens();
 
-        for (let indCop = 0; indCop < nbCops; indCop++) {
+        for (let indCop = 0; indCop < level.cops(); indCop++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
             let randShotgun = characterGroup.game.rnd.integerInRange(1, 4);
@@ -24,13 +25,18 @@ export class Street
             this.cops().add(new Cop(characterGroup, randX, randY, key, this));
         }
 
-        for (let indCiv = 0; indCiv < nbCitizens; indCiv++) {
+        for (let indCiv = 0; indCiv < level.citizens(); indCiv++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
             this.citizens().add(new Citizen(characterGroup, randX, randY, 'citizen1', this));
         }
 
         this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this);
+    }
+
+    isEmpty(): boolean
+    {
+        return this.cops().allAlive().length === 0 && this.citizens().allAlive().length === 0;
     }
 
     player(): Hero

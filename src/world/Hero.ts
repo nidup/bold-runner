@@ -218,7 +218,7 @@ export class Hero extends Phaser.Sprite
             this.body.velocity.y = 0;
             this.animations.play('die-'+this.currentGunAnim);
             this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
-                this.game.state.start('Play');
+                this.game.state.start('Play', true, false, 1);
             }, this);
         }
     }
