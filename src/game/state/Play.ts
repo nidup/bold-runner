@@ -15,7 +15,6 @@ export default class Play extends Phaser.State
     private buildings: Phaser.TileSprite;
     private street: Street;
     private characterLayer: Phaser.Group;
-    private levelText: Phaser.BitmapText;
     private levelNumber: number = 1;
     private switchingLevel: boolean = false;
     private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'money': number} = null;
@@ -53,6 +52,8 @@ export default class Play extends Phaser.State
         buildingsLayer.name = 'Buildings';
         this.buildings = this.game.add.tileSprite(0,heightPosition,width,height,'buildings',0, buildingsLayer);
         this.buildings.tileScale.set(tileSpriteRatio, tileSpriteRatio);
+        this.buildings.animations.add('idle', [0, 1, 2], 2, true);
+        this.buildings.animations.play('idle');
 
         this.characterLayer = this.game.add.group();
         this.characterLayer.name = 'Characters';
