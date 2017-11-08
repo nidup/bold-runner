@@ -2,13 +2,15 @@
 export class Level
 {
     private num: number;
-    private nbCops: number;
+    private nbCopsWithGun: number;
+    private nbCopsWithShotGun: number;
     private nbCitizens: number;
 
     constructor(num: number, data: any)
     {
         this.num = num;
-        this.nbCops = data['cops'];
+        this.nbCopsWithGun = data['cops_with_gun'];
+        this.nbCopsWithShotGun = data['cops_with_shotgun'];
         this.nbCitizens =  data['citizens'];
     }
 
@@ -17,9 +19,14 @@ export class Level
         return this.num;
     }
 
-    public cops(): number
+    public copsWithGun(): number
     {
-        return this.nbCops;
+        return this.nbCopsWithGun;
+    }
+
+    public copsWithShotGun(): number
+    {
+        return this.nbCopsWithShotGun;
     }
 
     public citizens(): number

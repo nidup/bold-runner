@@ -1,18 +1,22 @@
 [
   {
-    "cops": 2,
+    "cops_with_gun": 2,
+    "cops_with_shotgun": 0,
     "citizens": 5
   },
   {
-    "cops": 5,
+    "cops_with_gun": 4,
+    "cops_with_shotgun": 1,
     "citizens": 10
   },
   {
-    "cops": 10,
+    "cops_with_gun": 10,
+    "cops_with_shotgun": 4,
     "citizens": 30
   },
   {
-    "cops": 30,
+    "cops_with_gun": 15,
+    "cops_with_shotgun": 15,
     "citizens": 30
   }
 ]

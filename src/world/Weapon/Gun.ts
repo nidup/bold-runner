@@ -11,7 +11,7 @@ export class Gun implements BaseGun
     {
         this.game = group.game;
         this.amnoAmount = amno;
-        this.weapon = group.game.add.weapon(-1, 'Bullet', 14, group);
+        this.weapon = group.game.add.weapon(-1, 'Bullet', 0, group);
         this.weapon.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
         this.weapon.bulletKillDistance = 600;
         this.weapon.bulletSpeed = 600;

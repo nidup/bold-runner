@@ -18,12 +18,15 @@ export class Street
         this.copRepository = new Cops();
         this.citizenRepository = new Citizens();
 
-        for (let indCop = 0; indCop < level.cops(); indCop++) {
+        for (let indCop = 0; indCop < level.copsWithGun(); indCop++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
-            let randShotgun = characterGroup.game.rnd.integerInRange(1, 4);
-            let key = randShotgun === 1 ? 'cop-shotgun' : 'cop';
-            this.cops().add(new Cop(characterGroup, randX, randY, key, this));
+            this.cops().add(new Cop(characterGroup, randX, randY, 'cop', this));
+        }
+        for (let indCop = 0; indCop < level.copsWithShotGun(); indCop++) {
+            let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
+            let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
+            this.cops().add(new Cop(characterGroup, randX, randY, 'cop-shotgun', this));
         }
 
         for (let indCiv = 0; indCiv < level.citizens(); indCiv++) {
