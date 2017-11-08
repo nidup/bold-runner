@@ -1,20 +1,24 @@
 [
   {
+    "tutorial": "Kill them all!\n\nUse arrows to move and space bar to shot.",
     "cops_with_gun": 2,
     "cops_with_shotgun": 0,
     "citizens": 5
   },
   {
+    "tutorial": "Take care, some cops have shotguns now!\n\nUse S key to switch weapon.",
     "cops_with_gun": 4,
     "cops_with_shotgun": 1,
     "citizens": 10
   },
   {
+    "tutorial": "Take care, some cops have shotguns now!\n\nUse S key to switch weapon.",
     "cops_with_gun": 10,
     "cops_with_shotgun": 4,
     "citizens": 30
   },
   {
+    "tutorial": "Take care, some cops have shotguns now!\n\nUse S key to switch weapon.",
     "cops_with_gun": 15,
     "cops_with_shotgun": 15,
     "citizens": 30

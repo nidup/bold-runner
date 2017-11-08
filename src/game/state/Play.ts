@@ -5,6 +5,7 @@ import {Cop} from "../../world/Cop";
 import {Inventory} from "../../ui/Inventory";
 import {Level} from "../../world/Level";
 import {BackBag} from "../../world/BackBag";
+import {LevelPanel} from "../../ui/LevelPanel";
 
 export default class Play extends Phaser.State
 {
@@ -59,20 +60,15 @@ export default class Play extends Phaser.State
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
 
-        this.levelText = this.game.add.bitmapText(500, 200, 'carrier-command', '', 20, interfaceLayer);
-        this.levelText.fixedToCamera = true;
-
         const levelsData = JSON.parse(this.game.cache.getText('levels'));
         const levelData = levelsData[this.levelNumber - 1];
         const level = new Level(this.levelNumber, levelData);
         const backbag = new BackBag(this.previousInventory);
         this.street = new Street(this.characterLayer, level, backbag);
-        this.levelText.setText("Level " + level.number());
 
-        new Inventory(interfaceLayer, 600, 0, 'ui', this.street.player());
-        const tutorial = 'Arrows to move, space to shot, S to switch weapon';
-        const tutorialText = this.game.add.bitmapText(120, 30, 'carrier-command', tutorial, 10, interfaceLayer);
-        tutorialText.fixedToCamera = true;
+        new LevelPanel(interfaceLayer, 0, 0, 'LevelPanel', level);
+
+        new Inventory(interfaceLayer, 600, 0, 'InventoryPanel', this.street.player());
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.street.player());

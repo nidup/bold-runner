@@ -5,6 +5,7 @@ export class Level
     private nbCopsWithGun: number;
     private nbCopsWithShotGun: number;
     private nbCitizens: number;
+    private tutorialText: string;
 
     constructor(num: number, data: any)
     {
@@ -12,6 +13,7 @@ export class Level
         this.nbCopsWithGun = data['cops_with_gun'];
         this.nbCopsWithShotGun = data['cops_with_shotgun'];
         this.nbCitizens =  data['citizens'];
+        this.tutorialText = data['tutorial'];
     }
 
     public number(): number
@@ -32,5 +34,10 @@ export class Level
     public citizens(): number
     {
         return this.nbCitizens;
+    }
+
+    public tutorial(): string
+    {
+        return this.tutorialText;
     }
 }
