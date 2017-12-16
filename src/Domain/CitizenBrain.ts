@@ -1,7 +1,6 @@
 
-import {StackFSM} from "../ai/fsm/StackFSM";
-import {State} from "../ai/fsm/State";
-import {Cop} from "./Cop";
+import {StackFSM} from "./Brain/FSM/StackFSM";
+import {State} from "./Brain/FSM/State";
 import {Config} from "../game/Config";
 import {Citizen} from "./Citizen";
 import {Street} from "./Street";

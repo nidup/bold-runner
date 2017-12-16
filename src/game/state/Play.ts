@@ -1,11 +1,11 @@
 
-import {Street} from "../../world/Street";
-import {Citizen} from "../../world/Citizen";
-import {Cop} from "../../world/Cop";
-import {Inventory} from "../../ui/Inventory";
-import {Level} from "../../world/Level";
-import {BackBag} from "../../world/BackBag";
-import {LevelPanel} from "../../ui/LevelPanel";
+import {Street} from "../../Domain/Street";
+import {Citizen} from "../../Domain/Citizen";
+import {Cop} from "../../Domain/Cop";
+import {Inventory} from "../../Infrastructure/UI/Inventory";
+import {Level} from "../../Domain/Level";
+import {BackBag} from "../../Domain/BackBag";
+import {LevelPanel} from "../../Infrastructure/UI/LevelPanel";
 
 export default class Play extends Phaser.State
 {

@@ -1,6 +1,4 @@
 
-import {StackFSM} from "../ai/fsm/StackFSM";
-import {State} from "../ai/fsm/State";
 import {Cop} from "./Cop";
 import {Config} from "../game/Config";
 import {Street} from "./Street";
@@ -9,6 +7,8 @@ import {Citizen} from "./Citizen";
 import {Hero} from "./Hero";
 import {PickableItem} from "./PickableItem";
 import {BaseGun} from "./Weapon/BaseGun";
+import {StackFSM} from "./Brain/FSM/StackFSM";
+import {State} from "./Brain/FSM/State";
 
 export class CopBrain
 {

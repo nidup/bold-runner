@@ -1,7 +1,6 @@
 
-import {Config} from "../game/Config";
-import {Hero} from "../world/Hero";
-import {Level} from "../world/Level";
+import {Config} from "../../game/Config";
+import {Level} from "../../Domain/Level";
 
 export class LevelPanel extends Phaser.Sprite
 {
