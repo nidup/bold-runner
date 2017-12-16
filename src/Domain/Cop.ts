@@ -1,6 +1,6 @@
 
 import {CopBrain} from "./CopBrain";
-import {Config} from "../game/Config";
+import {Config} from "../Infrastructure/UI/Config";
 import {Gun} from "./Weapon/Gun";
 import {Street} from "./Street";
 import {ShotGun} from "./Weapon/ShotGun";

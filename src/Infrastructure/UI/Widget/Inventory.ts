@@ -1,6 +1,6 @@
 
-import {Config} from "../../game/Config";
-import {Hero} from "../../Domain/Hero";
+import {Config} from "../Config";
+import {Hero} from "../../../Domain/Hero";
 
 export class Inventory extends Phaser.Sprite
 {

@@ -1,5 +1,5 @@
 
-import {Config} from "../game/Config";
+import {Config} from "../Infrastructure/UI/Config";
 import {CitizenBrain} from "./CitizenBrain";
 import {Street} from "./Street";
 

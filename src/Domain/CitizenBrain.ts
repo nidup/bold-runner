@@ -1,7 +1,7 @@
 
 import {StackFSM} from "./Brain/FSM/StackFSM";
 import {State} from "./Brain/FSM/State";
-import {Config} from "../game/Config";
+import {Config} from "../Infrastructure/UI/Config";
 import {Citizen} from "./Citizen";
 import {Street} from "./Street";
 import {PickableItem} from "./PickableItem";

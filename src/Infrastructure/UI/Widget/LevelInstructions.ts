@@ -1,11 +1,9 @@
 
-import {Config} from "../../game/Config";
-import {Level} from "../../Domain/Level";
+import {Config} from "../Config";
+import {Level} from "../../../Domain/Level";
 
-export class LevelPanel extends Phaser.Sprite
+export class LevelInstructions extends Phaser.Sprite
 {
-    private level: Level;
-
     constructor(group: Phaser.Group, x: number, y: number, key: string, level: Level)
     {
         super(group.game, x, y, key, 0);
