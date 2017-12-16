@@ -1,6 +1,16 @@
-# Pixel Art Sandbox
+# Bold Runner
 
-Sandboxing few ideas
+Small side scrolling shoot'em up game, inspired by Blade Runner.
+
+Built in compo mode, everything is hand-crafted.
+
+# Demo
+
+[Here is an online demo, be patient, it downloads the whole internet ⏰](https://nidup.github.io/bold-runner/)
+
+<p align="center">
+<img src="https://github.com/nidup/bold-runner/blob/master/assets/doc/screenshot.png" alt="Bold Runner"/>
+</p>
 
 # Getting Started to Dev
 
@@ -48,21 +58,6 @@ docker exec -it phaser npm run build
 git add build/bundle.js
 git commit
 git push
-```
-
-# Utils
-
-## Connect in bash to the dev image
-
-Run,
-```
-docker exec -it phaser bash
-```
-
-Your local files should be mounted in the container,
-```
-ls
-Dockerfile  LICENSE  README.md	assets	bin  doc  index.html  lib  package.json  src  tsconfig.json  webpack.config.js
 ```
 
 # Licenses
