@@ -1,7 +1,7 @@
 {
-  "name": "nidup-sandbox",
+  "name": "nidup-bold-runner",
   "version": "1.0.0",
-  "description": "Sandbox using phaserjs + typescript + web pack server",
+  "description": "Small side scrolling shoot'em up game using phaserjs + typescript + web pack server",
   "main": "index.html",
   "scripts": {
     "dev": "webpack-dev-server --watch --content-base . -d --progress --host=0.0.0.0",
@@ -9,11 +9,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nidup/pixelart-sandbox"
+    "url": "https://github.com/nidup/bold-runner"
   },
   "author": "Nicolas <nicolas@akeneo.com>",
   "license": "MIT",
-  "homepage": "https://github.com/nidup/pixelart-sandbox",
+  "homepage": "https://github.com/nidup/bold-runner",
   "devDependencies": {
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.2",
