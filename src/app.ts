@@ -1,9 +1,9 @@
 /// <reference path="../lib/phaser.d.ts"/>
 
-import Boot from "./Infrastructure/UI/Game/State/Boot";
-import Preload from "./Infrastructure/UI/Game/State/Preload";
-import Menu from "./Infrastructure/UI/Game/State/Menu";
-import Play from "./Infrastructure/UI/Game/State/Play";
+import Boot from "./Game/State/Boot";
+import Preload from "./Game/State/Preload";
+import Menu from "./Game/State/Menu";
+import Play from "./Game/State/Play";
 
 class SimpleGame extends Phaser.Game {
 

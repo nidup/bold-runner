@@ -1,5 +1,5 @@
 
-import {Config} from "../Infrastructure/UI/Config";
+import {Config} from "../Config";
 import {Hero} from "./Hero";
 
 export class PickableItem extends Phaser.Sprite

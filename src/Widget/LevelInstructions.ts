@@ -1,6 +1,6 @@
 
 import {Config} from "../Config";
-import {Level} from "../../../Domain/Level";
+import {Level} from "../Game/Level";
 
 export class LevelInstructions extends Phaser.Sprite
 {

@@ -1,11 +1,11 @@
 
-import {Cops} from "./Cops";
-import {Cop} from "./Cop";
-import {Citizens} from "./Citizens";
-import {Citizen} from "./Citizen";
-import {Hero} from "./Hero";
+import {Cops} from "../Character/Cops";
+import {Cop} from "../Character/Cop";
+import {Citizens} from "../Character/Citizens";
+import {Citizen} from "../Character/Citizen";
+import {Hero} from "../Player/Hero";
 import {Level} from "./Level";
-import {BackBag} from "./BackBag";
+import {BackBag} from "../Player/BackBag";
 
 export class Street
 {
