@@ -1,11 +1,11 @@
 
-import {Street} from "../../world/Street";
-import {Citizen} from "../../world/Citizen";
-import {Cop} from "../../world/Cop";
-import {Inventory} from "../../ui/Inventory";
-import {Level} from "../../world/Level";
-import {BackBag} from "../../world/BackBag";
-import {LevelPanel} from "../../ui/LevelPanel";
+import {Street} from "../Street";
+import {Citizen} from "../../Character/Citizen";
+import {Cop} from "../../Character/Cop";
+import {Inventory} from "../../Widget/Inventory";
+import {Level} from "../Level";
+import {BackBag} from "../../Player/BackBag";
+import {LevelInstructions} from "../../Widget/LevelInstructions";
 
 export default class Play extends Phaser.State
 {
@@ -67,7 +67,7 @@ export default class Play extends Phaser.State
         const backbag = new BackBag(this.previousInventory);
         this.street = new Street(this.characterLayer, level, backbag);
 
-        new LevelPanel(interfaceLayer, 0, 0, 'LevelPanel', level);
+        new LevelInstructions(interfaceLayer, 0, 0, 'LevelInstructions', level);
 
         new Inventory(interfaceLayer, 600, 0, 'InventoryPanel', this.street.player());
 

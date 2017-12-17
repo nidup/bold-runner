@@ -1,11 +1,11 @@
 
-import {Street} from "./Street";
-import {Cop} from "./Cop";
-import {Citizen} from "./Citizen";
-import {Gun} from "./Weapon/Gun";
+import {Street} from "../Game/Street";
+import {Cop} from "../Character/Cop";
+import {Citizen} from "../Character/Citizen";
+import {Gun} from "../Weapon/Gun";
 import {PickableItem} from "./PickableItem";
-import {ShotGun} from "./Weapon/ShotGun";
-import {BaseGun} from "./Weapon/BaseGun";
+import {ShotGun} from "../Weapon/ShotGun";
+import {BaseGun} from "../Weapon/BaseGun";
 import {BackBag} from "./BackBag";
 
 export class Hero extends Phaser.Sprite

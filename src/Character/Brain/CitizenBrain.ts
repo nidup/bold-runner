@@ -1,11 +1,10 @@
 
-import {StackFSM} from "../ai/fsm/StackFSM";
-import {State} from "../ai/fsm/State";
-import {Cop} from "./Cop";
-import {Config} from "../game/Config";
-import {Citizen} from "./Citizen";
-import {Street} from "./Street";
-import {PickableItem} from "./PickableItem";
+import {StackFSM} from "./FSM/StackFSM";
+import {State} from "./FSM/State";
+import {Config} from "../../Config";
+import {Citizen} from "../Citizen";
+import {Street} from "../../Game/Street";
+import {PickableItem} from "../../Player/PickableItem";
 
 export class CitizenBrain
 {

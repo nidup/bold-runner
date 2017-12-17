@@ -1,14 +1,14 @@
 
-import {StackFSM} from "../ai/fsm/StackFSM";
-import {State} from "../ai/fsm/State";
-import {Cop} from "./Cop";
-import {Config} from "../game/Config";
-import {Street} from "./Street";
-import {Gun} from "./Weapon/Gun";
-import {Citizen} from "./Citizen";
-import {Hero} from "./Hero";
-import {PickableItem} from "./PickableItem";
-import {BaseGun} from "./Weapon/BaseGun";
+import {Cop} from "../Cop";
+import {Config} from "../../Config";
+import {Street} from "../../Game/Street";
+import {Gun} from "../../Weapon/Gun";
+import {Citizen} from "../Citizen";
+import {Hero} from "../../Player/Hero";
+import {PickableItem} from "../../Player/PickableItem";
+import {BaseGun} from "../../Weapon/BaseGun";
+import {StackFSM} from "./FSM/StackFSM";
+import {State} from "./FSM/State";
 
 export class CopBrain
 {
