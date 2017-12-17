@@ -205,17 +205,8 @@ export class Hero extends Phaser.Sprite
     private shot()
     {
         this.animations.play('shot-'+this.currentGunAnim);
-
         this.currentGun.fire();
-
-        if (this.currentGun === this.shotgun) {
-            this.group.game.camera.shake(0.003, 100);
-            this.group.game.camera.flash(0xffff32, 100, true, 0.3);
-        } else {
-            this.group.game.camera.shake(0.001, 100);
-            this.group.game.camera.flash(0xffff32, 100, true, 0.3);
-        }
-
+        this.shotCameraEffects();
         if (this.currentGun === this.shotgun && this.shotgunAmno() === 0) {
             this.switchToGun();
         }
@@ -225,6 +216,17 @@ export class Hero extends Phaser.Sprite
         this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
             this.aggressiveRating--;
         }, this);
+    }
+
+    private shotCameraEffects()
+    {
+        if (this.currentGun === this.shotgun) {
+            this.group.game.camera.shake(0.003, 100);
+            this.group.game.camera.flash(0xffff32, 100, true, 0.3);
+        } else {
+            this.group.game.camera.shake(0.001, 100);
+            this.group.game.camera.flash(0xffff32, 100, true, 0.3);
+        }
     }
 
     private die()

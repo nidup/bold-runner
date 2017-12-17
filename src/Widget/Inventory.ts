@@ -8,12 +8,14 @@ export class Inventory extends Phaser.Sprite
     private gunText: Phaser.BitmapText;
     private shotgunText: Phaser.BitmapText;
     private moneyText: Phaser.BitmapText;
+    private group: Phaser.Group;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, player: Hero)
     {
         super(group.game, x, y, key, 0);
         this.player = player;
         group.add(this);
+        this.group = group;
 
         this.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         this.fixedToCamera = true;
@@ -61,8 +63,10 @@ export class Inventory extends Phaser.Sprite
     {
         if (this.player.isDead()) {
             this.animations.play('dead');
+            this.dyingCameraEffects();
         } else if (this.player.isAggressive()) {
             this.animations.play('warning');
+            this.warningCameraEffects();
         } else {
             this.animations.play('idle');
         }
@@ -70,6 +74,16 @@ export class Inventory extends Phaser.Sprite
         this.moneyText.setText(this.alignText(this.player.money()));
         this.gunText.setText(this.alignText(this.player.gunAmno()));
         this.shotgunText.setText(this.alignText(this.player.shotgunAmno()));
+    }
+
+    private warningCameraEffects()
+    {
+        this.group.game.camera.flash(0xf04b36, 1000, false, 0.2);
+    }
+
+    private dyingCameraEffects()
+    {
+        this.group.game.camera.flash(0xb43232, 10000, false, 0.2);
     }
 
     private alignText(amount: number): string
