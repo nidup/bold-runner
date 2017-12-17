@@ -25,6 +25,7 @@ export class Hero extends Phaser.Sprite
     private dead: boolean = false;
     private moneyAmount: number = 0;
     private currentGunAnim: string = 'gun';
+    private group: Phaser.Group;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag)
     {
@@ -33,6 +34,8 @@ export class Hero extends Phaser.Sprite
 
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
+
+        this.group = group;
 
         this.inputEnabled = true;
         this.scale.setTo(this.scaleRatio, this.scaleRatio);
@@ -187,7 +190,7 @@ export class Hero extends Phaser.Sprite
             this.animations.play('walk-'+this.currentGunAnim);
 
         } else if (this.shotKey.isDown) {
-            this.attack();
+            this.shot();
 
         } else if (this.switchKey.isDown && !this.switching) {
             this.switching = true;
@@ -199,10 +202,20 @@ export class Hero extends Phaser.Sprite
         }
     }
 
-    private attack()
+    private shot()
     {
         this.animations.play('shot-'+this.currentGunAnim);
+
         this.currentGun.fire();
+
+        if (this.currentGun === this.shotgun) {
+            this.group.game.camera.shake(0.003, 100);
+            this.group.game.camera.flash(0xffff32, 100, true, 0.3);
+        } else {
+            this.group.game.camera.shake(0.001, 100);
+            this.group.game.camera.flash(0xffff32, 100, true, 0.3);
+        }
+
         if (this.currentGun === this.shotgun && this.shotgunAmno() === 0) {
             this.switchToGun();
         }
