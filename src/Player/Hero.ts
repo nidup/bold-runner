@@ -7,6 +7,7 @@ import {PickableItem} from "./PickableItem";
 import {ShotGun} from "../Weapon/ShotGun";
 import {BaseGun} from "../Weapon/BaseGun";
 import {BackBag} from "./BackBag";
+import {CameraFX} from "../Game/CameraFX";
 
 export class Hero extends Phaser.Sprite
 {
@@ -25,7 +26,7 @@ export class Hero extends Phaser.Sprite
     private dead: boolean = false;
     private moneyAmount: number = 0;
     private currentGunAnim: string = 'gun';
-    private group: Phaser.Group;
+    private cameraFx: CameraFX;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag)
     {
@@ -34,8 +35,6 @@ export class Hero extends Phaser.Sprite
 
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
-
-        this.group = group;
 
         this.inputEnabled = true;
         this.scale.setTo(this.scaleRatio, this.scaleRatio);
@@ -62,6 +61,8 @@ export class Hero extends Phaser.Sprite
         this.shotgun = new ShotGun(group, this, backbag.shotgunAmno());
         this.moneyAmount = backbag.money();
         this.switchToGun();
+
+        this.cameraFx = new CameraFX(group.game.camera);
     }
 
     public update()
@@ -221,11 +222,9 @@ export class Hero extends Phaser.Sprite
     private shotCameraEffects()
     {
         if (this.currentGun === this.shotgun) {
-            this.group.game.camera.shake(0.003, 100);
-            this.group.game.camera.flash(0xffff32, 100, true, 0.3);
+            this.cameraFx.shootgunEffect();
         } else {
-            this.group.game.camera.shake(0.001, 100);
-            this.group.game.camera.flash(0xffff32, 100, true, 0.3);
+            this.cameraFx.gunEffect();
         }
     }
 
