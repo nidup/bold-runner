@@ -6,6 +6,7 @@ import {Inventory} from "../../Widget/Inventory";
 import {Level} from "../Level";
 import {BackBag} from "../../Player/BackBag";
 import {LevelInstructions} from "../../Widget/LevelInstructions";
+import {FlashMessages} from "../../Widget/FlashMessages";
 
 export default class Play extends Phaser.State
 {
@@ -68,8 +69,8 @@ export default class Play extends Phaser.State
         this.street = new Street(this.characterLayer, level, backbag);
 
         new LevelInstructions(interfaceLayer, 0, 0, 'LevelInstructions', level);
-
         new Inventory(interfaceLayer, 600, 0, 'InventoryPanel', this.street.player());
+        new FlashMessages(interfaceLayer, this.street.player().pastGameEvents());
 
         this.game.world.setBounds(0, 0, 1600, 800);
         this.game.camera.follow(this.street.player());

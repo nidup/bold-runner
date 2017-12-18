@@ -7,6 +7,7 @@ import {PickableItem} from "./PickableItem";
 import {ShotGun} from "../Weapon/ShotGun";
 import {BaseGun} from "../Weapon/BaseGun";
 import {BackBag} from "./BackBag";
+import {CitizenKilled, CopKilled, GameEvents, GunPicked, HeroKilled, MoneyPicked, ShotGunPicked} from "./Events";
 import {CameraFX} from "../Game/CameraFX";
 
 export class Hero extends Phaser.Sprite
@@ -27,6 +28,7 @@ export class Hero extends Phaser.Sprite
     private moneyAmount: number = 0;
     private currentGunAnim: string = 'gun';
     private cameraFx: CameraFX;
+    private gameEvents: GameEvents;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag)
     {
@@ -63,6 +65,7 @@ export class Hero extends Phaser.Sprite
         this.switchToGun();
 
         this.cameraFx = new CameraFX(group.game.camera);
+        this.gameEvents = new GameEvents();
     }
 
     public update()
@@ -73,11 +76,13 @@ export class Hero extends Phaser.Sprite
         } else {
             this.move();
 
+            const hero = this;
             this.currentGun.bulletHits(
                 this.street.cops().allAlive(),
                 function(cop: Cop, bullet: Phaser.Bullet) {
                     bullet.kill();
                     cop.health = 0;
+                    hero.gameEvents.register(new CopKilled(hero.game.time.now));
                 }
             );
 
@@ -86,6 +91,7 @@ export class Hero extends Phaser.Sprite
                 function(citizen: Citizen, bullet: Phaser.Bullet) {
                     bullet.kill();
                     citizen.health = 0;
+                    hero.gameEvents.register(new CitizenKilled(hero.game.time.now));
                 }
             );
         }
@@ -152,15 +158,23 @@ export class Hero extends Phaser.Sprite
         if (item.key === 'Money') {
             const randAmount = this.game.rnd.integerInRange(2, 50);
             this.moneyAmount = this.moneyAmount + randAmount;
+            this.gameEvents.register(new MoneyPicked(this.game.time.now, randAmount, this.moneyAmount));
         } else if (item.key === 'Gun') {
             this.gun.reload(20);
+            this.gameEvents.register(new GunPicked(this.game.time.now));
         } else if (item.key === 'ShotGun') {
             if (this.shotgunAmno() === 0) {
                 this.switchToShotGun();
             }
             this.shotgun.reload(6);
+            this.gameEvents.register(new ShotGunPicked(this.game.time.now));
         }
         item.kill();
+    }
+
+    pastGameEvents(): GameEvents
+    {
+        return this.gameEvents;
     }
 
     private move()
@@ -235,6 +249,7 @@ export class Hero extends Phaser.Sprite
             this.body.velocity.x = 0;
             this.body.velocity.y = 0;
             this.animations.play('die-'+this.currentGunAnim);
+            this.gameEvents.register(new HeroKilled(this.game.time.now));
             this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
                 this.game.state.start('Play', true, false, 1);
             }, this);
