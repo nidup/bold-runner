@@ -11,7 +11,7 @@ export default class Preload extends Phaser.State {
 
     public create ()
     {
-        this.game.state.start('Play'); // TODO: shortcuts "Menu" state :)
+        this.game.state.start('Menu');
     }
 
     private loadAudio()
@@ -38,6 +38,7 @@ export default class Preload extends Phaser.State {
         this.load.spritesheet('Gun', 'assets/sprites/gun.png', 20, 20);
         this.load.spritesheet('ShotGun', 'assets/sprites/shotgun.png', 20, 20);
         this.load.spritesheet('Money', 'assets/sprites/money.png', 20, 20);
+        this.load.spritesheet('Menu', 'assets/sprites/menu.png', 800, 600);
     }
 
     private loadFonts()
