@@ -3,17 +3,20 @@ import {
     BaseEvent, CitizenKilled, CopKilled, GameEvents, HeroKilled, MoneyPicked,
     ShotGunPicked
 } from "../Player/Events";
+import {Hero} from "../Player/Hero";
 
 export class FlashMessages
 {
     private group: Phaser.Group;
     private gameEvents: GameEvents;
+    private hero: Hero;
 
-    constructor(group: Phaser.Group, gameEvents: GameEvents)
+    constructor(group: Phaser.Group, gameEvents: GameEvents, hero: Hero)
     {
         this.group = group;
         this.gameEvents = gameEvents;
         this.gameEvents.addListener(this.buildMessages, this);
+        this.hero = hero;
     }
 
     private buildMessages(raisedEvent: BaseEvent, callbackContext: any): void
@@ -40,7 +43,7 @@ export class FlashMessages
             messages.push(new Message("Got killed :("));
         }
 
-        const x = callbackContext.group.game.camera.x + 270;
+        const x = callbackContext.hero.x - 130;
         const fromY = 500;
         let startDelay = 0;
         messages.forEach(function(message: Message) {
