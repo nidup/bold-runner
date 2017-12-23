@@ -53,7 +53,7 @@ export default class Play extends Phaser.State
         buildingsLayer.name = 'Buildings';
         this.buildings = this.game.add.tileSprite(0,heightPosition,width,height,'buildings',0, buildingsLayer);
         this.buildings.tileScale.set(tileSpriteRatio, tileSpriteRatio);
-        this.buildings.animations.add('idle', [0, 1, 2], 4, true);
+        this.buildings.animations.add('idle', [0, 1, 2], 3, true);
         this.buildings.animations.play('idle');
 
         this.characterLayer = this.game.add.group();
