@@ -22,12 +22,19 @@ export class Street
         for (let indCop = 0; indCop < level.copsWithGun(); indCop++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
-            this.cops().add(new Cop(characterGroup, randX, randY, 'cop', this));
+            let isReplicant = false;
+            let randReplicant = characterGroup.game.rnd.integerInRange(1, 5) === 1;
+            if (nbReplicants > 0 && randReplicant) {
+                isReplicant = true;
+                nbReplicants--;
+            }
+            this.cops().add(new Cop(characterGroup, randX, randY, 'cop', this, isReplicant));
         }
         for (let indCop = 0; indCop < level.copsWithShotGun(); indCop++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
-            this.cops().add(new Cop(characterGroup, randX, randY, 'cop-shotgun', this));
+            // TODO
+            this.cops().add(new Cop(characterGroup, randX, randY, 'cop-shotgun', this, false));
         }
 
         for (let indCiv = 0; indCiv < level.citizens(); indCiv++) {

@@ -139,7 +139,11 @@ export class CopBrain
     {
         this.host.body.velocity.x = 0;
         this.host.body.velocity.y = 0;
-        this.host.animations.play('die');
+        if (!this.host.replicant()) {
+            this.host.animations.play('die');
+        } else {
+            this.host.animations.play('die-replicant');
+        }
         this.host.die();
         if (this.host.key === 'cop') {
             new PickableItem(this.group, this.host.x, this.host.y, 'Gun', this.street.player());
