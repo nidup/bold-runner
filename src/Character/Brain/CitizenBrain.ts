@@ -118,7 +118,11 @@ export class CitizenBrain
     {
         this.host.body.velocity.x = 0;
         this.host.body.velocity.y = 0;
-        this.host.animations.play('die');
+        if (!this.host.replicant()) {
+            this.host.animations.play('die');
+        } else {
+            this.host.animations.play('die-replicant');
+        }
         this.host.die();
         let randMoney = this.group.game.rnd.integerInRange(1, 3);
         if (randMoney === 1) {

@@ -8,8 +8,9 @@ export class Citizen extends Phaser.Sprite
     public body: Phaser.Physics.Arcade.Body;
     private brain: CitizenBrain;
     private dead: boolean = false;
+    private isReplicant: boolean = false;
 
-    constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street)
+    constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, replicant: boolean)
     {
         super(group.game, x, y, key, 0);
 
@@ -28,8 +29,10 @@ export class Citizen extends Phaser.Sprite
         this.animations.add('walk', [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
         this.animations.add('run', [5, 6, 7, 8, 9, 10, 11, 12, 13], 24, true);
         this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
+        this.animations.add('die-replicant', [21, 22, 23, 24, 25, 26, 27], 12, false);
 
         this.brain = new CitizenBrain(this, street, group);
+        this.isReplicant = replicant;
     }
 
     update()
@@ -37,6 +40,11 @@ export class Citizen extends Phaser.Sprite
         if (!this.dead) {
             this.brain.think();
         }
+    }
+
+    replicant(): boolean
+    {
+        return this.isReplicant;
     }
 
     die()

@@ -17,6 +17,7 @@ export class Street
     {
         this.copRepository = new Cops();
         this.citizenRepository = new Citizens();
+        let nbReplicants = level.replicants();
 
         for (let indCop = 0; indCop < level.copsWithGun(); indCop++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
@@ -32,7 +33,13 @@ export class Street
         for (let indCiv = 0; indCiv < level.citizens(); indCiv++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
             let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
-            this.citizens().add(new Citizen(characterGroup, randX, randY, 'citizen1', this));
+            let isReplicant = false;
+            if (nbReplicants > 0) {
+                isReplicant = true;
+                nbReplicants--;
+            }
+            this.citizens().add(new Citizen(characterGroup, randX, randY, 'citizen1', this, isReplicant));
+
         }
 
         this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this, backbag);
