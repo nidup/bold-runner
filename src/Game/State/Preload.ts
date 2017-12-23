@@ -1,5 +1,7 @@
 
-export default class Preload extends Phaser.State {
+export default class Preload extends Phaser.State
+{
+    private skipMenu = true;
 
     public preload ()
     {
@@ -11,7 +13,11 @@ export default class Preload extends Phaser.State {
 
     public create ()
     {
-        this.game.state.start('Menu');
+        if (this.skipMenu) {
+            this.game.state.start('Play');
+        } else {
+            this.game.state.start('Menu');
+        }
     }
 
     private loadAudio()
