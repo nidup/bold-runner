@@ -10,5 +10,8 @@ export class HurtFx
         host.game.add.tween(host).to({
             tint: tint,
         }, 100, Phaser.Easing.Exponential.Out, true, 0, 0, true);
+        host.game.add.tween(host).to({
+            x: host.x - 5,
+        }, 100, Phaser.Easing.Exponential.Out, true, 0, 0, true);
     }
 }
