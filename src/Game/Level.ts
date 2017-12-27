@@ -4,6 +4,7 @@ export class Level
     private num: number;
     private nbCopsWithGun: number;
     private nbCopsWithShotGun: number;
+    private nbSwats: number;
     private nbCitizens: number;
     private nbReplicants: number;
     private tutorialText: string;
@@ -13,6 +14,7 @@ export class Level
         this.num = num;
         this.nbCopsWithGun = data['cops_with_gun'];
         this.nbCopsWithShotGun = data['cops_with_shotgun'];
+        this.nbSwats = data['swats'];
         this.nbCitizens =  data['citizens'];
         this.tutorialText = data['tutorial'];
         this.nbReplicants = data['replicants'];
@@ -31,6 +33,11 @@ export class Level
     public copsWithShotGun(): number
     {
         return this.nbCopsWithShotGun;
+    }
+
+    public swats(): number
+    {
+        return this.nbSwats;
     }
 
     public citizens(): number

@@ -11,9 +11,9 @@ import {StackFSM} from "./FSM/StackFSM";
 import {State} from "./FSM/State";
 import {Swat} from "../Swat";
 
-export class CopBrain
+export class SwatBrain
 {
-    private host: Cop;
+    private host: Swat;
     private fsm: StackFSM;
     private left = -1;
     private right = 1;
@@ -25,10 +25,10 @@ export class CopBrain
     private street: Street;
     private group: Phaser.Group;
 
-    public constructor(cop: Cop, gun: BaseGun, street: Street, group: Phaser.Group)
+    public constructor(swat: Swat, gun: BaseGun, street: Street, group: Phaser.Group)
     {
         this.fsm = new StackFSM();
-        this.host = cop;
+        this.host = swat;
         this.gun = gun;
         this.street = street;
         this.group = group;
@@ -42,13 +42,20 @@ export class CopBrain
         this.fsm.update();
 
         const myself = this.host;
-        const otherAliveCops = this.street.cops().allAlive().filter(
-            function (cop: Cop) {
-                return cop !== myself;
+        const otherAliveSwats = this.street.swats().allAlive().filter(
+            function (swat: Swat) {
+                return swat !== myself;
             }
         );
         this.gun.bulletHits(
-            otherAliveCops,
+            otherAliveSwats,
+            function(swat: Swat, bullet: Phaser.Bullet) {
+                bullet.kill();
+                swat.health = 0;
+            }
+        );
+        this.gun.bulletHits(
+            this.street.cops().allAlive(),
             function(cop: Cop, bullet: Phaser.Bullet) {
                 bullet.kill();
                 cop.health = 0;
@@ -59,13 +66,6 @@ export class CopBrain
             function(citizen: Citizen, bullet: Phaser.Bullet) {
                 bullet.kill();
                 citizen.health = 0;
-            }
-        );
-        this.gun.bulletHits(
-            this.street.swats().allAlive(),
-            function(swat: Swat, bullet: Phaser.Bullet) {
-                bullet.kill();
-                swat.health = 0;
             }
         );
         this.gun.bulletHits(

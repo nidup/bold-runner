@@ -9,6 +9,7 @@ import {BaseGun} from "../Weapon/BaseGun";
 import {BackBag} from "./BackBag";
 import {CitizenKilled, CopKilled, GameEvents, GunPicked, HeroKilled, MoneyPicked, ShotGunPicked} from "./Events";
 import {CameraFX} from "../Game/CameraFX";
+import {Swat} from "../Character/Swat";
 
 export class Hero extends Phaser.Sprite
 {
@@ -82,6 +83,15 @@ export class Hero extends Phaser.Sprite
                 function(cop: Cop, bullet: Phaser.Bullet) {
                     bullet.kill();
                     cop.health = 0;
+                    hero.gameEvents.register(new CopKilled(hero.game.time.now));
+                }
+            );
+
+            this.currentGun.bulletHits(
+                this.street.swats().allAlive(),
+                function(swat: Swat, bullet: Phaser.Bullet) {
+                    bullet.kill();
+                    swat.health = 0;
                     hero.gameEvents.register(new CopKilled(hero.game.time.now));
                 }
             );

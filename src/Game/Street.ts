@@ -6,10 +6,13 @@ import {Citizen} from "../Character/Citizen";
 import {Hero} from "../Player/Hero";
 import {Level} from "./Level";
 import {BackBag} from "../Player/BackBag";
+import {Swats} from "../Character/Swats";
+import {Swat} from "../Character/Swat";
 
 export class Street
 {
     private copRepository: Cops;
+    private swatRepository: Swats;
     private citizenRepository: Citizens;
     private hero: Hero;
 
@@ -17,6 +20,7 @@ export class Street
     {
         this.copRepository = new Cops();
         this.citizenRepository = new Citizens();
+        this.swatRepository = new Swats();
         let nbReplicants = level.replicants();
 
         for (let indCop = 0; indCop < level.copsWithGun(); indCop++) {
@@ -41,6 +45,17 @@ export class Street
             }
             this.cops().add(new Cop(characterGroup, randX, randY, 'cop-shotgun', this, isReplicant));
         }
+        for (let indSwat = 0; indSwat < level.swats(); indSwat++) {
+            let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
+            let randY = characterGroup.game.rnd.integerInRange(this.minY(), this.maxY());
+            let isReplicant = false;
+            let randReplicant = characterGroup.game.rnd.integerInRange(1, 5) === 1;
+            if (nbReplicants > 0 && randReplicant) {
+                isReplicant = true;
+                nbReplicants--;
+            }
+            this.swats().add(new Swat(characterGroup, randX, randY, 'swat', this, isReplicant));
+        }
 
         for (let indCiv = 0; indCiv < level.citizens(); indCiv++) {
             let randX = characterGroup.game.rnd.integerInRange(this.minX(), this.maxX());
@@ -59,7 +74,7 @@ export class Street
 
     isEmpty(): boolean
     {
-        return this.cops().allAlive().length === 0 && this.citizens().allAlive().length === 0;
+        return this.cops().allAlive().length === 0 && this.citizens().allAlive().length === 0 && this.swats().allAlive().length === 0;
     }
 
     player(): Hero
@@ -70,6 +85,11 @@ export class Street
     cops(): Cops
     {
         return this.copRepository;
+    }
+
+    swats(): Swats
+    {
+        return this.swatRepository;
     }
 
     citizens(): Citizens

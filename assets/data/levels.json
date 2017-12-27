@@ -3,13 +3,15 @@
     "tutorial": "Kill them all!\n\nUse arrows to move and space bar to shot.",
     "cops_with_gun": 2,
     "cops_with_shotgun": 0,
+    "swats": 5,
     "citizens": 5,
-    "replicants": 2
+    "replicants": 12
   },
   {
     "tutorial": "Take care, some cops have shotguns now!\n\nUse S key to switch weapon.",
     "cops_with_gun": 4,
     "cops_with_shotgun": 1,
+    "swats": 0,
     "citizens": 10,
     "replicants": 2
   },
@@ -17,6 +19,7 @@
     "tutorial": "Take care, some cops have shotguns now!\n\nUse S key to switch weapon.",
     "cops_with_gun": 10,
     "cops_with_shotgun": 4,
+    "swats": 0,
     "citizens": 30,
     "replicants": 7
   },
@@ -24,6 +27,7 @@
     "tutorial": "Take care, some cops have shotguns now!\n\nUse S key to switch weapon.",
     "cops_with_gun": 15,
     "cops_with_shotgun": 15,
+    "swats": 0,
     "citizens": 30,
     "replicants": 10
   }
