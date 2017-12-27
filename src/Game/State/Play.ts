@@ -18,9 +18,9 @@ export default class Play extends Phaser.State
     private characterLayer: Phaser.Group;
     private levelNumber: number = 1;
     private switchingLevel: boolean = false;
-    private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'money': number} = null;
+    private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'machinegunAmno': number, 'money': number} = null;
 
-    public init (level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'money': 0})
+    public init (level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'machinegunAmno': 0, 'money': 0})
     {
         this.levelNumber = level;
         this.previousInventory = previousInventory;
@@ -69,7 +69,7 @@ export default class Play extends Phaser.State
         this.street = new Street(this.characterLayer, level, backbag);
 
         new LevelInstructions(interfaceLayer, 0, 0, 'LevelInstructions', level);
-        new Inventory(interfaceLayer, 600, 0, 'InventoryPanel', this.street.player());
+        new Inventory(interfaceLayer, 600, 0, 'Inventory', this.street.player());
         new FlashMessages(interfaceLayer, this.street.player().pastGameEvents(), this.street.player());
 
         this.game.world.setBounds(0, 0, 1600, 800);
@@ -138,6 +138,7 @@ export default class Play extends Phaser.State
                         {
                             'gunAmno': this.street.player().gunAmno(),
                             'shotgunAmno': this.street.player().shotgunAmno(),
+                            'machinegunAmno': this.street.player().machinegunAmno(),
                             'money': this.street.player().money()
                         }
                     );

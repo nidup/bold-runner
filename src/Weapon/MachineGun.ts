@@ -1,7 +1,7 @@
 
 import {BaseGun} from "./BaseGun";
 
-export class ShotGun implements BaseGun
+export class MachineGun implements BaseGun
 {
     private game: Phaser.Game;
     private weapon: Phaser.Weapon;
@@ -11,17 +11,17 @@ export class ShotGun implements BaseGun
     {
         this.weapon = group.game.add.weapon(-1, 'Bullet', 0, group);
         this.weapon.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
-        this.weapon.bulletKillDistance = 300;
+        this.weapon.bulletKillDistance = 800;
         this.weapon.bulletSpeed = 600;
-        this.weapon.fireRate = 1200;
+        this.weapon.fireRate = 200;
         this.weapon.trackSprite(owner, 0, -8, false);
         this.weapon.fireAngle = 0;
-        this.weapon.bulletAngleVariance = 10;
+        this.weapon.bulletAngleVariance = 3;
         this.game = group.game;
         this.amnoAmount = amno;
         this.weapon.onFire.add(
             function () {
-                this.amnoAmount = this.amnoAmount - 0.25;
+                this.amnoAmount = this.amnoAmount - 1;
             },
             this
         );
@@ -29,12 +29,6 @@ export class ShotGun implements BaseGun
 
     public fire()
     {
-        const originalRate = this.weapon.fireRate;
-        this.weapon.fireRate = 0;
-        this.weapon.fire();
-        this.weapon.fire();
-        this.weapon.fire();
-        this.weapon.fireRate = originalRate;
         this.weapon.fire();
     }
 

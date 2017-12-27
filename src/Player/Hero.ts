@@ -7,9 +7,13 @@ import {PickableItem} from "./PickableItem";
 import {ShotGun} from "../Weapon/ShotGun";
 import {BaseGun} from "../Weapon/BaseGun";
 import {BackBag} from "./BackBag";
-import {CitizenKilled, CopKilled, GameEvents, GunPicked, HeroKilled, MoneyPicked, ShotGunPicked} from "./Events";
+import {
+    CitizenKilled, CopKilled, GameEvents, GunPicked, HeroKilled, MachineGunPicked, MoneyPicked,
+    ShotGunPicked
+} from "./Events";
 import {CameraFX} from "../Game/CameraFX";
 import {Swat} from "../Character/Swat";
+import {MachineGun} from "../Weapon/MachineGun";
 
 export class Hero extends Phaser.Sprite
 {
@@ -19,6 +23,7 @@ export class Hero extends Phaser.Sprite
     private currentGun: BaseGun;
     private gun: Gun;
     private shotgun: ShotGun;
+    private machinegun: MachineGun;
     private cursors: Phaser.CursorKeys;
     private shotKey: Phaser.Key;
     private switchKey: Phaser.Key;
@@ -56,12 +61,18 @@ export class Hero extends Phaser.Sprite
         this.animations.add('die-shotgun', [41, 42, 43, 44, 45, 46, 47], 12, false);
         this.animations.add('shot-shotgun', [48, 49, 50, 51, 52, 53], 6, false);
 
+        this.animations.add('idle-machinegun', [54, 55, 56, 57, 58], 4, true);
+        this.animations.add('walk-machinegun', [59, 60, 61, 62, 63, 64, 65, 66, 67], 12, true);
+        this.animations.add('die-machinegun', [68, 69, 70, 71, 72, 73, 74], 12, false);
+        this.animations.add('shot-machinegun', [75, 76, 77, 78, 79, 80], 24, false);
+
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.shotKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.switchKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
 
         this.gun = new Gun(group, this, backbag.gunAmno());
         this.shotgun = new ShotGun(group, this, backbag.shotgunAmno());
+        this.machinegun = new MachineGun(group, this, backbag.machinegunAmno());
         this.moneyAmount = backbag.money();
         this.switchToGun();
 
@@ -142,13 +153,38 @@ export class Hero extends Phaser.Sprite
         return this.shotgun.amno();
     }
 
-    switchToOtherGun()
+    machinegunAmno(): number
     {
-        if (this.currentGunAnim === 'gun' && this.shotgunAmno() > 0) {
-            this.switchToShotGun();
-        } else {
-            this.switchToGun();
+        return this.machinegun.amno();
+    }
+
+    switchToNextUsableGun()
+    {
+        if (this.currentGun === this.gun) {
+            if (this.shotgunAmno() > 0) {
+                this.switchToShotGun();
+            } else if (this.machinegunAmno() > 0) {
+                this.switchToMachineGun();
+            }
+        } else if (this.currentGun === this.shotgun) {
+            if (this.machinegunAmno() > 0) {
+                this.switchToMachineGun();
+            } else if (this.gunAmno() > 0) {
+                this.switchToGun();
+            }
+        } else if (this.currentGun === this.machinegun) {
+            if (this.gunAmno() > 0) {
+                this.switchToGun();
+            } else if (this.shotgunAmno() > 0) {
+                this.switchToShotGun();
+            }
         }
+    }
+
+    switchToMachineGun()
+    {
+        this.currentGunAnim = 'machinegun';
+        this.currentGun = this.machinegun;
     }
 
     switchToShotGun()
@@ -180,7 +216,7 @@ export class Hero extends Phaser.Sprite
             this.moneyAmount = this.moneyAmount + randAmount;
             this.gameEvents.register(new MoneyPicked(this.game.time.now, randAmount, this.moneyAmount));
         } else if (item.key === 'Gun') {
-            this.gun.reload(20);
+            this.gun.reload(11);
             this.gameEvents.register(new GunPicked(this.game.time.now));
         } else if (item.key === 'ShotGun') {
             if (this.shotgunAmno() === 0) {
@@ -188,6 +224,12 @@ export class Hero extends Phaser.Sprite
             }
             this.shotgun.reload(6);
             this.gameEvents.register(new ShotGunPicked(this.game.time.now));
+        } else if (item.key === 'MachineGun') {
+            if (this.machinegunAmno() === 0) {
+                this.switchToMachineGun();
+            }
+            this.machinegun.reload(15);
+            this.gameEvents.register(new MachineGunPicked(this.game.time.now));
         }
         item.kill();
     }
@@ -208,6 +250,7 @@ export class Hero extends Phaser.Sprite
             this.animations.play('walk-'+this.currentGunAnim);
             this.gun.turnToTheLeft();
             this.shotgun.turnToTheLeft();
+            this.machinegun.turnToTheLeft();
 
         } else if (this.cursors.right.isDown) {
             this.scale.x = this.scaleRatio;
@@ -215,6 +258,7 @@ export class Hero extends Phaser.Sprite
             this.animations.play('walk-'+this.currentGunAnim);
             this.gun.turnToTheRight();
             this.shotgun.turnToTheRight();
+            this.machinegun.turnToTheRight();
 
         } else if (this.cursors.up.isDown && (this.street.minY() + 10) <= this.position.y ) {
             this.body.velocity.y = -this.speed;
@@ -229,7 +273,7 @@ export class Hero extends Phaser.Sprite
 
         } else if (this.switchKey.isDown && !this.switching) {
             this.switching = true;
-            this.switchToOtherGun();
+            this.switchToNextUsableGun();
             this.switching = false;
 
         } else {
@@ -242,6 +286,9 @@ export class Hero extends Phaser.Sprite
         this.animations.play('shot-'+this.currentGunAnim);
         this.currentGun.fire();
         this.shotCameraEffects();
+        if (this.currentGun === this.machinegun && this.machinegunAmno() === 0) {
+            this.switchToShotGun();
+        }
         if (this.currentGun === this.shotgun && this.shotgunAmno() === 0) {
             this.switchToGun();
         }
@@ -255,7 +302,9 @@ export class Hero extends Phaser.Sprite
 
     private shotCameraEffects()
     {
-        if (this.currentGun === this.shotgun) {
+        if (this.currentGun === this.machinegun) {
+            this.cameraFx.machinegunEffect();
+        } else if (this.currentGun === this.shotgun) {
             this.cameraFx.shootgunEffect();
         } else {
             this.cameraFx.gunEffect();

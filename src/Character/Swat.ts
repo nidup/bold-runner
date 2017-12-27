@@ -4,6 +4,7 @@ import {Gun} from "../Weapon/Gun";
 import {Street} from "../Game/Street";
 import {ShotGun} from "../Weapon/ShotGun";
 import {SwatBrain} from "./Brain/SwatBrain";
+import {MachineGun} from "../Weapon/MachineGun";
 
 export class Swat extends Phaser.Sprite
 {
@@ -27,15 +28,8 @@ export class Swat extends Phaser.Sprite
         this.body.allowGravity = false;
         this.body.collideWorldBounds = true;
 
-        let gun = null;
-        let shotRate = 0;
-        if (key === 'cop-shotgun') {
-            gun = new ShotGun(group, this);
-            shotRate = 6;
-        } else {
-            gun = new Gun(group, this);
-            shotRate = 12;
-        }
+        let gun = new MachineGun(group, this);
+        let shotRate = 24;
         this.brain = new SwatBrain(this, gun, street, group);
 
         this.animations.add('idle', [0, 1, 2, 3, 4], 4, true);

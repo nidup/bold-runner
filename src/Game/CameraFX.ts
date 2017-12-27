@@ -14,6 +14,12 @@ export class CameraFX
         this.camera.flash(0xffff32, 100, true, 0.3);
     }
 
+    public machinegunEffect()
+    {
+        this.camera.shake(0.001, 100);
+        this.camera.flash(0xffff32, 100, true, 0.3);
+    }
+
     public gunEffect()
     {
         this.camera.shake(0.001, 100);

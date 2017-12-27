@@ -153,11 +153,7 @@ export class SwatBrain
             this.host.animations.play('die-replicant');
         }
         this.host.die();
-        if (this.host.key === 'cop') {
-            new PickableItem(this.group, this.host.x, this.host.y, 'Gun', this.street.player());
-        } else {
-            new PickableItem(this.group, this.host.x, this.host.y, 'ShotGun', this.street.player());
-        }
+        new PickableItem(this.group, this.host.x, this.host.y, 'MachineGun', this.street.player());
     }
 
     private turnToTheRight()

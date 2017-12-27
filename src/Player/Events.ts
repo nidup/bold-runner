@@ -107,3 +107,7 @@ export class GunPicked extends BaseEvent
 export class ShotGunPicked extends BaseEvent
 {
 }
+
+export class MachineGunPicked extends BaseEvent
+{
+}

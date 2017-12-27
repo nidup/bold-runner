@@ -10,6 +10,8 @@ export class Inventory extends Phaser.Sprite
     private gunSprite: Phaser.Sprite;
     private shotgunText: Phaser.BitmapText;
     private shotgunSprite: Phaser.Sprite;
+    private machinegunText: Phaser.BitmapText;
+    private machinegunSprite: Phaser.Sprite;
     private moneyText: Phaser.BitmapText;
     private cameraFX: CameraFX;
 
@@ -39,7 +41,6 @@ export class Inventory extends Phaser.Sprite
         this.gunSprite.animations.add('unselected', [0]);
         this.gunSprite.animations.add('selected', [0, 1], 1, true);
         this.gunSprite.play('selected');
-
         this.gunText = this.game.add.bitmapText(gunX - marginLeftAmountToImage, gunY + marginTopAmountToImage, 'carrier-command','0', fontSize, group);
         this.gunText.fixedToCamera = true;
         this.gunText.align = 'right';
@@ -52,17 +53,27 @@ export class Inventory extends Phaser.Sprite
         this.shotgunSprite.animations.add('unselected', [0]);
         this.shotgunSprite.animations.add('selected', [0, 1], 1, true);
         this.shotgunSprite.play('unselected');
-
         this.shotgunText = this.game.add.bitmapText(shotgunX - marginLeftAmountToImage, shotgunY + marginTopAmountToImage, 'carrier-command','0', fontSize, group);
         this.shotgunText.fixedToCamera = true;
         this.shotgunText.align = 'right';
 
-        const moneyX = shotgunX;
-        const moneyY = shotgunY + 70;
+        const machinegunX = shotgunX;
+        const machinegunY = shotgunY + 70;
+        this.machinegunSprite = group.game.add.sprite(machinegunX, machinegunY, 'MachineGun', 1, group);
+        this.machinegunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+        this.machinegunSprite.fixedToCamera = true;
+        this.machinegunSprite.animations.add('unselected', [0]);
+        this.machinegunSprite.animations.add('selected', [0, 1], 1, true);
+        this.machinegunSprite.play('unselected');
+        this.machinegunText = this.game.add.bitmapText(machinegunX - marginLeftAmountToImage, machinegunY + marginTopAmountToImage, 'carrier-command','0', fontSize, group);
+        this.machinegunText.fixedToCamera = true;
+        this.machinegunText.align = 'right';
+
+        const moneyX = machinegunX;
+        const moneyY = machinegunY + 70;
         const moneySprite = group.game.add.sprite(moneyX, moneyY, 'Money', 1, group);
         moneySprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         moneySprite.fixedToCamera = true;
-
         this.moneyText = this.game.add.bitmapText(moneyX - marginLeftAmountToImage, moneyY + marginTopAmountToImage, 'carrier-command','0', fontSize, group);
         this.moneyText.fixedToCamera = true;
 
@@ -84,14 +95,21 @@ export class Inventory extends Phaser.Sprite
         if (this.player.isEquipedWithGun()) {
             this.gunSprite.play('selected');
             this.shotgunSprite.play('unselected');
-        } else {
+            this.machinegunSprite.play('unselected');
+        } else if (this.player.isEquipedWithShotgun()) {
             this.gunSprite.play('unselected');
             this.shotgunSprite.play('selected');
+            this.machinegunSprite.play('unselected');
+        } else {
+            this.gunSprite.play('unselected');
+            this.shotgunSprite.play('unselected');
+            this.machinegunSprite.play('selected');
         }
 
         this.moneyText.setText(this.alignText(this.player.money()));
         this.gunText.setText(this.alignText(this.player.gunAmno()));
         this.shotgunText.setText(this.alignText(this.player.shotgunAmno()));
+        this.machinegunText.setText(this.alignText(this.player.machinegunAmno()));
     }
 
     private alignText(amount: number): string
