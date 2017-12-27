@@ -1,10 +1,10 @@
 
 import {Street} from "../Street";
-import {Citizen} from "../../Character/Citizen";
-import {Cop} from "../../Character/Cop";
+import {Citizen} from "../../Character/Bot/Citizen";
+import {Cop} from "../../Character/Bot/Cop";
 import {Inventory} from "../../Widget/Inventory";
 import {Level} from "../Level";
-import {BackBag} from "../../Player/BackBag";
+import {BackBag} from "../../Character/Player/BackBag";
 import {LevelInstructions} from "../../Widget/LevelInstructions";
 import {FlashMessages} from "../../Widget/FlashMessages";
 

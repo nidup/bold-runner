@@ -1,10 +1,10 @@
 
 import {Cop} from "./Cop";
-import {Street} from "../Game/Street";
+import {Street} from "../../Game/Street";
 import {Citizen} from "./Citizen";
 import {Swat} from "./Swat";
 import {Hero} from "../Player/Hero";
-import {BaseGun} from "../Weapon/BaseGun";
+import {BaseGun} from "../../Weapon/BaseGun";
 
 export class BulletHits
 {
@@ -32,7 +32,7 @@ export class BulletHits
             otherAliveCops,
             function(cop: Cop, bullet: Phaser.Bullet) {
                 bullet.kill();
-                cop.health -= myGun.damage();
+                cop.hurt(myGun.damage());
             }
         );
 
@@ -45,7 +45,7 @@ export class BulletHits
             otherAliveSwats,
             function(swat: Swat, bullet: Phaser.Bullet) {
                 bullet.kill();
-                swat.health -= myGun.damage();
+                swat.hurt(myGun.damage());
             }
         );
 
@@ -53,7 +53,7 @@ export class BulletHits
             this.street.citizens().allAlive(),
             function(citizen: Citizen, bullet: Phaser.Bullet) {
                 bullet.kill();
-                citizen.health -= myGun.damage();
+                citizen.hurt(myGun.damage());
             }
         );
 
@@ -61,7 +61,7 @@ export class BulletHits
             this.street.player(),
             function(hero: Hero, bullet: Phaser.Bullet) {
                 bullet.kill();
-                hero.health -= myGun.damage();
+                hero.hurt(myGun.damage());
             }
         );
     }

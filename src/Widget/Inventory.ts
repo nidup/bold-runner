@@ -1,6 +1,6 @@
 
 import {Config} from "../Config";
-import {Hero} from "../Player/Hero";
+import {Hero} from "../Character/Player/Hero";
 import {CameraFX} from "../Game/CameraFX";
 
 export class Inventory extends Phaser.Sprite

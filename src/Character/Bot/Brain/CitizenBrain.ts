@@ -1,9 +1,9 @@
 
 import {StackFSM} from "./FSM/StackFSM";
 import {State} from "./FSM/State";
-import {Config} from "../../Config";
+import {Config} from "../../../Config";
 import {Citizen} from "../Citizen";
-import {Street} from "../../Game/Street";
+import {Street} from "../../../Game/Street";
 import {PickableItem} from "../../Player/PickableItem";
 
 export class CitizenBrain

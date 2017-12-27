@@ -1,13 +1,13 @@
 
-import {Cops} from "../Character/Cops";
-import {Cop} from "../Character/Cop";
-import {Citizens} from "../Character/Citizens";
-import {Citizen} from "../Character/Citizen";
-import {Hero} from "../Player/Hero";
+import {Cops} from "../Character/Bot/Cops";
+import {Cop} from "../Character/Bot/Cop";
+import {Citizens} from "../Character/Bot/Citizens";
+import {Citizen} from "../Character/Bot/Citizen";
+import {Hero} from "../Character/Player/Hero";
 import {Level} from "./Level";
-import {BackBag} from "../Player/BackBag";
-import {Swats} from "../Character/Swats";
-import {Swat} from "../Character/Swat";
+import {BackBag} from "../Character/Player/BackBag";
+import {Swats} from "../Character/Bot/Swats";
+import {Swat} from "../Character/Bot/Swat";
 
 export class Street
 {

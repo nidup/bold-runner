@@ -1,12 +1,12 @@
 
 import {Cop} from "../Cop";
-import {Config} from "../../Config";
-import {Street} from "../../Game/Street";
-import {Gun} from "../../Weapon/Gun";
+import {Config} from "../../../Config";
+import {Street} from "../../../Game/Street";
+import {Gun} from "../../../Weapon/Gun";
 import {Citizen} from "../Citizen";
 import {Hero} from "../../Player/Hero";
 import {PickableItem} from "../../Player/PickableItem";
-import {BaseGun} from "../../Weapon/BaseGun";
+import {BaseGun} from "../../../Weapon/BaseGun";
 import {StackFSM} from "./FSM/StackFSM";
 import {State} from "./FSM/State";
 import {Swat} from "../Swat";

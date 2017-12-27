@@ -1,21 +1,22 @@
 
-import {Street} from "../Game/Street";
-import {Cop} from "../Character/Cop";
-import {Citizen} from "../Character/Citizen";
-import {Gun} from "../Weapon/Gun";
+import {Street} from "../../Game/Street";
+import {Cop} from "../Bot/Cop";
+import {Citizen} from "../Bot/Citizen";
+import {Gun} from "../../Weapon/Gun";
 import {PickableItem} from "./PickableItem";
-import {ShotGun} from "../Weapon/ShotGun";
-import {BaseGun} from "../Weapon/BaseGun";
+import {ShotGun} from "../../Weapon/ShotGun";
+import {BaseGun} from "../../Weapon/BaseGun";
 import {BackBag} from "./BackBag";
 import {
     CitizenKilled, CopKilled, GameEvents, GunPicked, HeroKilled, MachineGunPicked, MoneyPicked,
     ShotGunPicked
 } from "./Events";
-import {CameraFX} from "../Game/CameraFX";
-import {Swat} from "../Character/Swat";
-import {MachineGun} from "../Weapon/MachineGun";
+import {CameraFX} from "../../Game/CameraFX";
+import {Swat} from "../Bot/Swat";
+import {MachineGun} from "../../Weapon/MachineGun";
+import {CanBeHurt} from "../CanBeHurt";
 
-export class Hero extends Phaser.Sprite
+export class Hero extends Phaser.Sprite implements CanBeHurt
 {
     public body: Phaser.Physics.Arcade.Body;
     private speed: number = 150;
@@ -94,8 +95,10 @@ export class Hero extends Phaser.Sprite
                 this.street.cops().allAlive(),
                 function(cop: Cop, bullet: Phaser.Bullet) {
                     bullet.kill();
-                    cop.health -= myGun.damage();
-                    hero.gameEvents.register(new CopKilled(hero.game.time.now));
+                    cop.hurt(myGun.damage());
+                    if (cop.isDying()) {
+                        hero.gameEvents.register(new CopKilled(hero.game.time.now));
+                    }
                 }
             );
 
@@ -103,8 +106,10 @@ export class Hero extends Phaser.Sprite
                 this.street.swats().allAlive(),
                 function(swat: Swat, bullet: Phaser.Bullet) {
                     bullet.kill();
-                    swat.health -= myGun.damage();
-                    hero.gameEvents.register(new CopKilled(hero.game.time.now));
+                    swat.hurt(myGun.damage());
+                    if (swat.isDying()) {
+                        hero.gameEvents.register(new CopKilled(hero.game.time.now));
+                    }
                 }
             );
 
@@ -112,11 +117,23 @@ export class Hero extends Phaser.Sprite
                 this.street.citizens().allAlive(),
                 function(citizen: Citizen, bullet: Phaser.Bullet) {
                     bullet.kill();
-                    citizen.health -= myGun.damage();
-                    hero.gameEvents.register(new CitizenKilled(hero.game.time.now));
+                    citizen.hurt(myGun.damage());
+                    if (citizen.isDying()) {
+                        hero.gameEvents.register(new CitizenKilled(hero.game.time.now));
+                    }
                 }
             );
         }
+    }
+
+    hurt(damage: number)
+    {
+        this.health -= damage;
+    }
+
+    isDying(): boolean
+    {
+        return this.health <= 0;
     }
 
     movingToTheRight(): boolean

@@ -1,14 +1,16 @@
 
 import {CopBrain} from "./Brain/CopBrain";
-import {Config} from "../Config";
-import {Gun} from "../Weapon/Gun";
-import {Street} from "../Game/Street";
-import {ShotGun} from "../Weapon/ShotGun";
+import {Config} from "../../Config";
+import {Gun} from "../../Weapon/Gun";
+import {Street} from "../../Game/Street";
+import {ShotGun} from "../../Weapon/ShotGun";
 import {CouldBeAReplicant} from "./CouldBeAReplicant";
 import {BulletHits} from "./BulletHits";
 import {PickableItem} from "../Player/PickableItem";
+import {CanBeHurt} from "../CanBeHurt";
+import {HurtFx} from "./HurtFx";
 
-export class Cop extends Phaser.Sprite implements CouldBeAReplicant
+export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
     public body: Phaser.Physics.Arcade.Body;
     private brain: CopBrain;
@@ -68,5 +70,17 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant
     die()
     {
         this.dead = true;
+    }
+
+    hurt(damage: number)
+    {
+        this.health -= damage;
+        const fx = new HurtFx();
+        fx.blinkHumanOrReplicant(this, this.replicant());
+    }
+
+    isDying(): boolean
+    {
+        return this.health <= 0;
     }
 }

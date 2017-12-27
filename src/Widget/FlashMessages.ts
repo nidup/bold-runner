@@ -2,8 +2,8 @@
 import {
     BaseEvent, CitizenKilled, CopKilled, GameEvents, HeroKilled, MoneyPicked,
     ShotGunPicked
-} from "../Player/Events";
-import {Hero} from "../Player/Hero";
+} from "../Character/Player/Events";
+import {Hero} from "../Character/Player/Hero";
 
 export class FlashMessages
 {
