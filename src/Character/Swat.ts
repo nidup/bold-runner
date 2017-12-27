@@ -1,12 +1,11 @@
 
 import {Config} from "../Config";
-import {Gun} from "../Weapon/Gun";
 import {Street} from "../Game/Street";
-import {ShotGun} from "../Weapon/ShotGun";
 import {SwatBrain} from "./Brain/SwatBrain";
 import {MachineGun} from "../Weapon/MachineGun";
+import {CouldBeAReplicant} from "./CouldBeAReplicant";
 
-export class Swat extends Phaser.Sprite
+export class Swat extends Phaser.Sprite implements CouldBeAReplicant
 {
     public body: Phaser.Physics.Arcade.Body;
     private brain: SwatBrain;

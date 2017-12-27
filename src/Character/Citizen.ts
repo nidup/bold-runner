@@ -2,8 +2,9 @@
 import {Config} from "../Config";
 import {CitizenBrain} from "./Brain/CitizenBrain";
 import {Street} from "../Game/Street";
+import {CouldBeAReplicant} from "./CouldBeAReplicant";
 
-export class Citizen extends Phaser.Sprite
+export class Citizen extends Phaser.Sprite implements CouldBeAReplicant
 {
     public body: Phaser.Physics.Arcade.Body;
     private brain: CitizenBrain;

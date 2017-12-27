@@ -4,8 +4,9 @@ import {Config} from "../Config";
 import {Gun} from "../Weapon/Gun";
 import {Street} from "../Game/Street";
 import {ShotGun} from "../Weapon/ShotGun";
+import {CouldBeAReplicant} from "./CouldBeAReplicant";
 
-export class Cop extends Phaser.Sprite
+export class Cop extends Phaser.Sprite implements CouldBeAReplicant
 {
     public body: Phaser.Physics.Arcade.Body;
     private brain: CopBrain;
