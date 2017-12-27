@@ -7,7 +7,9 @@ export class Inventory extends Phaser.Sprite
 {
     private player: Hero;
     private gunText: Phaser.BitmapText;
+    private gunSprite: Phaser.Sprite;
     private shotgunText: Phaser.BitmapText;
+    private shotgunSprite: Phaser.Sprite;
     private moneyText: Phaser.BitmapText;
     private cameraFX: CameraFX;
 
@@ -31,9 +33,12 @@ export class Inventory extends Phaser.Sprite
 
         const gunX = 1127;
         const gunY = 145;
-        const gunSprite = group.game.add.sprite(gunX, gunY, 'Gun', 1, group);
-        gunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
-        gunSprite.fixedToCamera = true;
+        this.gunSprite = group.game.add.sprite(gunX, gunY, 'Gun', 1, group);
+        this.gunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+        this.gunSprite.fixedToCamera = true;
+        this.gunSprite.animations.add('unselected', [0]);
+        this.gunSprite.animations.add('selected', [0, 1], 1, true);
+        this.gunSprite.play('selected');
 
         this.gunText = this.game.add.bitmapText(gunX - marginLeftAmountToImage, gunY + marginTopAmountToImage, 'carrier-command','0', fontSize, group);
         this.gunText.fixedToCamera = true;
@@ -41,9 +46,12 @@ export class Inventory extends Phaser.Sprite
 
         const shotgunX = gunX;
         const shotgunY = gunY + 70;
-        const shotgunSprite = group.game.add.sprite(shotgunX, shotgunY, 'ShotGun', 1, group);
-        shotgunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
-        shotgunSprite.fixedToCamera = true;
+        this.shotgunSprite = group.game.add.sprite(shotgunX, shotgunY, 'ShotGun', 1, group);
+        this.shotgunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+        this.shotgunSprite.fixedToCamera = true;
+        this.shotgunSprite.animations.add('unselected', [0]);
+        this.shotgunSprite.animations.add('selected', [0, 1], 1, true);
+        this.shotgunSprite.play('unselected');
 
         this.shotgunText = this.game.add.bitmapText(shotgunX - marginLeftAmountToImage, shotgunY + marginTopAmountToImage, 'carrier-command','0', fontSize, group);
         this.shotgunText.fixedToCamera = true;
@@ -71,6 +79,14 @@ export class Inventory extends Phaser.Sprite
             this.cameraFX.warningEffect();
         } else {
             this.animations.play('idle');
+        }
+
+        if (this.player.isEquipedWithGun()) {
+            this.gunSprite.play('selected');
+            this.shotgunSprite.play('unselected');
+        } else {
+            this.gunSprite.play('unselected');
+            this.shotgunSprite.play('selected');
         }
 
         this.moneyText.setText(this.alignText(this.player.money()));

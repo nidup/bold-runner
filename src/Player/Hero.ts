@@ -153,6 +153,16 @@ export class Hero extends Phaser.Sprite
         this.currentGun = this.gun;
     }
 
+    isEquipedWithGun(): boolean
+    {
+        return this.currentGun == this.gun;
+    }
+
+    isEquipedWithShotgun(): boolean
+    {
+        return this.currentGun == this.shotgun;
+    }
+
     pick(item: PickableItem)
     {
         if (item.key === 'Money') {
