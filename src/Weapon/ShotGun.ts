@@ -73,4 +73,9 @@ export class ShotGun implements BaseGun
     {
         this.amnoAmount = this.amnoAmount + amount;
     }
+
+    public damage(): number
+    {
+        return 40;
+    }
 }

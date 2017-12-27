@@ -4,6 +4,7 @@ import {Street} from "../Game/Street";
 import {SwatBrain} from "./Brain/SwatBrain";
 import {MachineGun} from "../Weapon/MachineGun";
 import {CouldBeAReplicant} from "./CouldBeAReplicant";
+import {BulletHits} from "./BulletHits";
 
 export class Swat extends Phaser.Sprite implements CouldBeAReplicant
 {
@@ -11,6 +12,7 @@ export class Swat extends Phaser.Sprite implements CouldBeAReplicant
     private brain: SwatBrain;
     private dead: boolean = false;
     private isReplicant: boolean = false;
+    private bulletHits: BulletHits;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, replicant: boolean)
     {
@@ -38,12 +40,15 @@ export class Swat extends Phaser.Sprite implements CouldBeAReplicant
         this.animations.add('die-replicant', [27, 28, 29, 30, 31, 32, 33], 12, false);
 
         this.isReplicant = replicant;
+        this.bulletHits = new BulletHits(this, gun, street);
+        this.health = 100;
     }
 
     update()
     {
         if (!this.dead) {
             this.brain.think();
+            this.bulletHits.hit();
         }
     }
 

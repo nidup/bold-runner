@@ -67,4 +67,9 @@ export class MachineGun implements BaseGun
     {
         this.amnoAmount = this.amnoAmount + amount;
     }
+
+    public damage(): number
+    {
+        return 30;
+    }
 }

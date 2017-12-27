@@ -5,6 +5,8 @@ import {Gun} from "../Weapon/Gun";
 import {Street} from "../Game/Street";
 import {ShotGun} from "../Weapon/ShotGun";
 import {CouldBeAReplicant} from "./CouldBeAReplicant";
+import {BulletHits} from "./BulletHits";
+import {PickableItem} from "../Player/PickableItem";
 
 export class Cop extends Phaser.Sprite implements CouldBeAReplicant
 {
@@ -12,6 +14,7 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant
     private brain: CopBrain;
     private dead: boolean = false;
     private isReplicant: boolean = false;
+    private bulletHits: BulletHits;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, replicant: boolean)
     {
@@ -46,12 +49,14 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant
         this.animations.add('die-replicant', [27, 28, 29, 30, 31, 32, 33], 12, false);
 
         this.isReplicant = replicant;
+        this.bulletHits = new BulletHits(this, gun, street);
     }
 
     update()
     {
         if (!this.dead) {
             this.brain.think();
+            this.bulletHits.hit();
         }
     }
 

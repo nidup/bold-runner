@@ -1,9 +1,9 @@
 [
   {
     "tutorial": "Replicants are in the street, kill'em all!\n\nUse arrows to move and space bar to shot.",
-    "cops_with_gun": 2,
-    "cops_with_shotgun": 0,
-    "swats": 0,
+    "cops_with_gun": 3,
+    "cops_with_shotgun": 3,
+    "swats": 3,
     "citizens": 5,
     "replicants": 2
   },

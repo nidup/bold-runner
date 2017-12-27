@@ -8,4 +8,5 @@ export interface BaseGun
     bulletHits(targets, overlapCallback);
     amno(): number;
     reload(amount: number);
+    damage(): number;
 }

@@ -40,41 +40,6 @@ export class SwatBrain
     public think()
     {
         this.fsm.update();
-
-        const myself = this.host;
-        const otherAliveSwats = this.street.swats().allAlive().filter(
-            function (swat: Swat) {
-                return swat !== myself;
-            }
-        );
-        this.gun.bulletHits(
-            otherAliveSwats,
-            function(swat: Swat, bullet: Phaser.Bullet) {
-                bullet.kill();
-                swat.health = 0;
-            }
-        );
-        this.gun.bulletHits(
-            this.street.cops().allAlive(),
-            function(cop: Cop, bullet: Phaser.Bullet) {
-                bullet.kill();
-                cop.health = 0;
-            }
-        );
-        this.gun.bulletHits(
-            this.street.citizens().allAlive(),
-            function(citizen: Citizen, bullet: Phaser.Bullet) {
-                bullet.kill();
-                citizen.health = 0;
-            }
-        );
-        this.gun.bulletHits(
-            this.street.player(),
-            function(hero: Hero, bullet: Phaser.Bullet) {
-                bullet.kill();
-                hero.health = 0;
-            }
-        );
     }
 
     public patrol = () =>

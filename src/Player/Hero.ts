@@ -89,11 +89,12 @@ export class Hero extends Phaser.Sprite
             this.move();
 
             const hero = this;
+            const myGun = this.currentGun;
             this.currentGun.bulletHits(
                 this.street.cops().allAlive(),
                 function(cop: Cop, bullet: Phaser.Bullet) {
                     bullet.kill();
-                    cop.health = 0;
+                    cop.health -= myGun.damage();
                     hero.gameEvents.register(new CopKilled(hero.game.time.now));
                 }
             );
@@ -102,7 +103,7 @@ export class Hero extends Phaser.Sprite
                 this.street.swats().allAlive(),
                 function(swat: Swat, bullet: Phaser.Bullet) {
                     bullet.kill();
-                    swat.health = 0;
+                    swat.health -= myGun.damage();
                     hero.gameEvents.register(new CopKilled(hero.game.time.now));
                 }
             );
@@ -111,7 +112,7 @@ export class Hero extends Phaser.Sprite
                 this.street.citizens().allAlive(),
                 function(citizen: Citizen, bullet: Phaser.Bullet) {
                     bullet.kill();
-                    citizen.health = 0;
+                    citizen.health -= myGun.damage();
                     hero.gameEvents.register(new CitizenKilled(hero.game.time.now));
                 }
             );
