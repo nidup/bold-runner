@@ -5,6 +5,7 @@ import {Config} from "../../../Config";
 import {Citizen} from "../Citizen";
 import {Street} from "../../../Game/Street";
 import {PickableItem} from "../../Player/PickableItem";
+import {Energy} from "../Energy";
 
 export class CitizenBrain
 {
@@ -17,9 +18,9 @@ export class CitizenBrain
     private walkSpeed: number = 50;
     private runSpeed: number = 150;
     private visionScope: number = 200;
-    private energy: number;
     private street: Street;
     private group: Phaser.Group;
+    private energy: Energy;
 
     public constructor(citizen: Citizen, street: Street, group: Phaser.Group)
     {
@@ -27,10 +28,10 @@ export class CitizenBrain
         this.host = citizen;
         this.street = street;
         this.group = group;
+        this.energy = new Energy(this.host.game.rnd);
         this.fsm.pushState(new State('walk', this.walk));
         this.changeToWalkSpeed();
         this.turnToARandomDirection();
-        this.recoverARandomEnergy();
     }
 
     public think()
@@ -40,7 +41,7 @@ export class CitizenBrain
 
     public walk = () =>
     {
-        this.energy--;
+        this.energy.decrease();
 
         if (this.host.health <= 0) {
             this.fsm.pushState(new State('dying', this.dying));
@@ -50,7 +51,7 @@ export class CitizenBrain
             this.turnFromThePlayer();
             this.fsm.pushState(new State('flee', this.flee));
 
-        } else if (this.energy <= 0) {
+        } else if (this.energy.empty()) {
             this.fsm.pushState(new State('resting', this.resting));
 
         } else {
@@ -80,9 +81,9 @@ export class CitizenBrain
             this.host.body.velocity.x = 0;
             this.host.body.velocity.y = 0;
             this.host.animations.play('idle');
-            this.energy++;
-            if (this.energy > 1000) {
-                this.recoverARandomEnergy();
+            this.energy.increase();
+            if (this.energy.minimalAmountToMoveIsReached()) {
+                this.energy.resetWithRandomAmount();
                 this.changeToWalkSpeed();
                 this.turnToARandomDirection();
                 this.fsm.popState();
@@ -178,11 +179,6 @@ export class CitizenBrain
         } else {
             this.turnToTheRight();
         }
-    }
-
-    private recoverARandomEnergy()
-    {
-        this.energy = this.host.game.rnd.integerInRange(50, 5000);
     }
 
     private playerIsCloseAndAggressive(): boolean

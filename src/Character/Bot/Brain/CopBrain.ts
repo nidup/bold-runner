@@ -10,6 +10,7 @@ import {BaseGun} from "../../../Weapon/BaseGun";
 import {StackFSM} from "./FSM/StackFSM";
 import {State} from "./FSM/State";
 import {Swat} from "../Swat";
+import {Energy} from "../Energy";
 
 export class CopBrain
 {
@@ -20,10 +21,10 @@ export class CopBrain
     private directionX;
     private speed: number = 50;
     private attackScope: number = 200;
-    private energy: number;
     private gun: BaseGun;
     private street: Street;
     private group: Phaser.Group;
+    private energy: Energy;
 
     public constructor(cop: Cop, gun: BaseGun, street: Street, group: Phaser.Group)
     {
@@ -32,9 +33,9 @@ export class CopBrain
         this.gun = gun;
         this.street = street;
         this.group = group;
+        this.energy = new Energy(this.host.game.rnd);
         this.fsm.pushState(new State('patrol', this.patrol));
         this.turnToARandomDirection();
-        this.recoverARandomEnergy();
     }
 
     public think()
@@ -61,8 +62,8 @@ export class CopBrain
 
         this.host.animations.play('walk');
 
-        this.energy--;
-        if (this.energy <= 0) {
+        this.energy.decrease();
+        if (this.energy.empty()) {
             this.fsm.pushState(new State('resting', this.resting));
         }
     }
@@ -81,9 +82,9 @@ export class CopBrain
             this.fsm.pushState(new State('attack', this.attack));
         }
 
-        this.energy++;
-        if (this.energy > 1000) {
-            this.recoverARandomEnergy();
+        this.energy.increase();
+        if (this.energy.minimalAmountToMoveIsReached()) {
+            this.energy.resetWithRandomAmount();
             this.turnToARandomDirection();
             this.fsm.popState();
         }
@@ -158,11 +159,6 @@ export class CopBrain
         } else {
             this.turnToTheRight();
         }
-    }
-
-    private recoverARandomEnergy()
-    {
-        this.energy = this.host.game.rnd.integerInRange(50, 5000);
     }
 
     private playerIsCloseAndAliveAndAggressive(): boolean
