@@ -1,5 +1,4 @@
 
-import {Config} from "../../../Config";
 import {Street} from "../../../Game/Street";
 import {PickableItem} from "../../Player/PickableItem";
 import {BaseGun} from "../../../Weapon/BaseGun";
@@ -7,20 +6,18 @@ import {StackFSM} from "./FSM/StackFSM";
 import {State} from "./FSM/State";
 import {Swat} from "../Swat";
 import {Energy} from "../Energy";
+import {Steering} from "../Steering";
 
 export class SwatBrain
 {
     private host: Swat;
     private fsm: StackFSM;
-    private left = -1;
-    private right = 1;
-    private directionX;
-    private speed: number = 50;
     private attackScope: number = 200;
     private gun: BaseGun;
     private street: Street;
     private group: Phaser.Group;
     private energy: Energy;
+    private steering: Steering;
 
     public constructor(swat: Swat, gun: BaseGun, street: Street, group: Phaser.Group)
     {
@@ -30,8 +27,8 @@ export class SwatBrain
         this.street = street;
         this.group = group;
         this.energy = new Energy(this.host.game.rnd);
+        this.steering = new Steering(this.host.game.rnd, this.host, this.gun);
         this.fsm.pushState(new State('patrol', this.patrol));
-        this.turnToARandomDirection();
     }
 
     public think()
@@ -49,11 +46,11 @@ export class SwatBrain
             this.fsm.pushState(new State('attack', this.attack));
         }
 
-        if (this.host.body.blocked.left && this.directionX === this.left) {
-            this.turnToTheRight();
+        if (this.steering.blockedToTheLeft()) {
+            this.steering.turnToTheRight();
         }
-        if (this.host.body.blocked.right && this.directionX === this.right) {
-            this.turnToTheLeft();
+        if (this.steering.blockedToTheRight()) {
+            this.steering.turnToTheLeft();
         }
 
         this.host.animations.play('walk');
@@ -66,8 +63,7 @@ export class SwatBrain
 
     public resting = () =>
     {
-        this.host.body.velocity.x = 0;
-        this.host.body.velocity.y = 0;
+        this.steering.stop();
         this.host.animations.play('idle');
 
         if (this.host.health <= 0) {
@@ -81,7 +77,7 @@ export class SwatBrain
         this.energy.increase();
         if (this.energy.minimalAmountToMoveIsReached()) {
             this.energy.resetWithRandomAmount();
-            this.turnToARandomDirection();
+            this.steering.turnToARandomDirection();
             this.fsm.popState();
         }
     }
@@ -93,22 +89,21 @@ export class SwatBrain
         }
 
         if (this.playerIsCloseAndAlive()) {
-            this.turnToThePlayer();
+            this.steering.turnToTheSprite(this.street.player());
             this.host.body.velocity.x = 0;
             this.host.body.velocity.y = 0;
             this.host.animations.play('shot');
             this.gun.fire();
 
         } else {
-            this.turnToARandomDirection();
+            this.steering.turnToARandomDirection();
             this.fsm.popState();
         }
     }
 
     public dying = () =>
     {
-        this.host.body.velocity.x = 0;
-        this.host.body.velocity.y = 0;
+        this.steering.stop();
         if (!this.host.replicant()) {
             this.host.animations.play('die');
         } else {
@@ -116,41 +111,6 @@ export class SwatBrain
         }
         this.host.die();
         new PickableItem(this.group, this.host.x, this.host.y, 'MachineGun', this.street.player());
-    }
-
-    private turnToTheRight()
-    {
-        this.directionX = this.right;
-        this.gun.turnToTheRight();
-        this.host.scale.x = Config.pixelScaleRatio();
-        this.host.body.velocity.x = this.speed;
-    }
-
-    private turnToTheLeft()
-    {
-        this.directionX = this.left;
-        this.gun.turnToTheLeft();
-        this.host.scale.x = -Config.pixelScaleRatio();
-        this.host.body.velocity.x = -this.speed;
-    }
-
-    private turnToThePlayer()
-    {
-        if (this.street.player().x > this.host.x) {
-            this.turnToTheRight();
-        } else {
-            this.turnToTheLeft();
-        }
-    }
-
-    private turnToARandomDirection()
-    {
-        this.directionX = this.host.game.rnd.sign();
-        if (this.directionX === -1) {
-            this.turnToTheLeft();
-        } else {
-            this.turnToTheRight();
-        }
     }
 
     private playerIsCloseAndAliveAndAggressive(): boolean

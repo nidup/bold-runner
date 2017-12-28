@@ -11,20 +11,18 @@ import {StackFSM} from "./FSM/StackFSM";
 import {State} from "./FSM/State";
 import {Swat} from "../Swat";
 import {Energy} from "../Energy";
+import {Steering} from "../Steering";
 
 export class CopBrain
 {
     private host: Cop;
     private fsm: StackFSM;
-    private left = -1;
-    private right = 1;
-    private directionX;
-    private speed: number = 50;
     private attackScope: number = 200;
     private gun: BaseGun;
     private street: Street;
     private group: Phaser.Group;
     private energy: Energy;
+    private steering: Steering;
 
     public constructor(cop: Cop, gun: BaseGun, street: Street, group: Phaser.Group)
     {
@@ -34,8 +32,8 @@ export class CopBrain
         this.street = street;
         this.group = group;
         this.energy = new Energy(this.host.game.rnd);
+        this.steering = new Steering(this.host.game.rnd, this.host, this.gun);
         this.fsm.pushState(new State('patrol', this.patrol));
-        this.turnToARandomDirection();
     }
 
     public think()
@@ -53,11 +51,11 @@ export class CopBrain
             this.fsm.pushState(new State('attack', this.attack));
         }
 
-        if (this.host.body.blocked.left && this.directionX === this.left) {
-            this.turnToTheRight();
+        if (this.steering.blockedToTheLeft()) {
+            this.steering.turnToTheRight();
         }
-        if (this.host.body.blocked.right && this.directionX === this.right) {
-            this.turnToTheLeft();
+        if (this.steering.blockedToTheRight()) {
+            this.steering.turnToTheLeft();
         }
 
         this.host.animations.play('walk');
@@ -70,8 +68,7 @@ export class CopBrain
 
     public resting = () =>
     {
-        this.host.body.velocity.x = 0;
-        this.host.body.velocity.y = 0;
+        this.steering.stop();
         this.host.animations.play('idle');
 
         if (this.host.health <= 0) {
@@ -85,7 +82,7 @@ export class CopBrain
         this.energy.increase();
         if (this.energy.minimalAmountToMoveIsReached()) {
             this.energy.resetWithRandomAmount();
-            this.turnToARandomDirection();
+            this.steering.turnToARandomDirection();
             this.fsm.popState();
         }
     }
@@ -97,22 +94,20 @@ export class CopBrain
         }
 
         if (this.playerIsCloseAndAlive()) {
-            this.turnToThePlayer();
-            this.host.body.velocity.x = 0;
-            this.host.body.velocity.y = 0;
+            this.steering.turnToTheSprite(this.street.player());
+            this.steering.stop();
             this.host.animations.play('shot');
             this.gun.fire();
 
         } else {
-            this.turnToARandomDirection();
+            this.steering.turnToARandomDirection();
             this.fsm.popState();
         }
     }
 
     public dying = () =>
     {
-        this.host.body.velocity.x = 0;
-        this.host.body.velocity.y = 0;
+        this.steering.stop();
         if (!this.host.replicant()) {
             this.host.animations.play('die');
         } else {
@@ -123,41 +118,6 @@ export class CopBrain
             new PickableItem(this.group, this.host.x, this.host.y, 'Gun', this.street.player());
         } else {
             new PickableItem(this.group, this.host.x, this.host.y, 'ShotGun', this.street.player());
-        }
-    }
-
-    private turnToTheRight()
-    {
-        this.directionX = this.right;
-        this.gun.turnToTheRight();
-        this.host.scale.x = Config.pixelScaleRatio();
-        this.host.body.velocity.x = this.speed;
-    }
-
-    private turnToTheLeft()
-    {
-        this.directionX = this.left;
-        this.gun.turnToTheLeft();
-        this.host.scale.x = -Config.pixelScaleRatio();
-        this.host.body.velocity.x = -this.speed;
-    }
-
-    private turnToThePlayer()
-    {
-        if (this.street.player().x > this.host.x) {
-            this.turnToTheRight();
-        } else {
-            this.turnToTheLeft();
-        }
-    }
-
-    private turnToARandomDirection()
-    {
-        this.directionX = this.host.game.rnd.sign();
-        if (this.directionX === -1) {
-            this.turnToTheLeft();
-        } else {
-            this.turnToTheRight();
         }
     }
 
