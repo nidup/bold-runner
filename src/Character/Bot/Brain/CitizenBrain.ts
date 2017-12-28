@@ -6,16 +6,17 @@ import {Street} from "../../../Game/Street";
 import {PickableItem} from "../../Player/PickableItem";
 import {Energy} from "../Energy";
 import {Steering} from "../Steering";
+import {Vision} from "../Vision";
 
 export class CitizenBrain
 {
     private host: Citizen;
     private fsm: StackFSM;
-    private visionScope: number = 200;
     private street: Street;
     private group: Phaser.Group;
     private energy: Energy;
     private steering: Steering;
+    private vision: Vision;
 
     public constructor(citizen: Citizen, street: Street, group: Phaser.Group)
     {
@@ -25,6 +26,7 @@ export class CitizenBrain
         this.group = group;
         this.energy = new Energy(this.host.game.rnd);
         this.steering = new Steering(this.host.game.rnd, this.host);
+        this.vision = new Vision(this.host, this.street);
         this.fsm.pushState(new State('walk', this.walk));
     }
 
@@ -40,7 +42,7 @@ export class CitizenBrain
         if (this.host.health <= 0) {
             this.fsm.pushState(new State('dying', this.dying));
 
-        } else if (this.playerIsCloseAndAggressive()) {
+        } else if (this.vision.playerIsCloseAndAggressive()) {
             this.steering.runFromTheSprite(this.street.player());
             this.fsm.pushState(new State('flee', this.flee));
 
@@ -64,7 +66,7 @@ export class CitizenBrain
         if (this.host.health <= 0) {
             this.fsm.pushState(new State('dying', this.dying));
 
-        } else if (this.playerIsCloseAndAggressive()) {
+        } else if (this.vision.playerIsCloseAndAggressive()) {
             this.steering.runFromTheSprite(this.street.player());
             this.fsm.pushState(new State('flee', this.flee));
 
@@ -85,7 +87,7 @@ export class CitizenBrain
         if (this.host.health <= 0) {
             this.fsm.pushState(new State('dying', this.dying));
 
-        } else if (this.playerIsClose()) {
+        } else if (this.vision.playerIsClose()) {
 
             if (this.steering.blockedToTheLeft()) {
                 this.steering.runToTheRight();
@@ -115,17 +117,5 @@ export class CitizenBrain
         if (randMoney === 1) {
             new PickableItem(this.group, this.host.x, this.host.y, 'Money', this.street.player());
         }
-    }
-
-    private playerIsCloseAndAggressive(): boolean
-    {
-        return this.street.player().isAggressive() && this.playerIsClose();
-    }
-
-    private playerIsClose(): boolean
-    {
-        const player = this.street.player();
-
-        return Phaser.Math.distance(player.x, player.y, this.host.x, this.host.y) < this.visionScope;
     }
 }

@@ -7,17 +7,18 @@ import {State} from "./FSM/State";
 import {Swat} from "../Swat";
 import {Energy} from "../Energy";
 import {Steering} from "../Steering";
+import {Vision} from "../Vision";
 
 export class SwatBrain
 {
     private host: Swat;
     private fsm: StackFSM;
-    private attackScope: number = 200;
     private gun: BaseGun;
     private street: Street;
     private group: Phaser.Group;
     private energy: Energy;
     private steering: Steering;
+    private vision: Vision;
 
     public constructor(swat: Swat, gun: BaseGun, street: Street, group: Phaser.Group)
     {
@@ -28,6 +29,7 @@ export class SwatBrain
         this.group = group;
         this.energy = new Energy(this.host.game.rnd);
         this.steering = new Steering(this.host.game.rnd, this.host, this.gun);
+        this.vision = new Vision(this.host, this.street);
         this.fsm.pushState(new State('patrol', this.patrol));
     }
 
@@ -42,7 +44,7 @@ export class SwatBrain
             this.fsm.pushState(new State('dying', this.dying));
         }
 
-        if (this.playerIsCloseAndAliveAndAggressive()) {
+        if (this.vision.playerIsCloseAndAliveAndAggressive()) {
             this.fsm.pushState(new State('attack', this.attack));
         }
 
@@ -70,7 +72,7 @@ export class SwatBrain
             this.fsm.pushState(new State('dying', this.dying));
         }
 
-        if (this.playerIsCloseAndAliveAndAggressive()) {
+        if (this.vision.playerIsCloseAndAliveAndAggressive()) {
             this.fsm.pushState(new State('attack', this.attack));
         }
 
@@ -88,7 +90,7 @@ export class SwatBrain
             this.fsm.pushState(new State('dying', this.dying));
         }
 
-        if (this.playerIsCloseAndAlive()) {
+        if (this.vision.playerIsCloseAndAlive()) {
             this.steering.stopAndTurnToTheSprite(this.street.player());
             this.host.animations.play('shot');
             this.gun.fire();
@@ -109,17 +111,5 @@ export class SwatBrain
         }
         this.host.die();
         new PickableItem(this.group, this.host.x, this.host.y, 'MachineGun', this.street.player());
-    }
-
-    private playerIsCloseAndAliveAndAggressive(): boolean
-    {
-        return this.street.player().isAggressive() && this.playerIsCloseAndAlive();
-    }
-
-    private playerIsCloseAndAlive(): boolean
-    {
-        const player = this.street.player();
-
-        return !player.isDead() && Phaser.Math.distance(player.x, player.y, this.host.x, this.host.y) < this.attackScope;
     }
 }
