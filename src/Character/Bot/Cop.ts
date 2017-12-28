@@ -9,6 +9,7 @@ import {BulletHits} from "./BulletHits";
 import {PickableItem} from "../Player/PickableItem";
 import {CanBeHurt} from "../CanBeHurt";
 import {HurtFx} from "./HurtFx";
+import {HorizontalDirection} from "../HorizontalDirection";
 
 export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
@@ -72,11 +73,11 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
         this.dead = true;
     }
 
-    hurt(damage: number)
+    hurt(damage: number, fromDirection: HorizontalDirection)
     {
         this.health -= damage;
         const fx = new HurtFx();
-        fx.blinkHumanOrReplicant(this, this.replicant());
+        fx.blinkHumanOrReplicant(this, fromDirection, this.replicant());
     }
 
     isDying(): boolean

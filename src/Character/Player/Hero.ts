@@ -15,6 +15,8 @@ import {CameraFX} from "../../Game/CameraFX";
 import {Swat} from "../Bot/Swat";
 import {MachineGun} from "../../Weapon/MachineGun";
 import {CanBeHurt} from "../CanBeHurt";
+import {HorizontalDirection} from "../HorizontalDirection";
+import {HurtFx} from "../Bot/HurtFx";
 
 export class Hero extends Phaser.Sprite implements CanBeHurt
 {
@@ -94,8 +96,8 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
             this.currentGun.bulletHits(
                 this.street.cops().allAlive(),
                 function(cop: Cop, bullet: Phaser.Bullet) {
+                    cop.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
                     bullet.kill();
-                    cop.hurt(myGun.damage());
                     if (cop.isDying()) {
                         hero.gameEvents.register(new CopKilled(hero.game.time.now));
                     }
@@ -105,8 +107,8 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
             this.currentGun.bulletHits(
                 this.street.swats().allAlive(),
                 function(swat: Swat, bullet: Phaser.Bullet) {
+                    swat.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
                     bullet.kill();
-                    swat.hurt(myGun.damage());
                     if (swat.isDying()) {
                         hero.gameEvents.register(new CopKilled(hero.game.time.now));
                     }
@@ -116,8 +118,8 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
             this.currentGun.bulletHits(
                 this.street.citizens().allAlive(),
                 function(citizen: Citizen, bullet: Phaser.Bullet) {
+                    citizen.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
                     bullet.kill();
-                    citizen.hurt(myGun.damage());
                     if (citizen.isDying()) {
                         hero.gameEvents.register(new CitizenKilled(hero.game.time.now));
                     }
@@ -126,9 +128,11 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         }
     }
 
-    hurt(damage: number)
+    hurt(damage: number, fromDirection: HorizontalDirection)
     {
         this.health -= damage;
+        const fx = new HurtFx();
+        fx.blinkHero(this, fromDirection);
     }
 
     isDying(): boolean

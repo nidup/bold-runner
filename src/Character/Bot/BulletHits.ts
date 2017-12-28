@@ -5,6 +5,7 @@ import {Citizen} from "./Citizen";
 import {Swat} from "./Swat";
 import {Hero} from "../Player/Hero";
 import {BaseGun} from "../../Weapon/BaseGun";
+import {HorizontalDirection} from "../HorizontalDirection";
 
 export class BulletHits
 {
@@ -31,8 +32,8 @@ export class BulletHits
         myGun.bulletHits(
             otherAliveCops,
             function(cop: Cop, bullet: Phaser.Bullet) {
+                cop.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
                 bullet.kill();
-                cop.hurt(myGun.damage());
             }
         );
 
@@ -44,24 +45,24 @@ export class BulletHits
         myGun.bulletHits(
             otherAliveSwats,
             function(swat: Swat, bullet: Phaser.Bullet) {
+                swat.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
                 bullet.kill();
-                swat.hurt(myGun.damage());
             }
         );
 
         myGun.bulletHits(
             this.street.citizens().allAlive(),
             function(citizen: Citizen, bullet: Phaser.Bullet) {
+                citizen.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
                 bullet.kill();
-                citizen.hurt(myGun.damage());
             }
         );
 
         myGun.bulletHits(
             this.street.player(),
             function(hero: Hero, bullet: Phaser.Bullet) {
+                hero.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
                 bullet.kill();
-                hero.hurt(myGun.damage());
             }
         );
     }

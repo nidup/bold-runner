@@ -5,6 +5,7 @@ import {Street} from "../../Game/Street";
 import {CouldBeAReplicant} from "./CouldBeAReplicant";
 import {CanBeHurt} from "../CanBeHurt";
 import {HurtFx} from "./HurtFx";
+import {HorizontalDirection} from "../HorizontalDirection";
 
 export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
@@ -55,11 +56,11 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
         this.dead = true;
     }
 
-    hurt(damage: number)
+    hurt(damage: number, fromDirection: HorizontalDirection)
     {
         this.health -= damage;
         const fx = new HurtFx();
-        fx.blinkHumanOrReplicant(this, this.replicant());
+        fx.blinkHumanOrReplicant(this, fromDirection, this.replicant());
     }
 
     isDying(): boolean
