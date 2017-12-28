@@ -47,10 +47,10 @@ export class SwatBrain
         }
 
         if (this.steering.blockedToTheLeft()) {
-            this.steering.turnToTheRight();
+            this.steering.walkToTheRight();
         }
         if (this.steering.blockedToTheRight()) {
-            this.steering.turnToTheLeft();
+            this.steering.walkToTheLeft();
         }
 
         this.host.animations.play('walk');
@@ -77,7 +77,7 @@ export class SwatBrain
         this.energy.increase();
         if (this.energy.minimalAmountToMoveIsReached()) {
             this.energy.resetWithRandomAmount();
-            this.steering.turnToARandomDirection();
+            this.steering.walkToARandomDirection();
             this.fsm.popState();
         }
     }
@@ -89,14 +89,12 @@ export class SwatBrain
         }
 
         if (this.playerIsCloseAndAlive()) {
-            this.steering.turnToTheSprite(this.street.player());
-            this.host.body.velocity.x = 0;
-            this.host.body.velocity.y = 0;
+            this.steering.stopAndTurnToTheSprite(this.street.player());
             this.host.animations.play('shot');
             this.gun.fire();
 
         } else {
-            this.steering.turnToARandomDirection();
+            this.steering.walkToARandomDirection();
             this.fsm.popState();
         }
     }

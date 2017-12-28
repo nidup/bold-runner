@@ -52,10 +52,10 @@ export class CopBrain
         }
 
         if (this.steering.blockedToTheLeft()) {
-            this.steering.turnToTheRight();
+            this.steering.walkToTheRight();
         }
         if (this.steering.blockedToTheRight()) {
-            this.steering.turnToTheLeft();
+            this.steering.walkToTheLeft();
         }
 
         this.host.animations.play('walk');
@@ -82,7 +82,7 @@ export class CopBrain
         this.energy.increase();
         if (this.energy.minimalAmountToMoveIsReached()) {
             this.energy.resetWithRandomAmount();
-            this.steering.turnToARandomDirection();
+            this.steering.walkToARandomDirection();
             this.fsm.popState();
         }
     }
@@ -94,13 +94,12 @@ export class CopBrain
         }
 
         if (this.playerIsCloseAndAlive()) {
-            this.steering.turnToTheSprite(this.street.player());
-            this.steering.stop();
+            this.steering.stopAndTurnToTheSprite(this.street.player());
             this.host.animations.play('shot');
             this.gun.fire();
 
         } else {
-            this.steering.turnToARandomDirection();
+            this.steering.walkToARandomDirection();
             this.fsm.popState();
         }
     }

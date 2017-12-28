@@ -11,9 +11,6 @@ export class CitizenBrain
 {
     private host: Citizen;
     private fsm: StackFSM;
-    private speed = 0;
-    private walkSpeed: number = 50;
-    private runSpeed: number = 150;
     private visionScope: number = 200;
     private street: Street;
     private group: Phaser.Group;
@@ -29,7 +26,6 @@ export class CitizenBrain
         this.energy = new Energy(this.host.game.rnd);
         this.steering = new Steering(this.host.game.rnd, this.host);
         this.fsm.pushState(new State('walk', this.walk));
-        this.changeToWalkSpeed();
     }
 
     public think()
@@ -45,20 +41,18 @@ export class CitizenBrain
             this.fsm.pushState(new State('dying', this.dying));
 
         } else if (this.playerIsCloseAndAggressive()) {
-            this.changeToProgressiveRunSpeed();
-            this.steering.turnFromTheSprite(this.street.player());
+            this.steering.runFromTheSprite(this.street.player());
             this.fsm.pushState(new State('flee', this.flee));
 
         } else if (this.energy.empty()) {
             this.fsm.pushState(new State('resting', this.resting));
 
         } else {
-            this.changeToWalkSpeed();
             if (this.steering.blockedToTheLeft()) {
-                this.steering.turnToTheRight();
+                this.steering.walkToTheRight();
             }
             if (this.steering.blockedToTheRight()) {
-                this.steering.turnToTheLeft();
+                this.steering.walkToTheLeft();
             }
 
             this.host.animations.play('walk');
@@ -71,8 +65,7 @@ export class CitizenBrain
             this.fsm.pushState(new State('dying', this.dying));
 
         } else if (this.playerIsCloseAndAggressive()) {
-            this.changeToProgressiveRunSpeed();
-            this.steering.turnFromTheSprite(this.street.player());
+            this.steering.runFromTheSprite(this.street.player());
             this.fsm.pushState(new State('flee', this.flee));
 
         } else {
@@ -81,8 +74,7 @@ export class CitizenBrain
             this.energy.increase();
             if (this.energy.minimalAmountToMoveIsReached()) {
                 this.energy.resetWithRandomAmount();
-                this.changeToWalkSpeed();
-                this.steering.turnToARandomDirection();
+                this.steering.walkToARandomDirection();
                 this.fsm.popState();
             }
         }
@@ -95,19 +87,17 @@ export class CitizenBrain
 
         } else if (this.playerIsClose()) {
 
-            this.changeToProgressiveRunSpeed();
             if (this.steering.blockedToTheLeft()) {
-                this.steering.turnToTheRight();
+                this.steering.runToTheRight();
             }
             if (this.steering.blockedToTheRight()) {
-                this.steering.turnToTheLeft();
+                this.steering.runToTheLeft();
             }
 
             this.host.animations.play('run');
 
         } else {
-            this.changeToWalkSpeed();
-            this.steering.turnToARandomDirection();
+            this.steering.walkToARandomDirection();
             this.fsm.popState();
         }
     }
@@ -124,23 +114,6 @@ export class CitizenBrain
         let randMoney = this.group.game.rnd.integerInRange(1, 3);
         if (randMoney === 1) {
             new PickableItem(this.group, this.host.x, this.host.y, 'Money', this.street.player());
-        }
-    }
-
-    private changeToWalkSpeed()
-    {
-        this.speed = this.walkSpeed;
-    }
-
-    private changeToProgressiveRunSpeed()
-    {
-        const player = this.street.player();
-        const distance = Phaser.Math.distance(player.x, player.y, this.host.x, this.host.y);
-
-        if (distance < this.visionScope / 2) {
-            this.speed = this.runSpeed;
-        } else {
-            this.speed = this.runSpeed * 0.7;
         }
     }
 

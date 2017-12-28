@@ -9,7 +9,8 @@ export class Steering
     private left = -1;
     private right = 1;
     private directionX;
-    private speed: number = 50;
+    private walkSpeed: number = 50;
+    private runSpeed: number = 150;
     private randomGenerator: Phaser.RandomDataGenerator;
 
     constructor(randomGenerator: Phaser.RandomDataGenerator, host: Phaser.Sprite, hostGun: BaseGun = null)
@@ -17,7 +18,7 @@ export class Steering
         this.randomGenerator = randomGenerator;
         this.bot = host;
         this.botGun = hostGun;
-        this.turnToARandomDirection();
+        this.walkToARandomDirection();
     }
 
     blockedToTheLeft(): boolean
@@ -36,28 +37,43 @@ export class Steering
         this.bot.body.velocity.y = 0;
     }
 
-    turnToTheRight()
+    walkToTheRight()
     {
-        this.directionX = this.right;
-        if (this.botGun) {
-            this.botGun.turnToTheRight();
-        }
-        this.bot.scale.x = Config.pixelScaleRatio();
-        this.bot.body.velocity.x = this.speed;
+        this.turnToTheRight();
+        this.bot.body.velocity.x = this.walkSpeed;
     }
 
-    turnToTheLeft()
+    walkToTheLeft()
     {
-        this.directionX = this.left;
-        if (this.botGun) {
-            this.botGun.turnToTheLeft();
-        }
-        this.bot.scale.x = -Config.pixelScaleRatio();
-        this.bot.body.velocity.x = -this.speed;
+        this.turnToTheLeft();
+        this.bot.body.velocity.x = -this.walkSpeed;
     }
 
-    turnToTheSprite(sprite: Phaser.Sprite)
+    runToTheRight()
     {
+        this.turnToTheRight();
+        this.bot.body.velocity.x = this.runSpeed;
+    }
+
+    runToTheLeft()
+    {
+        this.turnToTheLeft();
+        this.bot.body.velocity.x = -this.runSpeed;
+    }
+
+    walkToARandomDirection()
+    {
+        this.directionX = this.bot.game.rnd.sign();
+        if (this.directionX === -1) {
+            this.walkToTheLeft();
+        } else {
+            this.walkToTheRight();
+        }
+    }
+
+    stopAndTurnToTheSprite(sprite: Phaser.Sprite)
+    {
+        this.stop();
         if (sprite.x > this.bot.x) {
             this.turnToTheRight();
         } else {
@@ -65,22 +81,30 @@ export class Steering
         }
     }
 
-    turnFromTheSprite(sprite: Phaser.Sprite)
+    runFromTheSprite(sprite: Phaser.Sprite)
     {
         if (sprite.x < this.bot.x) {
-            this.turnToTheRight();
+            this.runToTheRight();
         } else {
-            this.turnToTheLeft();
+            this.runToTheLeft();
         }
     }
 
-    turnToARandomDirection()
+    private turnToTheRight()
     {
-        this.directionX = this.bot.game.rnd.sign();
-        if (this.directionX === -1) {
-            this.turnToTheLeft();
-        } else {
-            this.turnToTheRight();
+        this.directionX = this.right;
+        if (this.botGun) {
+            this.botGun.turnToTheRight();
         }
+        this.bot.scale.x = Config.pixelScaleRatio();
+    }
+
+    private turnToTheLeft()
+    {
+        this.directionX = this.left;
+        if (this.botGun) {
+            this.botGun.turnToTheLeft();
+        }
+        this.bot.scale.x = -Config.pixelScaleRatio();
     }
 }
