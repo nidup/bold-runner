@@ -2,7 +2,7 @@
 
 Small side scrolling shoot'em up game, inspired by Blade Runner.
 
-Built in compo mode, everything is hand-crafted.
+Built in compo mode, everything is hand-crafted, from code to assets.
 
 # Demo
 
