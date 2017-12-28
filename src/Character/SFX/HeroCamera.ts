@@ -1,5 +1,5 @@
 
-export class CameraFX
+export class HeroCamera
 {
     private camera: Phaser.Camera;
 

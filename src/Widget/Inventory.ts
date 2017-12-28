@@ -1,7 +1,7 @@
 
 import {Config} from "../Config";
 import {Hero} from "../Character/Player/Hero";
-import {CameraFX} from "../Game/CameraFX";
+import {HeroCamera} from "../Character/SFX/HeroCamera";
 
 export class Inventory extends Phaser.Sprite
 {
@@ -13,7 +13,7 @@ export class Inventory extends Phaser.Sprite
     private machinegunText: Phaser.BitmapText;
     private machinegunSprite: Phaser.Sprite;
     private moneyText: Phaser.BitmapText;
-    private cameraFX: CameraFX;
+    private cameraFX: HeroCamera;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, player: Hero)
     {
@@ -77,7 +77,7 @@ export class Inventory extends Phaser.Sprite
         this.moneyText = this.game.add.bitmapText(moneyX - marginLeftAmountToImage, moneyY + marginTopAmountToImage, 'carrier-command','0', fontSize, group);
         this.moneyText.fixedToCamera = true;
 
-        this.cameraFX = new CameraFX(group.game.camera);
+        this.cameraFX = new HeroCamera(group.game.camera);
     }
 
     public update()
