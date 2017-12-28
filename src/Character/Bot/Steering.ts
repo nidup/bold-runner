@@ -12,7 +12,7 @@ export class Steering
     private speed: number = 50;
     private randomGenerator: Phaser.RandomDataGenerator;
 
-    constructor(randomGenerator: Phaser.RandomDataGenerator, host: Phaser.Sprite, hostGun: BaseGun)
+    constructor(randomGenerator: Phaser.RandomDataGenerator, host: Phaser.Sprite, hostGun: BaseGun = null)
     {
         this.randomGenerator = randomGenerator;
         this.bot = host;
@@ -39,7 +39,9 @@ export class Steering
     turnToTheRight()
     {
         this.directionX = this.right;
-        this.botGun.turnToTheRight();
+        if (this.botGun) {
+            this.botGun.turnToTheRight();
+        }
         this.bot.scale.x = Config.pixelScaleRatio();
         this.bot.body.velocity.x = this.speed;
     }
@@ -47,7 +49,9 @@ export class Steering
     turnToTheLeft()
     {
         this.directionX = this.left;
-        this.botGun.turnToTheLeft();
+        if (this.botGun) {
+            this.botGun.turnToTheLeft();
+        }
         this.bot.scale.x = -Config.pixelScaleRatio();
         this.bot.body.velocity.x = -this.speed;
     }
@@ -55,6 +59,15 @@ export class Steering
     turnToTheSprite(sprite: Phaser.Sprite)
     {
         if (sprite.x > this.bot.x) {
+            this.turnToTheRight();
+        } else {
+            this.turnToTheLeft();
+        }
+    }
+
+    turnFromTheSprite(sprite: Phaser.Sprite)
+    {
+        if (sprite.x < this.bot.x) {
             this.turnToTheRight();
         } else {
             this.turnToTheLeft();

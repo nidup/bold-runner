@@ -1,19 +1,16 @@
 
 import {StackFSM} from "./FSM/StackFSM";
 import {State} from "./FSM/State";
-import {Config} from "../../../Config";
 import {Citizen} from "../Citizen";
 import {Street} from "../../../Game/Street";
 import {PickableItem} from "../../Player/PickableItem";
 import {Energy} from "../Energy";
+import {Steering} from "../Steering";
 
 export class CitizenBrain
 {
     private host: Citizen;
     private fsm: StackFSM;
-    private left = -1;
-    private right = 1;
-    private directionX;
     private speed = 0;
     private walkSpeed: number = 50;
     private runSpeed: number = 150;
@@ -21,6 +18,7 @@ export class CitizenBrain
     private street: Street;
     private group: Phaser.Group;
     private energy: Energy;
+    private steering: Steering;
 
     public constructor(citizen: Citizen, street: Street, group: Phaser.Group)
     {
@@ -29,9 +27,9 @@ export class CitizenBrain
         this.street = street;
         this.group = group;
         this.energy = new Energy(this.host.game.rnd);
+        this.steering = new Steering(this.host.game.rnd, this.host);
         this.fsm.pushState(new State('walk', this.walk));
         this.changeToWalkSpeed();
-        this.turnToARandomDirection();
     }
 
     public think()
@@ -48,7 +46,7 @@ export class CitizenBrain
 
         } else if (this.playerIsCloseAndAggressive()) {
             this.changeToProgressiveRunSpeed();
-            this.turnFromThePlayer();
+            this.steering.turnFromTheSprite(this.street.player());
             this.fsm.pushState(new State('flee', this.flee));
 
         } else if (this.energy.empty()) {
@@ -56,11 +54,11 @@ export class CitizenBrain
 
         } else {
             this.changeToWalkSpeed();
-            if (this.host.body.blocked.left && this.directionX === this.left) {
-                this.turnToTheRight();
+            if (this.steering.blockedToTheLeft()) {
+                this.steering.turnToTheRight();
             }
-            if (this.host.body.blocked.right && this.directionX === this.right) {
-                this.turnToTheLeft();
+            if (this.steering.blockedToTheRight()) {
+                this.steering.turnToTheLeft();
             }
 
             this.host.animations.play('walk');
@@ -74,18 +72,17 @@ export class CitizenBrain
 
         } else if (this.playerIsCloseAndAggressive()) {
             this.changeToProgressiveRunSpeed();
-            this.turnFromThePlayer();
+            this.steering.turnFromTheSprite(this.street.player());
             this.fsm.pushState(new State('flee', this.flee));
 
         } else {
-            this.host.body.velocity.x = 0;
-            this.host.body.velocity.y = 0;
+            this.steering.stop();
             this.host.animations.play('idle');
             this.energy.increase();
             if (this.energy.minimalAmountToMoveIsReached()) {
                 this.energy.resetWithRandomAmount();
                 this.changeToWalkSpeed();
-                this.turnToARandomDirection();
+                this.steering.turnToARandomDirection();
                 this.fsm.popState();
             }
         }
@@ -99,26 +96,25 @@ export class CitizenBrain
         } else if (this.playerIsClose()) {
 
             this.changeToProgressiveRunSpeed();
-            if (this.host.body.blocked.left && this.directionX === this.left) {
-                this.turnToTheRight();
+            if (this.steering.blockedToTheLeft()) {
+                this.steering.turnToTheRight();
             }
-            if (this.host.body.blocked.right && this.directionX === this.right) {
-                this.turnToTheLeft();
+            if (this.steering.blockedToTheRight()) {
+                this.steering.turnToTheLeft();
             }
 
             this.host.animations.play('run');
 
         } else {
             this.changeToWalkSpeed();
-            this.turnToARandomDirection();
+            this.steering.turnToARandomDirection();
             this.fsm.popState();
         }
     }
 
     public dying = () =>
     {
-        this.host.body.velocity.x = 0;
-        this.host.body.velocity.y = 0;
+        this.steering.stop();
         if (!this.host.replicant()) {
             this.host.animations.play('die');
         } else {
@@ -145,39 +141,6 @@ export class CitizenBrain
             this.speed = this.runSpeed;
         } else {
             this.speed = this.runSpeed * 0.7;
-        }
-    }
-
-    private turnToTheRight()
-    {
-        this.directionX = this.right;
-        this.host.scale.x = Config.pixelScaleRatio();
-        this.host.body.velocity.x = this.speed;
-    }
-
-    private turnToTheLeft()
-    {
-        this.directionX = this.left;
-        this.host.scale.x = -Config.pixelScaleRatio();
-        this.host.body.velocity.x = -this.speed;
-    }
-
-    private turnFromThePlayer()
-    {
-        if (this.street.player().x < this.host.x) {
-            this.turnToTheRight();
-        } else {
-            this.turnToTheLeft();
-        }
-    }
-
-    private turnToARandomDirection()
-    {
-        this.directionX = this.host.game.rnd.sign();
-        if (this.directionX === -1) {
-            this.turnToTheLeft();
-        } else {
-            this.turnToTheRight();
         }
     }
 
