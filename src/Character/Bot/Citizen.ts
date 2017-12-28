@@ -4,8 +4,8 @@ import {CitizenBrain} from "./Brain/CitizenBrain";
 import {Street} from "../../Game/Street";
 import {CouldBeAReplicant} from "./CouldBeAReplicant";
 import {CanBeHurt} from "../CanBeHurt";
-import {HurtFx} from "./HurtFx";
 import {HorizontalDirection} from "../HorizontalDirection";
+import {CharacterHurt} from "../SFX/CharacterHurt";
 
 export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
@@ -59,7 +59,7 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
     hurt(damage: number, fromDirection: HorizontalDirection)
     {
         this.health -= damage;
-        const fx = new HurtFx();
+        const fx = new CharacterHurt();
         fx.blinkHumanOrReplicant(this, fromDirection, this.replicant());
     }
 

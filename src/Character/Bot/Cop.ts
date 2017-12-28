@@ -6,10 +6,9 @@ import {Street} from "../../Game/Street";
 import {ShotGun} from "../../Weapon/ShotGun";
 import {CouldBeAReplicant} from "./CouldBeAReplicant";
 import {BulletHits} from "./BulletHits";
-import {PickableItem} from "../Player/PickableItem";
 import {CanBeHurt} from "../CanBeHurt";
-import {HurtFx} from "./HurtFx";
 import {HorizontalDirection} from "../HorizontalDirection";
+import {CharacterHurt} from "../SFX/CharacterHurt";
 
 export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
@@ -76,7 +75,7 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
     hurt(damage: number, fromDirection: HorizontalDirection)
     {
         this.health -= damage;
-        const fx = new HurtFx();
+        const fx = new CharacterHurt();
         fx.blinkHumanOrReplicant(this, fromDirection, this.replicant());
     }
 

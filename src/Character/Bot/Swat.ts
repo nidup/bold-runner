@@ -6,8 +6,8 @@ import {MachineGun} from "../../Weapon/MachineGun";
 import {CouldBeAReplicant} from "./CouldBeAReplicant";
 import {BulletHits} from "./BulletHits";
 import {CanBeHurt} from "../CanBeHurt";
-import {HurtFx} from "./HurtFx";
 import {HorizontalDirection} from "../HorizontalDirection";
+import {CharacterHurt} from "../SFX/CharacterHurt";
 
 export class Swat extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
@@ -68,7 +68,7 @@ export class Swat extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
     hurt(damage: number, fromDirection: HorizontalDirection)
     {
         this.health -= damage;
-        const fx = new HurtFx();
+        const fx = new CharacterHurt();
         fx.blinkHumanOrReplicant(this, fromDirection, this.replicant());
     }
 

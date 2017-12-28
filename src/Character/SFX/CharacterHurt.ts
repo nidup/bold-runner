@@ -1,7 +1,7 @@
 
 import {HorizontalDirection} from "../HorizontalDirection";
 
-export class HurtFx
+export class CharacterHurt
 {
     blinkHumanOrReplicant(host: Phaser.Sprite, fromDirection: HorizontalDirection, replicant: boolean)
     {

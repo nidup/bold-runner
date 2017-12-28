@@ -1,7 +1,11 @@
 
 import {Config} from "../Config";
 import {Hero} from "../Character/Player/Hero";
-import {CameraFX} from "../Game/CameraFX";
+import {HeroCamera} from "../Character/SFX/HeroCamera";
+import {
+    BaseEvent, GunPicked, MachineGunPicked, MoneyPicked,
+    ShotGunPicked
+} from "../Character/Player/Events";
 
 export class Inventory extends Phaser.Sprite
 {
@@ -13,7 +17,8 @@ export class Inventory extends Phaser.Sprite
     private machinegunText: Phaser.BitmapText;
     private machinegunSprite: Phaser.Sprite;
     private moneyText: Phaser.BitmapText;
-    private cameraFX: CameraFX;
+    private moneySprite: Phaser.Sprite;
+    private cameraFX: HeroCamera;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, player: Hero)
     {
@@ -71,13 +76,14 @@ export class Inventory extends Phaser.Sprite
 
         const moneyX = machinegunX;
         const moneyY = machinegunY + 70;
-        const moneySprite = group.game.add.sprite(moneyX, moneyY, 'Money', 1, group);
-        moneySprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
-        moneySprite.fixedToCamera = true;
+        this.moneySprite = group.game.add.sprite(moneyX, moneyY, 'Money', 1, group);
+        this.moneySprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+        this.moneySprite.fixedToCamera = true;
         this.moneyText = this.game.add.bitmapText(moneyX - marginLeftAmountToImage, moneyY + marginTopAmountToImage, 'carrier-command','0', fontSize, group);
         this.moneyText.fixedToCamera = true;
 
-        this.cameraFX = new CameraFX(group.game.camera);
+        this.cameraFX = new HeroCamera(group.game.camera);
+        player.pastGameEvents().addListener(this.collectItem, this);
     }
 
     public update()
@@ -122,5 +128,29 @@ export class Inventory extends Phaser.Sprite
         }
 
         return text;
+    }
+
+    private collectItem(raisedEvent: BaseEvent, callbackContext: any): void
+    {
+        let itemSpriteToShake = null;
+        if (raisedEvent instanceof GunPicked) {
+            itemSpriteToShake = callbackContext.gunSprite;
+        } else if (raisedEvent instanceof ShotGunPicked) {
+            itemSpriteToShake = callbackContext.shotgunSprite;
+        } else if (raisedEvent instanceof MachineGunPicked) {
+            itemSpriteToShake = callbackContext.machinegunSprite;
+        } else if (raisedEvent instanceof MoneyPicked) {
+            itemSpriteToShake = callbackContext.moneySprite;
+        }
+
+        if (itemSpriteToShake) {
+            const formerAngle = itemSpriteToShake.angle;
+            const newAngle = formerAngle - 15;
+            const formerY = itemSpriteToShake.y;
+            const newY = formerY - 5;
+            const tween = callbackContext.game.add.tween(itemSpriteToShake).to({y: newY, angle: newAngle}, 100, Phaser.Easing.Bounce.Out);
+            const nextTween = callbackContext.game.add.tween(itemSpriteToShake).to({y: formerY, angle: formerAngle}, 100, Phaser.Easing.Bounce.Out);
+            tween.chain(nextTween).start();
+        }
     }
 }

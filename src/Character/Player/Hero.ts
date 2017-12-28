@@ -11,12 +11,12 @@ import {
     CitizenKilled, CopKilled, GameEvents, GunPicked, HeroKilled, MachineGunPicked, MoneyPicked,
     ShotGunPicked
 } from "./Events";
-import {CameraFX} from "../../Game/CameraFX";
 import {Swat} from "../Bot/Swat";
 import {MachineGun} from "../../Weapon/MachineGun";
 import {CanBeHurt} from "../CanBeHurt";
 import {HorizontalDirection} from "../HorizontalDirection";
-import {HurtFx} from "../Bot/HurtFx";
+import {CharacterHurt} from "../SFX/CharacterHurt";
+import {HeroCamera} from "../SFX/HeroCamera";
 
 export class Hero extends Phaser.Sprite implements CanBeHurt
 {
@@ -36,7 +36,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private dead: boolean = false;
     private moneyAmount: number = 0;
     private currentGunAnim: string = 'gun';
-    private cameraFx: CameraFX;
+    private cameraFx: HeroCamera;
     private gameEvents: GameEvents;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag)
@@ -79,7 +79,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         this.moneyAmount = backbag.money();
         this.switchToGun();
 
-        this.cameraFx = new CameraFX(group.game.camera);
+        this.cameraFx = new HeroCamera(group.game.camera);
         this.gameEvents = new GameEvents();
     }
 
@@ -131,7 +131,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     hurt(damage: number, fromDirection: HorizontalDirection)
     {
         this.health -= damage;
-        const fx = new HurtFx();
+        const fx = new CharacterHurt();
         fx.blinkHero(this, fromDirection);
     }
 
