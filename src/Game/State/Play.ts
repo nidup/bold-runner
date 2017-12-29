@@ -7,13 +7,14 @@ import {Level} from "../Level";
 import {BackBag} from "../../Character/Player/BackBag";
 import {LevelInstructions} from "../../Widget/LevelInstructions";
 import {FlashMessages} from "../../Widget/FlashMessages";
+import {BuildingLayout} from "../../Building/BuildingLayout";
+import {Config} from "../../Config";
 
 export default class Play extends Phaser.State
 {
     private debug: boolean = false;
     private sky: Phaser.TileSprite;
     private background: Phaser.TileSprite;
-    private buildings: Phaser.TileSprite;
     private street: Street;
     private characterLayer: Phaser.Group;
     private levelNumber: number = 1;
@@ -34,27 +35,37 @@ export default class Play extends Phaser.State
         }
         this.game.stage.backgroundColor = '#000000';
 
-        const tileSpriteRatio = 2;
-        const width = 1600;
-        const height = 1200;
-        const heightPosition = -400;
-
         const skyLayer = this.game.add.group();
         skyLayer.name = 'Sky';
-        this.sky = this.game.add.tileSprite(0,heightPosition,width,height,'sky',0, skyLayer);
-        this.sky.tileScale.set(tileSpriteRatio, tileSpriteRatio);
 
         const backgroundLayer = this.game.add.group();
         backgroundLayer.name = 'Background';
-        this.background = this.game.add.tileSprite(0,heightPosition,width,height,'background',0, backgroundLayer);
-        this.background.tileScale.set(tileSpriteRatio, tileSpriteRatio);
 
         const buildingsLayer = this.game.add.group();
         buildingsLayer.name = 'Buildings';
-        this.buildings = this.game.add.tileSprite(0,heightPosition,width,height,'buildings',0, buildingsLayer);
-        this.buildings.tileScale.set(tileSpriteRatio, tileSpriteRatio);
-        this.buildings.animations.add('idle', [0, 1, 2], 3, true);
-        this.buildings.animations.play('idle');
+
+        const layout = new BuildingLayout(buildingsLayer);
+        layout.addMedium();
+        layout.addElectricSheep();
+        layout.addBig();
+        layout.addPub();
+        layout.addSmall();
+        layout.addBig();
+
+        const streetWidth = layout.streetWidth();
+        const height = 1200;
+        const heightPosition = -400;
+
+        this.sky = this.game.add.tileSprite(0,heightPosition, streetWidth, height,'sky',0, skyLayer);
+        this.sky.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+
+        this.background = this.game.add.tileSprite(0,heightPosition, streetWidth, height,'background',0, backgroundLayer);
+        this.background.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+
+        const streetHeight = 220;
+        const streetPositionY = 580;
+        const street = this.game.add.tileSprite(0, streetPositionY, streetWidth, streetHeight,'Street',0, buildingsLayer);
+        street.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
 
         this.characterLayer = this.game.add.group();
         this.characterLayer.name = 'Characters';
@@ -66,13 +77,13 @@ export default class Play extends Phaser.State
         const levelData = levelsData[this.levelNumber - 1];
         const level = new Level(this.levelNumber, levelData);
         const backbag = new BackBag(this.previousInventory);
-        this.street = new Street(this.characterLayer, level, backbag);
+        this.street = new Street(this.characterLayer, level, backbag, streetWidth);
 
         new LevelInstructions(interfaceLayer, 0, 0, 'LevelInstructions', level);
         new Inventory(interfaceLayer, 600, 0, 'Inventory', this.street.player());
         new FlashMessages(interfaceLayer, this.street.player().pastGameEvents(), this.street.player());
 
-        this.game.world.setBounds(0, 0, 1600, 800);
+        this.game.world.setBounds(0, 0, streetWidth, 800);
         this.game.camera.follow(this.street.player());
     }
 
@@ -114,7 +125,6 @@ export default class Play extends Phaser.State
     {
         this.sky.destroy();
         this.background.destroy();
-        this.buildings.destroy();
         this.street.player().destroy();
         this.street.citizens().all().map(function(citizen: Citizen) { citizen.destroy()});
         this.street.cops().all().map(function(cop: Cop) { cop.destroy()});

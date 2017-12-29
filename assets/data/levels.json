@@ -4,8 +4,8 @@
     "cops_with_gun": 3,
     "cops_with_shotgun": 0,
     "swats": 3,
-    "citizens": 7,
-    "replicants": 2
+    "citizens": 10,
+    "replicants": 13
   },
   {
     "tutorial": "Cops can now be equiped with shotguns.\n\nUse S key to switch weapon.",

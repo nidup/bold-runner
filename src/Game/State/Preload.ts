@@ -47,6 +47,12 @@ export default class Preload extends Phaser.State
         this.load.spritesheet('MachineGun', 'assets/sprites/machinegun.png', 20, 20);
         this.load.spritesheet('Money', 'assets/sprites/money.png', 20, 20);
         this.load.spritesheet('Menu', 'assets/sprites/menu.png', 800, 600);
+        this.load.spritesheet('Street', 'assets/sprites/street.png', 80, 110);
+        this.load.spritesheet('BuildingElectricSheep', 'assets/sprites/building-electric-sheep.png', 180, 240);
+        this.load.spritesheet('BuildingBig', 'assets/sprites/building-big.png', 240, 240);
+        this.load.spritesheet('BuildingMedium', 'assets/sprites/building-medium.png', 180, 240);
+        this.load.spritesheet('BuildingSmall', 'assets/sprites/building-small.png', 120, 240);
+        this.load.spritesheet('BuildingPub', 'assets/sprites/building-pub.png', 120, 240);
     }
 
     private loadFonts()
