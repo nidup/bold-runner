@@ -8,6 +8,7 @@ import {Level} from "./Level";
 import {BackBag} from "../Character/Player/BackBag";
 import {Swats} from "../Character/Bot/Swats";
 import {Swat} from "../Character/Bot/Swat";
+import {Controller} from "./Controller";
 
 export class Street
 {
@@ -17,7 +18,7 @@ export class Street
     private hero: Hero;
     private streetWidth: number;
 
-    constructor(characterGroup: Phaser.Group, level: Level, backbag: BackBag, streetWidth: number)
+    constructor(characterGroup: Phaser.Group, level: Level, backbag: BackBag, streetWidth: number, heroController: Controller)
     {
         this.streetWidth = streetWidth;
         this.copRepository = new Cops();
@@ -71,7 +72,7 @@ export class Street
 
         }
 
-        this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this, backbag);
+        this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this, backbag, heroController);
     }
 
     isEmpty(): boolean

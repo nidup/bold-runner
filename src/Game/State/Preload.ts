@@ -1,7 +1,7 @@
 
 export default class Preload extends Phaser.State
 {
-    private skipMenu = true;
+    private skipMenu = false;
 
     public preload ()
     {
@@ -31,9 +31,9 @@ export default class Preload extends Phaser.State
 
     private loadGameImages()
     {
+        this.load.spritesheet('ControllerIndicator', 'assets/sprites/controller-indicator.png', 16,16);
         this.load.spritesheet('sky', 'assets/sprites/sky.png', 800, 600);
         this.load.spritesheet('background', 'assets/sprites/background.png', 800, 600);
-        this.load.spritesheet('buildings', 'assets/sprites/buildings.png', 800, 600);
         this.load.spritesheet('Inventory', 'assets/sprites/inventory.png', 300, 300);
         this.load.spritesheet('LevelInstructions', 'assets/sprites/level.png', 400, 300);
         this.load.spritesheet('citizen1', 'assets/sprites/citizen1.png', 32, 32);

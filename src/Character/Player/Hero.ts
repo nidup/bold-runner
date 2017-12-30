@@ -16,6 +16,7 @@ import {CharacterHurt} from "../SFX/CharacterHurt";
 import {HeroCamera} from "../SFX/HeroCamera";
 import {BulletHits} from "./BulletHits";
 import {Config} from "../../Config";
+import {Controller} from "../../Game/Controller";
 
 export class Hero extends Phaser.Sprite implements CanBeHurt
 {
@@ -25,9 +26,6 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private gun: Gun;
     private shotgun: ShotGun;
     private machinegun: MachineGun;
-    private cursors: Phaser.CursorKeys;
-    private shotKey: Phaser.Key;
-    private switchKey: Phaser.Key;
     private switchedTime: number = 0;
     private street: Street;
     private aggressiveRating : number = 0;
@@ -37,8 +35,9 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private gameEvents: GameEvents;
     private bulletHits: BulletHits;
     private group: Phaser.Group;
+    private controller: Controller;
 
-    constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag)
+    constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag, controller: Controller)
     {
         super(group.game, x, y, key, 0);
         this.street = street;
@@ -73,9 +72,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         this.animations.add('die-'+this.machinegun.identifier(), [68, 69, 70, 71, 72, 73, 74], 12, false);
         this.animations.add('shot-'+this.machinegun.identifier(), [75, 76, 77, 78, 79, 80], 24, false);
 
-        this.cursors = this.game.input.keyboard.createCursorKeys();
-        this.shotKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.switchKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+        this.controller = controller;
 
         switch (backbag.currentGunIdentifier()) {
             case 'Gun':
@@ -250,39 +247,44 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         this.body.velocity.x = 0;
         this.body.velocity.y = 0;
 
-        if (this.cursors.left.isDown) {
-            this.scale.x = -Config.pixelScaleRatio();
-            this.body.velocity.x = -this.speed;
-            this.animations.play('walk-'+this.currentGun.identifier());
-            this.gun.turnToTheLeft();
-            this.shotgun.turnToTheLeft();
-            this.machinegun.turnToTheLeft();
-
-        } else if (this.cursors.right.isDown) {
-            this.scale.x = Config.pixelScaleRatio();
-            this.body.velocity.x = this.speed;
-            this.animations.play('walk-'+this.currentGun.identifier());
-            this.gun.turnToTheRight();
-            this.shotgun.turnToTheRight();
-            this.machinegun.turnToTheRight();
-
-        } else if (this.cursors.up.isDown && (this.street.minY() + 10) <= this.position.y ) {
-            this.body.velocity.y = -this.speed;
-            this.animations.play('walk-'+this.currentGun.identifier());
-
-        } else if (this.cursors.down.isDown) {
-            this.body.velocity.y = this.speed;
-            this.animations.play('walk-'+this.currentGun.identifier());
-
-        } else if (this.shotKey.isDown) {
+        if (this.controller.shooting()) {
             this.shot();
 
-        } else if (this.switchKey.isDown && this.game.time.now > this.switchedTime) {
+        // TODO: use justDown to fix this??
+        } else if (this.controller.switchingWeapon() && this.game.time.now > this.switchedTime) {
             this.switchedTime = this.game.time.now + 500;
             this.switchToNextUsableGun();
 
         } else {
-            this.animations.play('idle-'+this.currentGun.identifier());
+            if (this.controller.goingLeft()) {
+                this.scale.x = -Config.pixelScaleRatio();
+                this.body.velocity.x = -this.speed;
+                this.animations.play('walk-'+this.currentGun.identifier());
+                this.gun.turnToTheLeft();
+                this.shotgun.turnToTheLeft();
+                this.machinegun.turnToTheLeft();
+
+            } else if (this.controller.goingRight()) {
+                this.scale.x = Config.pixelScaleRatio();
+                this.body.velocity.x = this.speed;
+                this.animations.play('walk-'+this.currentGun.identifier());
+                this.gun.turnToTheRight();
+                this.shotgun.turnToTheRight();
+                this.machinegun.turnToTheRight();
+            }
+
+            if (this.controller.goingUp() && (this.street.minY() + 10) <= this.position.y ) {
+                this.body.velocity.y = -this.speed;
+                this.animations.play('walk-'+this.currentGun.identifier());
+
+            } else if (this.controller.goingDown()) {
+                this.body.velocity.y = this.speed;
+                this.animations.play('walk-'+this.currentGun.identifier());
+            }
+
+            if (!this.controller.goingLeft() && !this.controller.goingRight() && !this.controller.goingDown() && !this.controller.goingUp()) {
+                this.animations.play('idle-'+this.currentGun.identifier());
+            }
         }
     }
 

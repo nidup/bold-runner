@@ -9,6 +9,7 @@ import {FlashMessages} from "../../Widget/FlashMessages";
 import {BuildingLayout} from "../../Building/BuildingLayout";
 import {Config} from "../../Config";
 import {LevelLoader} from "../LevelLoader";
+import {GamePadController, KeyBoardController} from "../Controller";
 
 export default class Play extends Phaser.State
 {
@@ -20,12 +21,14 @@ export default class Play extends Phaser.State
     private levelNumber: number = 1;
     private switchingLevel: boolean = false;
     private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'machinegunAmno': number, 'money': number, 'currentGun': string} = null;
+    private controllerType: string = null;
 
-    public init (level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'machinegunAmno': 0, 'money': 0, 'currentGun': 'Gun'})
+    public init (controllerType: string, level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'machinegunAmno': 0, 'money': 0, 'currentGun': 'Gun'})
     {
         this.levelNumber = level;
         this.previousInventory = previousInventory;
         this.switchingLevel = false;
+        this.controllerType = controllerType;
     }
 
     public create()
@@ -70,8 +73,17 @@ export default class Play extends Phaser.State
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
 
+        let controller = null;
+        if (this.controllerType === 'keyboard') {
+            controller = new KeyBoardController(this.game);
+        } else if (this.controllerType === 'gamepad') {
+            controller = new GamePadController(this.game);
+        } else {
+            throw new Error('Unknown controller '+ this.controllerType);
+        }
+
         const backbag = new BackBag(this.previousInventory);
-        this.street = new Street(this.characterLayer, level, backbag, streetWidth);
+        this.street = new Street(this.characterLayer, level, backbag, streetWidth, controller);
 
         new LevelInstructions(interfaceLayer, 0, 0, 'LevelInstructions', level);
         new Inventory(interfaceLayer, 600, 0, 'Inventory', this.street.player());
@@ -111,7 +123,6 @@ export default class Play extends Phaser.State
             );
             this.game.debug.body(this.street.player());
             this.game.debug.cameraInfo(this.game.camera, 32, 32);
-
         }
     }
 
@@ -138,13 +149,14 @@ export default class Play extends Phaser.State
                         'Play',
                         true,
                         false,
+                        this.controllerType,
                         this.levelNumber,
                         {
                             'gunAmno': this.street.player().gunAmno(),
                             'shotgunAmno': this.street.player().shotgunAmno(),
                             'machinegunAmno': this.street.player().machinegunAmno(),
                             'money': this.street.player().money(),
-                            'currentGun': this.street.player().equippedGun().identifier()
+                            'currentGun': this.street.player().equippedGun().identifier() // TODO: should not be passed in backbag
                         }
                     );
                 } else {
