@@ -100,5 +100,22 @@
       "Small",
       "ElectricSheep"
     ]
+  },
+  {
+    "tutorial": "Last level.",
+    "characters": {
+      "cops_with_gun": 4,
+      "cops_with_shotgun": 4,
+      "swats": 2,
+      "citizens": 20,
+      "replicants": 8
+    },
+    "buildings": [
+      "Big",
+      "ElectricSheep",
+      "Pub",
+      "Medium",
+      "Small"
+    ]
   }
 ]
