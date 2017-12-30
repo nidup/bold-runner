@@ -1,42 +1,104 @@
 [
   {
-    "tutorial": "Replicants are in the street, kill'em all!\n\nUse arrows to move and space bar to shot.",
-    "cops_with_gun": 3,
-    "cops_with_shotgun": 0,
-    "swats": 3,
-    "citizens": 10,
-    "replicants": 13
+    "tutorial": "Replicants are hidden in the population\n\nNo choice, you need to kill'em all.\n\nUse arrows to move and space bar to shot.",
+    "characters": {
+      "cops_with_gun": 0,
+      "cops_with_shotgun": 0,
+      "swats": 0,
+      "citizens": 6,
+      "replicants": 3
+    },
+    "buildings": [
+      "Medium",
+      "ElectricSheep",
+      "Big",
+      "Pub",
+      "Small"
+    ]
   },
   {
-    "tutorial": "Cops can now be equiped with shotguns.\n\nUse S key to switch weapon.",
-    "cops_with_gun": 4,
-    "cops_with_shotgun": 1,
-    "swats": 0,
-    "citizens": 10,
-    "replicants": 2
+    "tutorial": "Cops can be replicant too.\n\nThey have guns and can shoot you.\n\nOnce killed, you can pick-up extra amno.",
+    "characters": {
+      "cops_with_gun": 2,
+      "cops_with_shotgun": 0,
+      "swats": 0,
+      "citizens": 10,
+      "replicants": 4
+    },
+    "buildings": [
+      "Big",
+      "Medium",
+      "Pub",
+      "Small",
+      "ElectricSheep"
+    ]
   },
   {
-    "tutorial": "SWAT units are patrolling!\n\nTake care, they're stronger than cops.",
-    "cops_with_gun": 4,
-    "cops_with_shotgun": 0,
-    "swats": 2,
-    "citizens": 12,
-    "replicants": 7
+    "tutorial": "When seing you're agressive, a cop shoot\n\nat you. He may hurts citizen or other cops\n\nhelping you to clear the stage.",
+    "characters": {
+      "cops_with_gun": 5,
+      "cops_with_shotgun": 0,
+      "swats": 0,
+      "citizens": 24,
+      "replicants": 8
+    },
+    "buildings": [
+      "Small",
+      "ElectricSheep",
+      "Medium",
+      "Pub",
+      "Big"
+    ]
   },
   {
-    "tutorial": "Mass Murder!",
-    "cops_with_gun": 10,
-    "cops_with_shotgun": 4,
-    "swats": 2,
-    "citizens": 20,
-    "replicants": 7
+    "tutorial": "Cops can be equipped with shotgun and bullet\n\nproof jacket that make them more resistant.\n\nUse S key to switch weapon.",
+    "characters": {
+      "cops_with_gun": 3,
+      "cops_with_shotgun": 2,
+      "swats": 0,
+      "citizens": 10,
+      "replicants": 4
+    },
+    "buildings": [
+      "Pub",
+      "Big",
+      "Medium",
+      "Small",
+      "ElectricSheep"
+    ]
   },
   {
-    "tutorial": "Butchery!",
-    "cops_with_gun": 15,
-    "cops_with_shotgun": 10,
-    "swats": 10,
-    "citizens": 30,
-    "replicants": 10
+    "tutorial": "Shotgun is super efficient to clean crowdy\n\nplace, however it's not accurate and\n\nthe range is shorter than gun.",
+    "characters": {
+      "cops_with_gun": 3,
+      "cops_with_shotgun": 2,
+      "swats": 0,
+      "citizens": 20,
+      "replicants": 4
+    },
+    "buildings": [
+      "Medium",
+      "Big",
+      "Small",
+      "ElectricSheep",
+      "Pub"
+    ]
+  },
+  {
+    "tutorial": "SWAT units are patrolling. They're super\n\nresistant with their armor and they're\n\nequipped with automatic rifle.",
+    "characters": {
+      "cops_with_gun": 3,
+      "cops_with_shotgun": 2,
+      "swats": 2,
+      "citizens": 14,
+      "replicants": 4
+    },
+    "buildings": [
+      "Pub",
+      "Big",
+      "Medium",
+      "Small",
+      "ElectricSheep"
+    ]
   }
 ]

@@ -6,6 +6,7 @@ import {Building} from "./Building";
 import {Pub} from "./Pub";
 import {Medium} from "./Medium";
 import {Small} from "./Small";
+import {Level} from "../Game/Level";
 
 export class BuildingLayout
 {
@@ -16,35 +17,34 @@ export class BuildingLayout
     private previousBuilding: Phaser.Sprite = null;
     private buildingsRepository: Buildings;
 
-    constructor(group: Phaser.Group)
+    constructor(level: Level, group: Phaser.Group)
     {
         this.group = group;
         this.buildingsRepository = new Buildings();
-    }
-
-    addElectricSheep(): ElectricSheep
-    {
-        return this.addBuilding(new ElectricSheep(this.group, this.buildPositionX(), this.buildingY));
-    }
-
-    addPub(): Pub
-    {
-        return this.addBuilding(new Pub(this.group, this.buildPositionX(), this.buildingY));
-    }
-
-    addBig(): Big
-    {
-        return this.addBuilding(new Big(this.group, this.buildPositionX(), this.buildingY));
-    }
-
-    addMedium(): Medium
-    {
-        return this.addBuilding(new Medium(this.group, this.buildPositionX(), this.buildingY));
-    }
-
-    addSmall(): Small
-    {
-        return this.addBuilding(new Small(this.group, this.buildPositionX(), this.buildingY));
+        level.orderedBuildingTypes().forEach(
+            function (type: string) {
+                switch (type) {
+                    case 'Small':
+                        this.addSmall();
+                        break;
+                    case 'Medium':
+                        this.addMedium();
+                        break;
+                    case 'Big':
+                        this.addBig();
+                        break;
+                    case 'Pub':
+                        this.addPub();
+                        break;
+                    case 'ElectricSheep':
+                        this.addElectricSheep();
+                        break;
+                    default:
+                        throw new Error("Building type "+type+" is unknown");
+                }
+            },
+            this
+        );
     }
 
     streetWidth(): number
@@ -55,6 +55,31 @@ export class BuildingLayout
     buildings(): Buildings
     {
         return this.buildingsRepository;
+    }
+
+    private addElectricSheep(): ElectricSheep
+    {
+        return this.addBuilding(new ElectricSheep(this.group, this.buildPositionX(), this.buildingY));
+    }
+
+    private addPub(): Pub
+    {
+        return this.addBuilding(new Pub(this.group, this.buildPositionX(), this.buildingY));
+    }
+
+    private addBig(): Big
+    {
+        return this.addBuilding(new Big(this.group, this.buildPositionX(), this.buildingY));
+    }
+
+    private addMedium(): Medium
+    {
+        return this.addBuilding(new Medium(this.group, this.buildPositionX(), this.buildingY));
+    }
+
+    private addSmall(): Small
+    {
+        return this.addBuilding(new Small(this.group, this.buildPositionX(), this.buildingY));
     }
 
     private addBuilding(building: Building): Building

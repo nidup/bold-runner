@@ -9,6 +9,7 @@ import {LevelInstructions} from "../../Widget/LevelInstructions";
 import {FlashMessages} from "../../Widget/FlashMessages";
 import {BuildingLayout} from "../../Building/BuildingLayout";
 import {Config} from "../../Config";
+import {LevelLoader} from "../LevelLoader";
 
 export default class Play extends Phaser.State
 {
@@ -35,6 +36,9 @@ export default class Play extends Phaser.State
         }
         this.game.stage.backgroundColor = '#000000';
 
+        const levelLoader = new LevelLoader();
+        const level = levelLoader.load(this.game, this.levelNumber);
+
         const skyLayer = this.game.add.group();
         skyLayer.name = 'Sky';
 
@@ -44,13 +48,7 @@ export default class Play extends Phaser.State
         const buildingsLayer = this.game.add.group();
         buildingsLayer.name = 'Buildings';
 
-        const layout = new BuildingLayout(buildingsLayer);
-        layout.addMedium();
-        layout.addElectricSheep();
-        layout.addBig();
-        layout.addPub();
-        layout.addSmall();
-        layout.addBig();
+        const layout = new BuildingLayout(level, buildingsLayer);
 
         const streetWidth = layout.streetWidth();
         const height = 1200;
@@ -73,9 +71,6 @@ export default class Play extends Phaser.State
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
 
-        const levelsData = JSON.parse(this.game.cache.getText('levels'));
-        const levelData = levelsData[this.levelNumber - 1];
-        const level = new Level(this.levelNumber, levelData);
         const backbag = new BackBag(this.previousInventory);
         this.street = new Street(this.characterLayer, level, backbag, streetWidth);
 

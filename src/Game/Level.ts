@@ -8,16 +8,19 @@ export class Level
     private nbCitizens: number;
     private nbReplicants: number;
     private tutorialText: string;
+    private buildings: string[];
 
     constructor(num: number, data: any)
     {
         this.num = num;
-        this.nbCopsWithGun = data['cops_with_gun'];
-        this.nbCopsWithShotGun = data['cops_with_shotgun'];
-        this.nbSwats = data['swats'];
-        this.nbCitizens =  data['citizens'];
         this.tutorialText = data['tutorial'];
-        this.nbReplicants = data['replicants'];
+        const characters = data['characters'];
+        this.nbCopsWithGun = characters['cops_with_gun'];
+        this.nbCopsWithShotGun = characters['cops_with_shotgun'];
+        this.nbSwats = characters['swats'];
+        this.nbCitizens =  characters['citizens'];
+        this.nbReplicants = characters['replicants'];
+        this.buildings = data['buildings'];
     }
 
     public number(): number
@@ -53,5 +56,10 @@ export class Level
     public tutorial(): string
     {
         return this.tutorialText;
+    }
+
+    public orderedBuildingTypes(): string[]
+    {
+        return this.buildings;
     }
 }
