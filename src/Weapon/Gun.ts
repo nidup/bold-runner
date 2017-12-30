@@ -74,6 +74,6 @@ export class Gun implements BaseGun
 
     identifier(): string
     {
-        return 'gun';
+        return 'Gun';
     }
 }

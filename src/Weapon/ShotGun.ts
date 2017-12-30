@@ -81,6 +81,6 @@ export class ShotGun implements BaseGun
 
     identifier(): string
     {
-        return 'shotgun';
+        return 'ShotGun';
     }
 }

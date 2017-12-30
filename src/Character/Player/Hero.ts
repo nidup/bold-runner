@@ -28,7 +28,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private cursors: Phaser.CursorKeys;
     private shotKey: Phaser.Key;
     private switchKey: Phaser.Key;
-    private switching: boolean = false;
+    private switchedTime: number = 0;
     private street: Street;
     private aggressiveRating : number = 0;
     private dead: boolean = false;
@@ -36,14 +36,15 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private cameraFx: HeroCamera;
     private gameEvents: GameEvents;
     private bulletHits: BulletHits;
+    private group: Phaser.Group;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag)
     {
         super(group.game, x, y, key, 0);
         this.street = street;
-
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
+        this.group = group;
 
         this.inputEnabled = true;
         this.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
@@ -52,38 +53,38 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         this.body.allowGravity = false;
         this.body.collideWorldBounds = true;
 
-        this.animations.add('idle-gun', [0, 1, 2, 3, 4], 4, true);
-        this.animations.add('walk-gun', [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
-        this.animations.add('die-gun', [14, 15, 16, 17, 18, 19, 20], 12, false);
-        this.animations.add('shot-gun', [21, 22, 23, 24, 25, 26], 12, false);
-
-        this.animations.add('idle-shotgun', [27, 28, 29, 30, 31], 4, true);
-        this.animations.add('walk-shotgun', [32, 33, 34, 35, 36, 37, 38, 39, 40], 12, true);
-        this.animations.add('die-shotgun', [41, 42, 43, 44, 45, 46, 47], 12, false);
-        this.animations.add('shot-shotgun', [48, 49, 50, 51, 52, 53], 6, false);
-
-        this.animations.add('idle-machinegun', [54, 55, 56, 57, 58], 4, true);
-        this.animations.add('walk-machinegun', [59, 60, 61, 62, 63, 64, 65, 66, 67], 12, true);
-        this.animations.add('die-machinegun', [68, 69, 70, 71, 72, 73, 74], 12, false);
-        this.animations.add('shot-machinegun', [75, 76, 77, 78, 79, 80], 24, false);
-
-        this.cursors = this.game.input.keyboard.createCursorKeys();
-        this.shotKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.switchKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
-
         this.gun = new Gun(group, this, backbag.gunAmno());
         this.shotgun = new ShotGun(group, this, backbag.shotgunAmno());
         this.machinegun = new MachineGun(group, this, backbag.machinegunAmno());
         this.moneyAmount = backbag.money();
 
+        this.animations.add('idle-'+this.gun.identifier(), [0, 1, 2, 3, 4], 4, true);
+        this.animations.add('walk-'+this.gun.identifier(), [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
+        this.animations.add('die-'+this.gun.identifier(), [14, 15, 16, 17, 18, 19, 20], 12, false);
+        this.animations.add('shot-'+this.gun.identifier(), [21, 22, 23, 24, 25, 26], 12, false);
+
+        this.animations.add('idle-'+this.shotgun.identifier(), [27, 28, 29, 30, 31], 4, true);
+        this.animations.add('walk-'+this.shotgun.identifier(), [32, 33, 34, 35, 36, 37, 38, 39, 40], 12, true);
+        this.animations.add('die-'+this.shotgun.identifier(), [41, 42, 43, 44, 45, 46, 47], 12, false);
+        this.animations.add('shot-'+this.shotgun.identifier(), [48, 49, 50, 51, 52, 53], 6, false);
+
+        this.animations.add('idle-'+this.machinegun.identifier(), [54, 55, 56, 57, 58], 4, true);
+        this.animations.add('walk-'+this.machinegun.identifier(), [59, 60, 61, 62, 63, 64, 65, 66, 67], 12, true);
+        this.animations.add('die-'+this.machinegun.identifier(), [68, 69, 70, 71, 72, 73, 74], 12, false);
+        this.animations.add('shot-'+this.machinegun.identifier(), [75, 76, 77, 78, 79, 80], 24, false);
+
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.shotKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.switchKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+
         switch (backbag.currentGunIdentifier()) {
-            case 'gun':
+            case 'Gun':
                 this.switchToGun();
                 break;
-            case 'shotgun':
+            case 'ShotGun':
                 this.switchToShotGun();
                 break;
-            case 'machinegun':
+            case 'MachineGun':
                 this.switchToMachineGun();
                 break;
             default:
@@ -101,7 +102,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
             this.die();
 
         } else {
-            this.move();
+            this.controls();
             this.bulletHits.hit();
         }
     }
@@ -184,16 +185,19 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     switchToMachineGun()
     {
         this.currentGun = this.machinegun;
+        this.switchGunEffect();
     }
 
     switchToShotGun()
     {
         this.currentGun = this.shotgun;
+        this.switchGunEffect();
     }
 
     switchToGun()
     {
         this.currentGun = this.gun;
+        this.switchGunEffect();
     }
 
     isEquipedWithGun(): boolean
@@ -241,7 +245,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         return this.gameEvents;
     }
 
-    private move()
+    private controls()
     {
         this.body.velocity.x = 0;
         this.body.velocity.y = 0;
@@ -273,10 +277,9 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         } else if (this.shotKey.isDown) {
             this.shot();
 
-        } else if (this.switchKey.isDown && !this.switching) {
-            this.switching = true;
+        } else if (this.switchKey.isDown && this.game.time.now > this.switchedTime) {
+            this.switchedTime = this.game.time.now + 500;
             this.switchToNextUsableGun();
-            this.switching = false;
 
         } else {
             this.animations.play('idle-'+this.currentGun.identifier());
@@ -311,6 +314,14 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         } else {
             this.cameraFx.gunEffect();
         }
+    }
+
+    private switchGunEffect()
+    {
+        const switchGunSprite = this.game.add.sprite(this.x - 10, this.y - 40, this.currentGun.identifier(), 1, this.group);
+        const duration = 300;
+        const tween = this.group.game.add.tween(switchGunSprite).to( { y: switchGunSprite.y - 20 }, duration, "Linear", true);
+        tween.onComplete.addOnce(function () { switchGunSprite.destroy();} );
     }
 
     private die()

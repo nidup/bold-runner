@@ -21,7 +21,7 @@ export default class Play extends Phaser.State
     private switchingLevel: boolean = false;
     private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'machinegunAmno': number, 'money': number, 'currentGun': string} = null;
 
-    public init (level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'machinegunAmno': 0, 'money': 0, 'currentGun': 'gun'})
+    public init (level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'machinegunAmno': 0, 'money': 0, 'currentGun': 'Gun'})
     {
         this.levelNumber = level;
         this.previousInventory = previousInventory;
