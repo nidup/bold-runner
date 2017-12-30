@@ -9,7 +9,7 @@ import {FlashMessages} from "../../Widget/FlashMessages";
 import {BuildingLayout} from "../../Building/BuildingLayout";
 import {Config} from "../../Config";
 import {LevelLoader} from "../LevelLoader";
-import {GamePadController, KeyBoardController} from "../Controller";
+import {GamePadController, KeyBoardController, VirtualPadController} from "../Controller";
 
 export default class Play extends Phaser.State
 {
@@ -78,6 +78,8 @@ export default class Play extends Phaser.State
             controller = new KeyBoardController(this.game);
         } else if (this.controllerType === 'gamepad') {
             controller = new GamePadController(this.game);
+        } else if (this.controllerType === 'virtualpad') {
+            controller = new VirtualPadController(this.game);
         } else {
             throw new Error('Unknown controller '+ this.controllerType);
         }

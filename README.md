@@ -65,3 +65,5 @@ git push
 MIT for the code of this repository (src folder).
 
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) for the artwork (assets folder).
+
+Excepts assets/controllers folder, [kudos to Xelu!](https://github.com/photonstorm/phaser-examples/tree/master/examples/assets/controllers)

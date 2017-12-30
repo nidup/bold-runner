@@ -1,27 +1,27 @@
 
 import {Config} from "../../Config";
-import {Controller, GamePadController, KeyBoardController} from "../Controller";
+import {Controller, GamePadController, KeyBoardController, VirtualPadController} from "../Controller";
+import {DeviceDetector} from "../DeviceDetector";
 
 export default class Menu extends Phaser.State {
 
     private startText : Phaser.BitmapText;
-    private controlsKey: Phaser.Key;
-    private cursors: Phaser.CursorKeys;
     private keyboardController: KeyBoardController;
     private gamepadController: GamePadController;
     private gamepadIndicatorSprite: Phaser.Sprite;
     private gamepadIndicatorText : Phaser.BitmapText;
     private controlsKeyboardText: string;
     private controlsGamepadText: string;
+    private controlsVirtualpadText: string;
     private controlsText: Phaser.BitmapText;
     private chosenController: Controller;
+    private isMobile: boolean;
 
     public create ()
     {
         const smallFontSize = 10;
         const largeFontSize = 34;
         this.game.stage.backgroundColor = '#1b1128';
-        this.cursors = this.game.input.keyboard.createCursorKeys();
 
         //this.background = this.game.add.sprite(0, 0, 'Menu');
         //this.background.scale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
@@ -39,33 +39,20 @@ export default class Menu extends Phaser.State {
             +"citizens.";
         this.game.add.bitmapText(storyX, storyY, 'carrier-command',storyText, smallFontSize);
 
+        const detector = new DeviceDetector(this.game.device);
+        this.isMobile = detector.isMobile();
+
         const controlsChoiceX = storyX;
         const controlsChoiceY = storyY + 150;
-        this.controlsKeyboardText = "Keyboard controls:\n\n"
-            +" - Move: arrows\n\n"
-            +" - Fire: space bar\n\n"
-            +" - Switch weapon: S\n\n";
+        if (this.isMobile) {
+            this.setupForMobile(controlsChoiceX, controlsChoiceY, smallFontSize);
+        } else {
+            this.setupForComputer(controlsChoiceX, controlsChoiceY, smallFontSize);
+        }
 
-        this.controlsGamepadText = "Gamepad controls:\n\n"
-            +" - Move: arrows\n\n"
-            +" - Fire: button X\n\n"
-            +" - Switch weapon: button Y\n\n";
-
-        this.controlsText = this.game.add.bitmapText(controlsChoiceX, controlsChoiceY, 'carrier-command',this.controlsKeyboardText, smallFontSize);
-
-        this.keyboardController = new KeyBoardController(this.game);
-        this.gamepadController = new GamePadController(this.game);
-        this.chosenController = this.keyboardController;
-
-        const indicatorX = controlsChoiceX;
-        const indicatorY = controlsChoiceY + 100;
-        this.gamepadIndicatorSprite = this.game.add.sprite(indicatorX,indicatorY, 'ControllerIndicator');
-        this.gamepadIndicatorSprite.scale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
-        this.gamepadIndicatorText = this.game.add.bitmapText(indicatorX + 50, indicatorY + 10, 'carrier-command','', smallFontSize);
-
-        const startX = indicatorX;
-        const startY = indicatorY + 80;
-        this.startText = this.game.add.bitmapText(startX, startY, 'carrier-command','Press space to start', smallFontSize);
+        const startX = storyX;
+        const startY = storyY + 270;
+        this.startText = this.game.add.bitmapText(startX, startY, 'carrier-command','Press X button to start', smallFontSize);
         this.startText.alpha = 1;
         const tweenAlpha = this.game.add.tween(this.startText).to( { alpha: 0.3 }, 0, "Linear", true);
         tweenAlpha.repeat(10000, 500);
@@ -73,36 +60,76 @@ export default class Menu extends Phaser.State {
         const authorX = 1000;
         const authorY = 740;
         this.game.add.bitmapText(authorX, authorY, 'carrier-command','Nidup, 2018', smallFontSize);
+    }
 
-        const spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        spaceKey.onDown.add(this.startGame, this);
-        this.controlsKey = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
+    private setupForMobile(controlsChoiceX: number, controlsChoiceY:number, smallFontSize: number)
+    {
+        this.controlsVirtualpadText = "Controls [Virtual Gamepad Selected]:\n\n"
+            +" - Move: arrows\n\n"
+            +" - Fire: button X\n\n"
+            +" - Switch weapon: button Y\n\n";
+        this.controlsText = this.game.add.bitmapText(controlsChoiceX, controlsChoiceY, 'carrier-command',this.controlsVirtualpadText, smallFontSize);
+
+        this.chosenController = new VirtualPadController(this.game);
+    }
+
+    private setupForComputer(controlsChoiceX: number, controlsChoiceY:number, smallFontSize: number)
+    {
+        this.controlsKeyboardText = "Controls [Keyboard Selected]:\n\n"
+            +" - Move: arrows\n\n"
+            +" - Fire: space bar\n\n"
+            +" - Switch weapon: S\n\n";
+        this.controlsGamepadText = "Controls [Gamepad Selected]:\n\n"
+            +" - Move: arrows\n\n"
+            +" - Fire: button X\n\n"
+            +" - Switch weapon: button Y\n\n";
+        this.controlsText = this.game.add.bitmapText(controlsChoiceX, controlsChoiceY, 'carrier-command',this.controlsKeyboardText, smallFontSize);
+
+        this.keyboardController = new KeyBoardController(this.game);
+        this.gamepadController = new GamePadController(this.game);
+        this.chosenController = this.keyboardController;
+
+        const indicatorX = 50;
+        const indicatorY = 730;
+        this.gamepadIndicatorSprite = this.game.add.sprite(indicatorX,indicatorY, 'ControllerIndicator');
+        this.gamepadIndicatorSprite.scale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+        this.gamepadIndicatorText = this.game.add.bitmapText(indicatorX + 50, indicatorY + 10, 'carrier-command','', smallFontSize);
     }
 
     public update()
     {
-        if (this.gamepadController.supported()) {
-            this.gamepadIndicatorSprite.animations.frame = 0;
-            this.gamepadIndicatorText.setText('Gamepad is supported, press X to switch controls');
-            if (this.controlsKey.justDown) {
-                if (this.chosenController === this.keyboardController) {
-                    this.chosenController = this.gamepadController;
-                    this.controlsText.setText(this.controlsGamepadText);
-                } else {
-                    this.chosenController = this.keyboardController;
-                    this.controlsText.setText(this.controlsKeyboardText);
-                }
-            }
-        } else {
-            this.gamepadIndicatorSprite.animations.frame = 1;
-            this.gamepadIndicatorText.setText('Gamepad is not supported, try to re-plug');
-            this.chosenController = this.keyboardController;
-        }
-    }
+        if (!this.isMobile) {
+            if (this.gamepadController.supported()) {
+                this.gamepadIndicatorSprite.animations.frame = 0;
 
-    public startGame ()
-    {
-        this.game.state.start('Play', true, false, this.chosenController.identifier());
+                if (this.chosenController.switchingWeapon()) {
+                    if (this.chosenController === this.keyboardController) {
+                        this.chosenController = this.gamepadController;
+                        this.controlsText.setText(this.controlsGamepadText);
+                    } else {
+                        this.chosenController = this.keyboardController;
+                        this.controlsText.setText(this.controlsKeyboardText);
+                    }
+                }
+
+                if (this.chosenController === this.keyboardController) {
+                    this.gamepadIndicatorText.setText('Keyboard is selected, press S key to use gamepad');
+                    this.startText.setText('Press space key to start');
+                } else {
+                    this.gamepadIndicatorText.setText('Gamepad is selected, press Y button to use keyboard');
+                    this.startText.setText('Press X button to start');
+                }
+
+            } else {
+                this.gamepadIndicatorSprite.animations.frame = 1;
+                this.gamepadIndicatorText.setText('Gamepad is not supported, try to re-plug');
+                this.chosenController = this.keyboardController;
+            }
+        }
+
+        if (this.chosenController.shooting()) {
+            this.game.state.start('Play', true, false, this.chosenController.identifier());
+        }
     }
 
     public shutdown ()
