@@ -335,7 +335,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
             this.animations.play('die-'+this.currentGun.identifier());
             this.gameEvents.register(new HeroKilled(this.game.time.now));
             this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
-                this.game.state.start('Play', true, false, 1);
+                this.game.state.start('Play', true, false, this.controller.identifier(), 1);
             }, this);
         }
     }

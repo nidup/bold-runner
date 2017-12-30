@@ -8,6 +8,7 @@ export interface Controller
     shooting(): boolean;
     switchingWeapon(): boolean;
     supported(): boolean;
+    identifier(): string;
 }
 
 export class KeyBoardController implements Controller
@@ -56,6 +57,11 @@ export class KeyBoardController implements Controller
     supported(): boolean
     {
         return true;
+    }
+
+    identifier(): string
+    {
+        return 'keyboard';
     }
 }
 
@@ -111,5 +117,10 @@ export class GamePadController implements Controller
     switchingWeapon(): boolean
     {
         return this.pad.isDown(Phaser.Gamepad.XBOX360_Y);
+    }
+
+    identifier(): string
+    {
+        return 'gamepad';
     }
 }

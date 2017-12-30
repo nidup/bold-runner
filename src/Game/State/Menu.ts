@@ -1,6 +1,6 @@
 
 import {Config} from "../../Config";
-import {GamePadController, KeyBoardController} from "../Controller";
+import {Controller, GamePadController, KeyBoardController} from "../Controller";
 
 export default class Menu extends Phaser.State {
 
@@ -14,7 +14,7 @@ export default class Menu extends Phaser.State {
     private controlsKeyboardText: string;
     private controlsGamepadText: string;
     private controlsText: Phaser.BitmapText;
-    private choseController: string;
+    private chosenController: Controller;
 
     public create ()
     {
@@ -55,6 +55,7 @@ export default class Menu extends Phaser.State {
 
         this.keyboardController = new KeyBoardController(this.game);
         this.gamepadController = new GamePadController(this.game);
+        this.chosenController = this.keyboardController;
 
         const indicatorX = controlsChoiceX;
         const indicatorY = controlsChoiceY + 100;
@@ -76,7 +77,6 @@ export default class Menu extends Phaser.State {
         const spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         spaceKey.onDown.add(this.startGame, this);
         this.controlsKey = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
-        this.choseController = 'keyboard';
     }
 
     public update()
@@ -85,24 +85,24 @@ export default class Menu extends Phaser.State {
             this.gamepadIndicatorSprite.animations.frame = 0;
             this.gamepadIndicatorText.setText('Gamepad is supported, press X to switch controls');
             if (this.controlsKey.justDown) {
-                if (this.choseController === 'keyboard') {
-                    this.choseController = 'gamepad';
+                if (this.chosenController === this.keyboardController) {
+                    this.chosenController = this.gamepadController;
                     this.controlsText.setText(this.controlsGamepadText);
                 } else {
-                    this.choseController = 'keyboard';
+                    this.chosenController = this.keyboardController;
                     this.controlsText.setText(this.controlsKeyboardText);
                 }
             }
         } else {
             this.gamepadIndicatorSprite.animations.frame = 1;
             this.gamepadIndicatorText.setText('Gamepad is not supported, try to re-plug');
-            this.choseController = 'keyboard';
+            this.chosenController = this.keyboardController;
         }
     }
 
     public startGame ()
     {
-        this.game.state.start('Play', true, false, this.choseController);
+        this.game.state.start('Play', true, false, this.chosenController.identifier());
     }
 
     public shutdown ()
