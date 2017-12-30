@@ -38,9 +38,11 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
         if (key === 'cop-shotgun') {
             gun = new ShotGun(group, this);
             shotRate = 6;
+            this.health = 40;
         } else {
             gun = new Gun(group, this);
             shotRate = 12;
+            this.health = 1;
         }
         this.brain = new CopBrain(this, gun, street, group);
 
