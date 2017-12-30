@@ -1,28 +1,26 @@
 
 import {Street} from "../../Game/Street";
-import {Cop} from "../Bot/Cop";
-import {Citizen} from "../Bot/Citizen";
 import {Gun} from "../../Weapon/Gun";
 import {PickableItem} from "./PickableItem";
 import {ShotGun} from "../../Weapon/ShotGun";
 import {BaseGun} from "../../Weapon/BaseGun";
 import {BackBag} from "./BackBag";
 import {
-    CitizenKilled, CopKilled, GameEvents, GunPicked, HeroKilled, MachineGunPicked, MoneyPicked,
+    GameEvents, GunPicked, HeroKilled, MachineGunPicked, MoneyPicked,
     ShotGunPicked
 } from "./Events";
-import {Swat} from "../Bot/Swat";
 import {MachineGun} from "../../Weapon/MachineGun";
 import {CanBeHurt} from "../CanBeHurt";
 import {HorizontalDirection} from "../HorizontalDirection";
 import {CharacterHurt} from "../SFX/CharacterHurt";
 import {HeroCamera} from "../SFX/HeroCamera";
+import {BulletHits} from "./BulletHits";
+import {Config} from "../../Config";
 
 export class Hero extends Phaser.Sprite implements CanBeHurt
 {
     public body: Phaser.Physics.Arcade.Body;
     private speed: number = 150;
-    private scaleRatio = 2;
     private currentGun: BaseGun;
     private gun: Gun;
     private shotgun: ShotGun;
@@ -37,6 +35,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private moneyAmount: number = 0;
     private cameraFx: HeroCamera;
     private gameEvents: GameEvents;
+    private bulletHits: BulletHits;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag)
     {
@@ -47,7 +46,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         group.add(this);
 
         this.inputEnabled = true;
-        this.scale.setTo(this.scaleRatio, this.scaleRatio);
+        this.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         this.anchor.setTo(0.5, 0.5);
         this.body.setCircle(9, 7, 8);
         this.body.allowGravity = false;
@@ -93,6 +92,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
 
         this.cameraFx = new HeroCamera(group.game.camera);
         this.gameEvents = new GameEvents();
+        this.bulletHits = new BulletHits(this, this.street);
     }
 
     public update()
@@ -102,41 +102,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
 
         } else {
             this.move();
-
-            const hero = this;
-            const myGun = this.currentGun;
-            this.currentGun.bulletHits(
-                this.street.cops().allAlive(),
-                function(cop: Cop, bullet: Phaser.Bullet) {
-                    cop.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
-                    bullet.kill();
-                    if (cop.isDying()) {
-                        hero.gameEvents.register(new CopKilled(hero.game.time.now));
-                    }
-                }
-            );
-
-            this.currentGun.bulletHits(
-                this.street.swats().allAlive(),
-                function(swat: Swat, bullet: Phaser.Bullet) {
-                    swat.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
-                    bullet.kill();
-                    if (swat.isDying()) {
-                        hero.gameEvents.register(new CopKilled(hero.game.time.now));
-                    }
-                }
-            );
-
-            this.currentGun.bulletHits(
-                this.street.citizens().allAlive(),
-                function(citizen: Citizen, bullet: Phaser.Bullet) {
-                    citizen.hurt(myGun.damage(), new HorizontalDirection(bullet.body));
-                    bullet.kill();
-                    if (citizen.isDying()) {
-                        hero.gameEvents.register(new CitizenKilled(hero.game.time.now));
-                    }
-                }
-            );
+            this.bulletHits.hit();
         }
     }
 
@@ -281,7 +247,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         this.body.velocity.y = 0;
 
         if (this.cursors.left.isDown) {
-            this.scale.x = -this.scaleRatio;
+            this.scale.x = -Config.pixelScaleRatio();
             this.body.velocity.x = -this.speed;
             this.animations.play('walk-'+this.currentGun.identifier());
             this.gun.turnToTheLeft();
@@ -289,7 +255,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
             this.machinegun.turnToTheLeft();
 
         } else if (this.cursors.right.isDown) {
-            this.scale.x = this.scaleRatio;
+            this.scale.x = Config.pixelScaleRatio();
             this.body.velocity.x = this.speed;
             this.animations.play('walk-'+this.currentGun.identifier());
             this.gun.turnToTheRight();
