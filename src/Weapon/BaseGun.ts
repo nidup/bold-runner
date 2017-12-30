@@ -9,4 +9,5 @@ export interface BaseGun
     amno(): number;
     reload(amount: number);
     damage(): number;
+    identifier(): string;
 }

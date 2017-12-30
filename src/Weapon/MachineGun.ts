@@ -27,27 +27,27 @@ export class MachineGun implements BaseGun
         );
     }
 
-    public fire()
+    fire()
     {
         this.weapon.fire();
     }
 
-    public turnToTheLeft()
+    turnToTheLeft()
     {
         this.weapon.fireAngle = 180;
     }
 
-    public turnToTheRight()
+    turnToTheRight()
     {
         this.weapon.fireAngle = 0;
     }
 
-    public bullets()
+    bullets()
     {
         return this.weapon.bullets;
     }
 
-    public bulletHits(targets, overlapCallback)
+    bulletHits(targets, overlapCallback)
     {
         this.game.physics.arcade.overlap(
             this.weapon.bullets,
@@ -58,18 +58,23 @@ export class MachineGun implements BaseGun
         );
     }
 
-    public amno(): number
+    amno(): number
     {
         return this.amnoAmount;
     }
 
-    public reload(amount: number)
+    reload(amount: number)
     {
         this.amnoAmount = this.amnoAmount + amount;
     }
 
-    public damage(): number
+    damage(): number
     {
         return 30;
+    }
+
+    identifier(): string
+    {
+        return 'machinegun';
     }
 }
