@@ -6,6 +6,8 @@ import {CouldBeAReplicant} from "./CouldBeAReplicant";
 import {CanBeHurt} from "../CanBeHurt";
 import {HorizontalDirection} from "../HorizontalDirection";
 import {CharacterHurt} from "../SFX/CharacterHurt";
+import {FearStatus} from "./FearStatus";
+import {PickableItem} from "../Player/PickableItem";
 
 export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
@@ -13,6 +15,10 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
     private brain: CitizenBrain;
     private dead: boolean = false;
     private isReplicant: boolean = false;
+    private fearStatus: FearStatus;
+    private group: Phaser.Group;
+    private street: Street;
+    private feelingSprite: Phaser.Sprite;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, replicant: boolean)
     {
@@ -20,6 +26,7 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
 
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
+        this.group = group;
 
         this.inputEnabled = true;
         this.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
@@ -35,14 +42,30 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
         this.animations.add('die', [14, 15, 16, 17, 18, 19, 20], 12, false);
         this.animations.add('die-replicant', [21, 22, 23, 24, 25, 26, 27], 12, false);
 
-        this.brain = new CitizenBrain(this, street, group);
+        this.fearStatus = new FearStatus();
+        this.brain = new CitizenBrain(this, street, group, this.fearStatus);
         this.isReplicant = replicant;
+        this.street = street;
+
+        this.feelingSprite = this.game.add.sprite(this.x - 10, this.y - 40, 'Marker', 0, group);
+        this.feelingSprite.animations.add('nothing', [4], 4, true);
+        this.feelingSprite.animations.add('afraid', [2, 3], 4, true);
+        this.feelingSprite.animations.play('afraid');
     }
 
     update()
     {
         if (!this.dead) {
             this.brain.think();
+
+            if (this.isAfraid()) {
+                this.feelingSprite.play('afraid');
+                this.feelingSprite.x = this.x - 10;
+                this.feelingSprite.y = this.y - 45;
+
+            } else {
+               this.feelingSprite.play('nothing');
+            }
         }
     }
 
@@ -53,7 +76,32 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
 
     die()
     {
+        if (!this.replicant()) {
+            this.animations.play('die');
+        } else {
+            this.animations.play('die-replicant');
+        }
+        let randMoney = this.group.game.rnd.integerInRange(1, 3);
+        if (randMoney === 1) {
+            new PickableItem(this.group, this.x, this.y, 'Money', this.street.player());
+        }
+
         this.dead = true;
+    }
+
+    run()
+    {
+        this.animations.play('run');
+    }
+
+    walk()
+    {
+        this.animations.play('walk');
+    }
+
+    rest()
+    {
+        this.animations.play('idle');
     }
 
     hurt(damage: number, fromDirection: HorizontalDirection)
@@ -66,5 +114,10 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
     isDying(): boolean
     {
         return this.health <= 0;
+    }
+
+    isAfraid(): boolean
+    {
+        return this.fearStatus.isAfraid();
     }
 }

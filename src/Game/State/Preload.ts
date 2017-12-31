@@ -51,6 +51,7 @@ export default class Preload extends Phaser.State
         this.load.spritesheet('swat', 'assets/sprites/swat.png', 32, 32);
         this.load.spritesheet('hero', 'assets/sprites/hero.png', 32, 32);
         this.load.spritesheet('Bullet', 'assets/sprites/bullets.png', 10, 10);
+        this.load.spritesheet('Marker', 'assets/sprites/markers.png', 20, 20);
         this.load.spritesheet('Gun', 'assets/sprites/gun.png', 20, 20);
         this.load.spritesheet('ShotGun', 'assets/sprites/shotgun.png', 20, 20);
         this.load.spritesheet('MachineGun', 'assets/sprites/machinegun.png', 20, 20);
