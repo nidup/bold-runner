@@ -2,7 +2,7 @@
   {
     "tutorial": "Replicants are hidden in the population\n\nNo choice, you need to kill'em all.\n\nUse arrows to move and space bar to shot.",
     "characters": {
-      "cops_with_gun": 4,
+      "cops_with_gun": 0,
       "cops_with_shotgun": 0,
       "swats": 0,
       "citizens": 6,
