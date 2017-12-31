@@ -17,6 +17,7 @@ import {HeroCamera} from "../SFX/HeroCamera";
 import {BulletHits} from "./BulletHits";
 import {Config} from "../../Config";
 import {Controller} from "../../Game/Controller";
+import {AggressivenessGauge} from "./AggressivenessGauge";
 
 export class Hero extends Phaser.Sprite implements CanBeHurt
 {
@@ -28,7 +29,6 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private machinegun: MachineGun;
     private switchedTime: number = 0;
     private street: Street;
-    private aggressiveRating : number = 0;
     private dead: boolean = false;
     private moneyAmount: number = 0;
     private cameraFx: HeroCamera;
@@ -36,6 +36,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private bulletHits: BulletHits;
     private group: Phaser.Group;
     private controller: Controller;
+    private agressivenessGauge: AggressivenessGauge;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag, controller: Controller)
     {
@@ -91,6 +92,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         this.cameraFx = new HeroCamera(group.game.camera);
         this.gameEvents = new GameEvents();
         this.bulletHits = new BulletHits(this, this.street);
+        this.agressivenessGauge = new AggressivenessGauge(this.game.time);
     }
 
     public update()
@@ -128,7 +130,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
 
     isAggressive(): boolean
     {
-        return this.aggressiveRating > 0;
+        return this.agressivenessGauge.isAggressive();
     }
 
     isDead(): boolean
@@ -299,12 +301,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         if (this.currentGun === this.shotgun && this.shotgunAmno() === 0) {
             this.switchToGun();
         }
-        this.game.time.events.add(Phaser.Timer.SECOND * 0.5, function () {
-            this.aggressiveRating++;
-        }, this);
-        this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
-            this.aggressiveRating--;
-        }, this);
+        this.agressivenessGauge.increase();
     }
 
     private shotCameraEffects()
