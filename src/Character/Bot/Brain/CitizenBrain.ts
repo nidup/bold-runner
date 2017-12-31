@@ -143,4 +143,9 @@ export class CitizenBrain
     public dying = () =>
     {
     }
+
+    public currentStateName(): string
+    {
+        return this.fsm.getCurrentState().getName();
+    }
 }

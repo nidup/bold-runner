@@ -7,8 +7,9 @@ import {State} from "./FSM/State";
 import {Energy} from "../Energy";
 import {Steering} from "../Steering";
 import {Vision} from "../Vision";
+import {Brain} from "./Brain";
 
-export class CopBrain
+export class CopBrain implements Brain
 {
     private host: Cop;
     private fsm: StackFSM;
@@ -132,5 +133,10 @@ export class CopBrain
 
     public dying = () =>
     {
+    }
+
+    public currentStateName(): string
+    {
+        return this.fsm.getCurrentState().getName();
     }
 }

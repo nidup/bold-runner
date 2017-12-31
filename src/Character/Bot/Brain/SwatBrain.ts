@@ -8,8 +8,9 @@ import {Swat} from "../Swat";
 import {Energy} from "../Energy";
 import {Steering} from "../Steering";
 import {Vision} from "../Vision";
+import {Brain} from "./Brain";
 
-export class SwatBrain
+export class SwatBrain implements Brain
 {
     private host: Swat;
     private fsm: StackFSM;
@@ -133,5 +134,10 @@ export class SwatBrain
 
     public dying = () =>
     {
+    }
+
+    public currentStateName(): string
+    {
+        return this.fsm.getCurrentState().getName();
     }
 }
