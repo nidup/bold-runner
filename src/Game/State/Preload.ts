@@ -1,4 +1,6 @@
 
+import {Config} from "../../Config";
+
 export default class Preload extends Phaser.State
 {
     private skipMenu = false;
@@ -14,7 +16,11 @@ export default class Preload extends Phaser.State
     public create ()
     {
         if (this.skipMenu) {
-            this.game.state.start('Play', true, false, 'gamepad');
+            if (Config.fakingMobileForDebug()) {
+                this.game.state.start('Play', true, false, 'virtualpad');
+            } else {
+                this.game.state.start('Play', true, false, 'keyboard');
+            }
         } else {
             this.game.state.start('Menu');
         }
@@ -34,6 +40,7 @@ export default class Preload extends Phaser.State
         this.load.spritesheet('ControllerIndicator', 'assets/controllers/controller-indicator.png', 16,16);
         this.load.atlas('xbox360', 'assets/controllers/xbox360.png', 'assets/controllers/xbox360.json');
 
+        this.load.spritesheet('Side', 'assets/sprites/side.png', 12, 12);
         this.load.spritesheet('sky', 'assets/sprites/sky.png', 800, 600);
         this.load.spritesheet('background', 'assets/sprites/background.png', 800, 600);
         this.load.spritesheet('Inventory', 'assets/sprites/inventory.png', 300, 300);

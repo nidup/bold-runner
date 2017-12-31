@@ -19,6 +19,9 @@ export default class Menu extends Phaser.State {
 
     public create ()
     {
+        const detector = new DeviceDetector(this.game.device);
+        this.isMobile = detector.isMobile();
+
         const smallFontSize = 10;
         const largeFontSize = 34;
         this.game.stage.backgroundColor = '#1b1128';
@@ -26,7 +29,10 @@ export default class Menu extends Phaser.State {
         //this.background = this.game.add.sprite(0, 0, 'Menu');
         //this.background.scale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
 
-        const titleX = 260;
+        let titleX = 260;
+        if (this.isMobile) {
+            titleX += Config.mobileExtraSidePadding();
+        }
         const titleY = 213;
         this.game.add.bitmapText(titleX, titleY, 'carrier-command','Bold Runner', largeFontSize);
 
@@ -39,9 +45,6 @@ export default class Menu extends Phaser.State {
             +"citizens.";
         this.game.add.bitmapText(storyX, storyY, 'carrier-command',storyText, smallFontSize);
 
-        const detector = new DeviceDetector(this.game.device);
-        this.isMobile = detector.isMobile();
-
         const controlsChoiceX = storyX;
         const controlsChoiceY = storyY + 150;
         if (this.isMobile) {
@@ -52,7 +55,7 @@ export default class Menu extends Phaser.State {
 
         const startX = storyX;
         const startY = storyY + 270;
-        this.startText = this.game.add.bitmapText(startX, startY, 'carrier-command','Press X button to start', smallFontSize);
+        this.startText = this.game.add.bitmapText(startX, startY, 'carrier-command','', smallFontSize);
         this.startText.alpha = 1;
         const tweenAlpha = this.game.add.tween(this.startText).to( { alpha: 0.3 }, 0, "Linear", true);
         tweenAlpha.repeat(10000, 500);
@@ -98,7 +101,9 @@ export default class Menu extends Phaser.State {
 
     public update()
     {
-        if (!this.isMobile) {
+        if (this.isMobile) {
+            this.startText.setText('Press X key to start');
+        } else {
             if (this.gamepadController.supported()) {
                 this.gamepadIndicatorSprite.animations.frame = 0;
 
@@ -123,6 +128,7 @@ export default class Menu extends Phaser.State {
             } else {
                 this.gamepadIndicatorSprite.animations.frame = 1;
                 this.gamepadIndicatorText.setText('Gamepad is not supported, try to re-plug');
+                this.startText.setText('Press space key to start');
                 this.chosenController = this.keyboardController;
             }
         }

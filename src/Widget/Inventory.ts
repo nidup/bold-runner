@@ -38,7 +38,7 @@ export class Inventory extends Phaser.Sprite
         const marginLeftAmountToImage = 80;
         const marginTopAmountToImage = 15;
 
-        const gunX = 1127;
+        const gunX = this.x + 527;
         const gunY = 145;
         this.gunSprite = group.game.add.sprite(gunX, gunY, 'Gun', 1, group);
         this.gunSprite.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());

@@ -1,4 +1,6 @@
 
+import {Config} from "../Config";
+
 export class DeviceDetector
 {
     private device: Phaser.Device;
@@ -10,6 +12,6 @@ export class DeviceDetector
 
     isMobile()
     {
-        return this.device.android;
+        return !this.device.desktop || Config.fakingMobileForDebug();
     }
 }

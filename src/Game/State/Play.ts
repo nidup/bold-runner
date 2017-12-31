@@ -10,10 +10,10 @@ import {BuildingLayout} from "../../Building/BuildingLayout";
 import {Config} from "../../Config";
 import {LevelLoader} from "../LevelLoader";
 import {GamePadController, KeyBoardController, VirtualPadController} from "../Controller";
+import {DeviceDetector} from "../DeviceDetector";
 
 export default class Play extends Phaser.State
 {
-    private debug: boolean = false;
     private sky: Phaser.TileSprite;
     private background: Phaser.TileSprite;
     private street: Street;
@@ -22,6 +22,8 @@ export default class Play extends Phaser.State
     private switchingLevel: boolean = false;
     private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'machinegunAmno': number, 'money': number, 'currentGun': string} = null;
     private controllerType: string = null;
+    private leftBoundMargin: Phaser.TileSprite;
+    private rightBoundMargin: Phaser.TileSprite;
 
     public init (controllerType: string, level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'machinegunAmno': 0, 'money': 0, 'currentGun': 'Gun'})
     {
@@ -33,7 +35,7 @@ export default class Play extends Phaser.State
 
     public create()
     {
-        if (this.debug) {
+        if (Config.debug()) {
             this.game.time.advancedTiming = true
         }
         this.game.stage.backgroundColor = '#000000';
@@ -50,28 +52,60 @@ export default class Play extends Phaser.State
         const buildingsLayer = this.game.add.group();
         buildingsLayer.name = 'Buildings';
 
-        const layout = new BuildingLayout(level, buildingsLayer);
-
-        const streetWidth = layout.streetWidth();
-        const height = 1200;
-        const heightPosition = -400;
-
-        this.sky = this.game.add.tileSprite(0,heightPosition, streetWidth, height,'sky',0, skyLayer);
-        this.sky.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
-
-        this.background = this.game.add.tileSprite(0,heightPosition, streetWidth, height,'background',0, backgroundLayer);
-        this.background.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
-
-        const streetHeight = 220;
-        const streetPositionY = 580;
-        const street = this.game.add.tileSprite(0, streetPositionY, streetWidth, streetHeight,'Street',0, buildingsLayer);
-        street.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
-
         this.characterLayer = this.game.add.group();
         this.characterLayer.name = 'Characters';
 
         const interfaceLayer = this.game.add.group();
         interfaceLayer.name = 'Interface';
+
+        let streetPositionX = 0;
+        let sideMarginWidth = 1;
+        let rightCameraMarginX = this.game.width;
+        const detector = new DeviceDetector(this.game.device);
+        if (detector.isMobile()) {
+            streetPositionX += Config.mobileExtraSidePadding();
+            sideMarginWidth = Config.mobileExtraSidePadding();
+            rightCameraMarginX -= Config.mobileExtraSidePadding();
+        }
+
+        const leftCameraMargin = this.game.add.tileSprite(0, 0, sideMarginWidth, 800, 'Side', 0, interfaceLayer);
+        leftCameraMargin.fixedToCamera = true;
+
+        this.leftBoundMargin = this.game.add.tileSprite(-1, 0, sideMarginWidth, 800, 'Side', 0, interfaceLayer);
+        this.game.physics.enable(this.leftBoundMargin, Phaser.Physics.ARCADE);
+        this.leftBoundMargin.body.immovable = true;
+        this.leftBoundMargin.body.allowGravity = false;
+
+        const rightCameraMargin = this.game.add.tileSprite(rightCameraMarginX, 0, sideMarginWidth, 800, 'Side', 0, interfaceLayer);
+        rightCameraMargin.fixedToCamera = true;
+
+        const layout = new BuildingLayout(level, buildingsLayer, streetPositionX);
+        const streetWidth = layout.streetWidth();
+
+        let worldWidth = streetWidth;
+        let rightBoundMarginX = streetWidth;
+        if (detector.isMobile()) {
+            worldWidth += Config.mobileExtraSidePadding();
+        }
+
+        this.rightBoundMargin = this.game.add.tileSprite(rightBoundMarginX, 0, sideMarginWidth, 800, 'Side', 0, interfaceLayer);
+        this.game.physics.enable(this.rightBoundMargin, Phaser.Physics.ARCADE);
+        this.rightBoundMargin.body.immovable = true;
+        this.rightBoundMargin.body.allowGravity = false;
+
+        const height = 1200;
+        const heightPosition = -400;
+
+        this.sky = this.game.add.tileSprite(streetPositionX, heightPosition, streetWidth, height,'sky',0, skyLayer);
+        this.sky.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+
+        this.background = this.game.add.tileSprite(streetPositionX, heightPosition, streetWidth, height,'background',0, backgroundLayer);
+        this.background.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
+
+        const streetHeight = 220;
+        const streetPositionY = 580;
+        const street = this.game.add.tileSprite(streetPositionX, streetPositionY, streetWidth, streetHeight,'Street',0, buildingsLayer);
+        street.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
 
         let controller = null;
         if (this.controllerType === 'keyboard') {
@@ -85,13 +119,17 @@ export default class Play extends Phaser.State
         }
 
         const backbag = new BackBag(this.previousInventory);
-        this.street = new Street(this.characterLayer, level, backbag, streetWidth, controller);
+        this.street = new Street(this.characterLayer, level, backbag, streetPositionX, streetWidth, controller);
 
-        new LevelInstructions(interfaceLayer, 0, 0, 'LevelInstructions', level);
-        new Inventory(interfaceLayer, 600, 0, 'Inventory', this.street.player());
+        new LevelInstructions(interfaceLayer, streetPositionX, 0, 'LevelInstructions', level);
+        new Inventory(interfaceLayer, streetPositionX + 600, 0, 'Inventory', this.street.player());
         new FlashMessages(interfaceLayer, this.street.player().pastGameEvents(), this.street.player());
 
-        this.game.world.setBounds(0, 0, streetWidth, 800);
+        const worldBoundX = 0;
+        const worldBoundY = 0;
+        const worldHeight = 800;
+        this.game.world.setBounds(worldBoundX, worldBoundY, worldWidth, worldHeight);
+
         this.game.camera.follow(this.street.player());
     }
 
@@ -100,6 +138,16 @@ export default class Play extends Phaser.State
         if (this.street.isEmpty()) {
             this.nextLevel();
         }
+
+        this.game.physics.arcade.collide(this.leftBoundMargin, this.street.player());
+        this.game.physics.arcade.collide(this.leftBoundMargin, this.street.citizens().all());
+        this.game.physics.arcade.collide(this.leftBoundMargin, this.street.cops().all());
+        this.game.physics.arcade.collide(this.leftBoundMargin, this.street.swats().all());
+
+        this.game.physics.arcade.collide(this.rightBoundMargin, this.street.player());
+        this.game.physics.arcade.collide(this.rightBoundMargin, this.street.citizens().all());
+        this.game.physics.arcade.collide(this.rightBoundMargin, this.street.cops().all());
+        this.game.physics.arcade.collide(this.rightBoundMargin, this.street.swats().all());
 
         const skyParallaxSpeed = 0.03;
         this.sky.tilePosition.x -= skyParallaxSpeed;
@@ -116,15 +164,20 @@ export default class Play extends Phaser.State
 
     public render()
     {
-        if (this.debug) {
+        if (Config.debug()) {
             this.game.debug.text(
                 "FPS: "  + this.game.time.fps + " ",
                 2,
                 14,
                 "#00ff00"
             );
+
             this.game.debug.body(this.street.player());
             this.game.debug.cameraInfo(this.game.camera, 32, 32);
+            this.game.debug.spriteInfo(this.street.player(), 32, 200);
+            //this.game.debug.body(this.street.citizens().all()[0]);
+            //this.game.debug.spriteInfo(this.street.citizens().all()[0], 32, 300);
+            //this.game.debug.bodyInfo(this.street.citizens().all()[0], 32, 300);
         }
     }
 

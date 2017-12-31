@@ -149,8 +149,8 @@ export class VirtualPadController implements Controller
         this.game = game;
         const scaleRatio = 1.5;
 
-        const imgPadPositionX = 120;
-        const imgPadPositionY = 570;
+        const imgPadPositionX = 90;
+        const imgPadPositionY = 430;
         const imgPadFrame = '360_Dpad';
         const padImage = game.add.image(imgPadPositionX, imgPadPositionY, 'xbox360', imgPadFrame);
         padImage.scale.set(scaleRatio);
@@ -199,8 +199,8 @@ export class VirtualPadController implements Controller
         this.buttonDown.fixedToCamera = true;
         this.buttonDown.scale.set(scaleRatio);
 
-        const btnYpositionX = 850;
-        const btnYpositionY = 650;
+        const btnYpositionX = 930 + Config.mobileExtraSidePadding() * 2;
+        const btnYpositionY = imgPadPositionY + 90;
         const btnYFrame = '360_Y';
         this.buttonY = game.add.button(btnYpositionX, btnYpositionY, 'xbox360', null, this, btnYFrame, btnYFrame, btnYFrame);
         this.buttonY.onInputUp.add(function(){ this.buttonYPressed = false}, this);
@@ -208,7 +208,7 @@ export class VirtualPadController implements Controller
         this.buttonY.fixedToCamera = true;
         this.buttonY.scale.set(scaleRatio);
 
-        const btnXpositionX = btnYpositionX + 150;
+        const btnXpositionX = btnYpositionX + 110;
         const btnXpositionY = btnYpositionY - 150;
         const btnXFrame = '360_X';
         this.buttonX = game.add.button(btnXpositionX, btnXpositionY, 'xbox360', null, this, btnXFrame, btnXFrame, btnXFrame);

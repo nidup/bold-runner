@@ -15,11 +15,11 @@ export class LevelInstructions extends Phaser.Sprite
         const fontLevelSize = 13;
         const fontTutorialSize = 10;
 
-        const levelText = this.game.add.bitmapText(55, 55, 'carrier-command', '', fontLevelSize, group);
+        const levelText = this.game.add.bitmapText(this.x + 55, 55, 'carrier-command', '', fontLevelSize, group);
         levelText.fixedToCamera = true;
         levelText.setText("Level " + level.number());
 
-        const tutorialText = this.game.add.bitmapText(225, 50, 'carrier-command', level.tutorial(), fontTutorialSize, group);
+        const tutorialText = this.game.add.bitmapText(this.x + 225, 50, 'carrier-command', level.tutorial(), fontTutorialSize, group);
         tutorialText.fixedToCamera = true;
     }
 }

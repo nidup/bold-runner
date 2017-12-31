@@ -23,12 +23,12 @@ export class Steering
 
     blockedToTheLeft(): boolean
     {
-        return this.bot.body.blocked.left && this.directionX === this.left;
+        return (this.bot.body.blocked.left || this.bot.body.touching.left) && this.directionX === this.left;
     }
 
     blockedToTheRight(): boolean
     {
-        return this.bot.body.blocked.right && this.directionX === this.right;
+        return (this.bot.body.blocked.right || this.bot.body.touching.right) && this.directionX === this.right;
     }
 
     stop()

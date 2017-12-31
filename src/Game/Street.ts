@@ -16,10 +16,12 @@ export class Street
     private swatRepository: Swats;
     private citizenRepository: Citizens;
     private hero: Hero;
+    private streetPositionX: number;
     private streetWidth: number;
 
-    constructor(characterGroup: Phaser.Group, level: Level, backbag: BackBag, streetWidth: number, heroController: Controller)
+    constructor(characterGroup: Phaser.Group, level: Level, backbag: BackBag, streetPositionX: number, streetWidth: number, heroController: Controller)
     {
+        this.streetPositionX = streetPositionX;
         this.streetWidth = streetWidth;
         this.copRepository = new Cops();
         this.citizenRepository = new Citizens();
@@ -112,7 +114,7 @@ export class Street
 
     minX(): number
     {
-        return 20;
+        return this.streetPositionX + 20;
     }
 
     maxX(): number

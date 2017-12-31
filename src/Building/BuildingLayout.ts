@@ -11,15 +11,17 @@ import {Level} from "../Game/Level";
 export class BuildingLayout
 {
     private group: Phaser.Group;
+    private streetPositionX: number;
     private buildingY = 100;
     private isometricMargin = 50;
     private previousBuildingMargin = 6;
     private previousBuilding: Phaser.Sprite = null;
     private buildingsRepository: Buildings;
 
-    constructor(level: Level, group: Phaser.Group)
+    constructor(level: Level, group: Phaser.Group, streetPositionX: number)
     {
         this.group = group;
+        this.streetPositionX = streetPositionX;
         this.buildingsRepository = new Buildings();
         level.orderedBuildingTypes().forEach(
             function (type: string) {
@@ -94,7 +96,7 @@ export class BuildingLayout
     private buildPositionX(): number
     {
         if (this.previousBuilding === null) {
-            return 0 - this.isometricMargin;
+            return this.streetPositionX - this.isometricMargin;
         } else {
             return this.previousBuilding.x + this.previousBuilding.width - this.isometricMargin - this.previousBuildingMargin;
         }
