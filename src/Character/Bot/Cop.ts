@@ -9,6 +9,7 @@ import {BulletHits} from "./BulletHits";
 import {CanBeHurt} from "../CanBeHurt";
 import {HorizontalDirection} from "../HorizontalDirection";
 import {CharacterHurt} from "../SFX/CharacterHurt";
+import {PickableItem} from "../Player/PickableItem";
 
 export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
@@ -17,6 +18,8 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
     private dead: boolean = false;
     private isReplicant: boolean = false;
     private bulletHits: BulletHits;
+    private group: Phaser.Group;
+    private street: Street;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, replicant: boolean)
     {
@@ -24,6 +27,7 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
+        this.group = group;
 
         this.inputEnabled = true;
         this.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
@@ -44,7 +48,6 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
             shotRate = 12;
             this.health = 1;
         }
-        this.brain = new CopBrain(this, gun, street, group);
 
         this.animations.add('idle', [0, 1, 2, 3, 4], 4, true);
         this.animations.add('walk', [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
@@ -53,7 +56,9 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
         this.animations.add('die-replicant', [27, 28, 29, 30, 31, 32, 33], 12, false);
 
         this.isReplicant = replicant;
+        this.street = street;
         this.bulletHits = new BulletHits(this, gun, street);
+        this.brain = new CopBrain(this, gun, street, group);
     }
 
     update()
@@ -71,7 +76,32 @@ export class Cop extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 
     die()
     {
+        if (!this.replicant()) {
+            this.animations.play('die');
+        } else {
+            this.animations.play('die-replicant');
+        }
+        if (this.key === 'cop') {
+            new PickableItem(this.group, this.x, this.y, 'Gun', this.street.player());
+        } else {
+            new PickableItem(this.group, this.x, this.y, 'ShotGun', this.street.player());
+        }
         this.dead = true;
+    }
+
+    walk()
+    {
+        this.animations.play('walk');
+    }
+
+    rest()
+    {
+        this.animations.play('idle');
+    }
+
+    shot()
+    {
+        this.animations.play('shot');
     }
 
     hurt(damage: number, fromDirection: HorizontalDirection)

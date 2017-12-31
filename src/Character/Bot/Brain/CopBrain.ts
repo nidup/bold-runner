@@ -1,8 +1,6 @@
 
 import {Cop} from "../Cop";
 import {Street} from "../../../Game/Street";
-import {Gun} from "../../../Weapon/Gun";
-import {PickableItem} from "../../Player/PickableItem";
 import {BaseGun} from "../../../Weapon/BaseGun";
 import {StackFSM} from "./FSM/StackFSM";
 import {State} from "./FSM/State";
@@ -31,7 +29,7 @@ export class CopBrain
         this.energy = new Energy(this.host.game.rnd);
         this.steering = new Steering(this.host.game.rnd, this.host, this.gun);
         this.vision = new Vision(this.host, this.street);
-        this.fsm.pushState(new State('patrol', this.patrol));
+        this.toPatrol();
     }
 
     public think()
@@ -39,82 +37,100 @@ export class CopBrain
         this.fsm.update();
     }
 
+    private toPatrol()
+    {
+        this.host.walk();
+        this.fsm.pushState(new State('patrol', this.patrol));
+    }
+
     public patrol = () =>
     {
-        if (this.host.health <= 0) {
-            this.fsm.pushState(new State('dying', this.dying));
-        }
-
-        if (this.vision.playerIsCloseAndAliveAndAggressive()) {
-            this.fsm.pushState(new State('attack', this.attack));
-        }
-
-        if (this.steering.blockedToTheLeft()) {
-            this.steering.walkToTheRight();
-        }
-        if (this.steering.blockedToTheRight()) {
-            this.steering.walkToTheLeft();
-        }
-
-        this.host.animations.play('walk');
-
         this.energy.decrease();
-        if (this.energy.empty()) {
-            this.fsm.pushState(new State('resting', this.resting));
+
+        if (this.host.health <= 0) {
+            this.toDie();
+
+        } else if (this.vision.playerIsCloseAndAliveAndAggressive()) {
+            this.toAttack();
+
+        } else if (this.energy.empty()) {
+            this.toRest();
+
+        } else {
+            if (this.steering.blockedToTheLeft()) {
+                this.steering.walkToTheRight();
+            } else if (this.steering.blockedToTheRight()) {
+                this.steering.walkToTheLeft();
+            }
         }
+    }
+
+    private toDie()
+    {
+        this.steering.stop();
+        this.host.die();
+        this.fsm.pushState(new State('dying', this.dying));
+    }
+
+    private toRest()
+    {
+        this.steering.stop();
+        this.host.rest();
+        this.fsm.pushState(new State('resting', this.resting));
+    }
+
+    private toAttack()
+    {
+        this.fsm.pushState(new State('attack', this.attack));
     }
 
     public resting = () =>
     {
-        this.steering.stop();
-        this.host.animations.play('idle');
-
         if (this.host.health <= 0) {
-            this.fsm.pushState(new State('dying', this.dying));
-        }
+            this.toDie();
 
-        if (this.vision.playerIsCloseAndAliveAndAggressive()) {
-            this.fsm.pushState(new State('attack', this.attack));
-        }
+        } else if (this.vision.playerIsCloseAndAliveAndAggressive()) {
+            this.toAttack();
 
-        this.energy.increase();
-        if (this.energy.minimalAmountToMoveIsReached()) {
-            this.energy.resetWithRandomAmount();
-            this.steering.walkToARandomDirection();
-            this.fsm.popState();
+        } else {
+            this.energy.increase();
+            if (this.energy.minimalAmountToMoveIsReached()) {
+                this.fromRestToWalk();
+            }
         }
+    }
+
+    private fromRestToWalk()
+    {
+        this.energy.resetWithRandomAmount();
+        this.steering.walkToARandomDirection();
+        this.host.walk();
+        this.fsm.popState();
     }
 
     public attack = () =>
     {
         if (this.host.health <= 0) {
-            this.fsm.pushState(new State('dying', this.dying));
-        }
+            this.toDie();
 
-        if (this.vision.playerIsCloseAndAlive()) {
+        } else if (this.vision.playerIsCloseAndAlive()) {
             this.steering.stopAndTurnToTheSprite(this.street.player());
-            this.host.animations.play('shot');
+            this.host.shot();
             this.gun.fire();
 
         } else {
-            this.steering.walkToARandomDirection();
-            this.fsm.popState();
+            this.fromAttackToWalk();
         }
+    }
+
+    private fromAttackToWalk()
+    {
+        this.steering.walkToARandomDirection();
+        this.host.walk();
+        this.fsm.popState();
     }
 
     public dying = () =>
     {
-        this.steering.stop();
-        if (!this.host.replicant()) {
-            this.host.animations.play('die');
-        } else {
-            this.host.animations.play('die-replicant');
-        }
-        this.host.die();
-        if (this.host.key === 'cop') {
-            new PickableItem(this.group, this.host.x, this.host.y, 'Gun', this.street.player());
-        } else {
-            new PickableItem(this.group, this.host.x, this.host.y, 'ShotGun', this.street.player());
-        }
     }
 }

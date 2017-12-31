@@ -18,6 +18,8 @@ export class Gun implements BaseGun
         this.weapon.fireRate = 600;
         this.weapon.trackSprite(owner, 0, -8, false);
         this.weapon.fireAngle = 0;
+        this.weapon.addBulletAnimation('idle', [0, 1], 4, true);
+        this.weapon.bulletAnimation = 'idle';
         this.weapon.onFire.add(
             function () {
                 this.amnoAmount--;

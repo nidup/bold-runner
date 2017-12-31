@@ -48,8 +48,11 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
         this.street = street;
 
         this.feelingSprite = this.game.add.sprite(this.x - 10, this.y - 40, 'Marker', 0, group);
+        this.feelingSprite.scale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
         this.feelingSprite.animations.add('nothing', [4], 4, true);
         this.feelingSprite.animations.add('afraid', [2, 3], 4, true);
+        this.feelingSprite.animations.add('dying', [5, 6], 2, false);
+        this.feelingSprite.animations.add('dying-replicant', [7, 8, 9], 2, false);
         this.feelingSprite.animations.play('afraid');
     }
 
@@ -58,14 +61,20 @@ export class Citizen extends Phaser.Sprite implements CouldBeAReplicant, CanBeHu
         if (!this.dead) {
             this.brain.think();
 
-            if (this.isAfraid()) {
+            if (this.isDying()) {
+                if (this.replicant()) {
+                    this.feelingSprite.play('dying-replicant', 4, false, true);
+                } else {
+                    this.feelingSprite.play('dying', 4, false, true);
+                }
+            } else if (this.isAfraid()) {
                 this.feelingSprite.play('afraid');
-                this.feelingSprite.x = this.x - 10;
-                this.feelingSprite.y = this.y - 45;
-
             } else {
-               this.feelingSprite.play('nothing');
+                this.feelingSprite.play('nothing');
             }
+
+            this.feelingSprite.x = this.x - 22;
+            this.feelingSprite.y = this.y - 60;
         }
     }
 
