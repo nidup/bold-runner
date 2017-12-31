@@ -8,6 +8,7 @@ import {BulletHits} from "./BulletHits";
 import {CanBeHurt} from "../CanBeHurt";
 import {HorizontalDirection} from "../HorizontalDirection";
 import {CharacterHurt} from "../SFX/CharacterHurt";
+import {PickableItem} from "../Player/PickableItem";
 
 export class Swat extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 {
@@ -16,6 +17,8 @@ export class Swat extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
     private dead: boolean = false;
     private isReplicant: boolean = false;
     private bulletHits: BulletHits;
+    private group: Phaser.Group;
+    private street: Street;
 
     constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, replicant: boolean)
     {
@@ -23,6 +26,7 @@ export class Swat extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
+        this.group = group;
 
         this.inputEnabled = true;
         this.scale.setTo(Config.pixelScaleRatio(), Config.pixelScaleRatio());
@@ -34,7 +38,6 @@ export class Swat extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 
         let gun = new MachineGun(group, this);
         let shotRate = 24;
-        this.brain = new SwatBrain(this, gun, street, group);
 
         this.animations.add('idle', [0, 1, 2, 3, 4], 4, true);
         this.animations.add('walk', [5, 6, 7, 8, 9, 10, 11, 12, 13], 12, true);
@@ -42,7 +45,9 @@ export class Swat extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
         this.animations.add('shot', [21, 22, 23, 24, 25, 26], shotRate, false);
         this.animations.add('die-replicant', [27, 28, 29, 30, 31, 32, 33], 12, false);
 
+        this.brain = new SwatBrain(this, gun, street, group);
         this.isReplicant = replicant;
+        this.street = street;
         this.bulletHits = new BulletHits(this, gun, street);
         this.health = 100;
     }
@@ -62,7 +67,29 @@ export class Swat extends Phaser.Sprite implements CouldBeAReplicant, CanBeHurt
 
     die()
     {
+        if (!this.replicant()) {
+            this.animations.play('die');
+        } else {
+            this.animations.play('die-replicant');
+        }
+        new PickableItem(this.group, this.x, this.y, 'MachineGun', this.street.player());
+
         this.dead = true;
+    }
+
+    walk()
+    {
+        this.animations.play('walk');
+    }
+
+    rest()
+    {
+        this.animations.play('idle');
+    }
+
+    shot()
+    {
+        this.animations.play('shot');
     }
 
     hurt(damage: number, fromDirection: HorizontalDirection)
