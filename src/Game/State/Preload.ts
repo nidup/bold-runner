@@ -4,6 +4,7 @@ import {Config} from "../../Config";
 export default class Preload extends Phaser.State
 {
     private skipMenu = false;
+    private skipToLevel = 1;
 
     public preload ()
     {
@@ -17,9 +18,9 @@ export default class Preload extends Phaser.State
     {
         if (this.skipMenu) {
             if (Config.fakingMobileForDebug()) {
-                this.game.state.start('Play', true, false, 'virtualpad');
+                this.game.state.start('Play', true, false, 'virtualpad', this.skipToLevel);
             } else {
-                this.game.state.start('Play', true, false, 'keyboard');
+                this.game.state.start('Play', true, false, 'keyboard', this.skipToLevel);
             }
         } else {
             this.game.state.start('Menu');
