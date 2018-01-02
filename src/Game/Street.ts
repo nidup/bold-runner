@@ -71,7 +71,6 @@ export class Street
                 nbReplicants--;
             }
             this.citizens().add(new Citizen(characterGroup, randX, randY, 'citizen1', this, isReplicant));
-
         }
 
         this.hero = new Hero(characterGroup, this.minX(), this.maxY(), 'hero', this, backbag, heroController);

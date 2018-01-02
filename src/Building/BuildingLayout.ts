@@ -7,6 +7,7 @@ import {Pub} from "./Pub";
 import {Medium} from "./Medium";
 import {Small} from "./Small";
 import {Level} from "../Game/Level";
+import {Hospital} from "./Hospital";
 
 export class BuildingLayout
 {
@@ -40,6 +41,9 @@ export class BuildingLayout
                         break;
                     case 'ElectricSheep':
                         this.addElectricSheep();
+                        break;
+                    case 'Hospital':
+                        this.addHospital();
                         break;
                     default:
                         throw new Error("Building type "+type+" is unknown");
@@ -82,6 +86,11 @@ export class BuildingLayout
     private addSmall(): Small
     {
         return this.addBuilding(new Small(this.group, this.buildPositionX(), this.buildingY));
+    }
+
+    private addHospital(): Hospital
+    {
+        return this.addBuilding(new Hospital(this.group, this.buildPositionX(), this.buildingY));
     }
 
     private addBuilding(building: Building): Building
