@@ -1,6 +1,6 @@
 
 import {
-    BaseEvent, CitizenKilled, CopKilled, GameEvents, HeroKilled, MoneyPicked,
+    BaseEvent, CitizenKilled, CopKilled, GameEvents, HeroKilled, HeroNursed, MoneyPicked,
     ShotGunPicked
 } from "../Character/Player/Events";
 import {Hero} from "../Character/Player/Hero";
@@ -39,7 +39,9 @@ export class FlashMessages
             callbackContext.buildPickedMoneyMessage(messages, raisedEvent);
         }
 
-        if (raisedEvent instanceof HeroKilled) {
+        if (raisedEvent instanceof HeroNursed) {
+            messages.push(new Message("Got nursed :)"));
+        } else if (raisedEvent instanceof HeroKilled) {
             messages.push(new Message("Got killed :("));
         }
 

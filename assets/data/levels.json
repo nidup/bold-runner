@@ -68,6 +68,23 @@
     ]
   },
   {
+    "tutorial": "When you get shoot, you can get nursed in an hospital, it costs 200 cdts. If there is no hospital in the street, you'll die.",
+    "characters": {
+      "cops_with_gun": 6,
+      "cops_with_shotgun": 0,
+      "swats": 0,
+      "citizens": 12,
+      "replicants": 8
+    },
+    "buildings": [
+      "Small",
+      "Hospital",
+      "Medium",
+      "Pub",
+      "Big"
+    ]
+  },
+  {
     "tutorial": "Cops can be equipped with shotgun and bullet proof jacket that make them more resistant. Use the relevant weapon.",
     "characters": {
       "cops_with_gun": 3,
@@ -81,7 +98,7 @@
       "Big",
       "Medium",
       "Small",
-      "ElectricSheep"
+      "Hospital"
     ]
   },
   {
@@ -97,7 +114,7 @@
       "Medium",
       "Big",
       "Small",
-      "ElectricSheep",
+      "Hospital",
       "Pub"
     ]
   },
@@ -114,7 +131,7 @@
       "Small",
       "ElectricSheep",
       "Pub",
-      "Medium",
+      "Hospital",
       "Big"
     ]
   },
@@ -132,7 +149,7 @@
       "Big",
       "Medium",
       "Small",
-      "ElectricSheep"
+      "Hospital"
     ]
   },
   {
@@ -148,7 +165,7 @@
       "Big",
       "Pub",
       "ElectricSheep",
-      "Medium",
+      "Hospital",
       "Small",
       "Medium"
     ]
@@ -184,7 +201,7 @@
       "Pub",
       "Small",
       "Big",
-      "Medium"
+      "Hospital"
     ]
   },
   {
@@ -198,7 +215,7 @@
     },
     "buildings": [
       "Pub",
-      "Medium",
+      "Hospital",
       "Big",
       "Small",
       "Medium",

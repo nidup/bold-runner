@@ -11,26 +11,41 @@ import {Config} from "../../Config";
 import {LevelLoader} from "../LevelLoader";
 import {GamePadController, KeyBoardController, VirtualPadController} from "../Controller";
 import {DeviceDetector} from "../DeviceDetector";
+import {StreetLimits} from "../StreetLimits";
+import {CharactersGenerator} from "../../Character/CharactersGenerator";
+import {Buildings} from "../../Building/Buildings";
+import {HeroNursed} from "../../Character/Player/Events";
 
 export default class Play extends Phaser.State
 {
     private sky: Phaser.TileSprite;
     private background: Phaser.TileSprite;
     private street: Street;
+    private buildings: Buildings;
     private characterLayer: Phaser.Group;
     private levelNumber: number = 1;
     private switchingLevel: boolean = false;
-    private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'machinegunAmno': number, 'money': number, 'currentGun': string} = null;
+    private previousInventory: {'gunAmno': number, 'shotgunAmno': number, 'machinegunAmno': number, 'money': number} = null;
+    private previousGunType: string;
     private controllerType: string = null;
+    private playerPosition: Phaser.Point;
     private leftBoundMargin: Phaser.TileSprite;
     private rightBoundMargin: Phaser.TileSprite;
+    private topBoundMargin: Phaser.TileSprite;
 
-    public init (controllerType: string, level = 1, previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'machinegunAmno': 0, 'money': 0, 'currentGun': 'Gun'})
-    {
+    public init (
+        controllerType: string,
+        level: number = 1,
+        previousInventory = {'gunAmno': 100, 'shotgunAmno': 0, 'machinegunAmno': 0, 'money': 0},
+        currentGunType: string = 'Gun',
+        playerPosition: Phaser.Point = null
+    ) {
         this.levelNumber = level;
         this.previousInventory = previousInventory;
         this.switchingLevel = false;
         this.controllerType = controllerType;
+        this.previousGunType = currentGunType;
+        this.playerPosition = playerPosition;
     }
 
     public create()
@@ -93,6 +108,13 @@ export default class Play extends Phaser.State
         this.rightBoundMargin.body.immovable = true;
         this.rightBoundMargin.body.allowGravity = false;
 
+        const streetPositionY = 580;
+        let topBoundMarginY = streetPositionY - 40;
+        this.topBoundMargin = this.game.add.tileSprite(0, topBoundMarginY, worldWidth, 1, 'Top', 0, interfaceLayer);
+        this.game.physics.enable(this.topBoundMargin, Phaser.Physics.ARCADE);
+        this.topBoundMargin.body.immovable = true;
+        this.topBoundMargin.body.allowGravity = false;
+
         const height = 1200;
         const heightPosition = -400;
 
@@ -103,7 +125,6 @@ export default class Play extends Phaser.State
         this.background.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
 
         const streetHeight = 220;
-        const streetPositionY = 580;
         const street = this.game.add.tileSprite(streetPositionX, streetPositionY, streetWidth, streetHeight,'Street',0, buildingsLayer);
         street.tileScale.set(Config.pixelScaleRatio(), Config.pixelScaleRatio());
 
@@ -119,7 +140,18 @@ export default class Play extends Phaser.State
         }
 
         const backbag = new BackBag(this.previousInventory);
-        this.street = new Street(this.characterLayer, level, backbag, streetPositionX, streetWidth, controller);
+        const limits = new StreetLimits(streetPositionX, streetWidth);
+        const generator = new CharactersGenerator(
+            this.characterLayer,
+            limits,
+            level,
+            backbag,
+            controller,
+            this.previousGunType,
+            this.playerPosition
+        );
+        this.street = new Street(generator);
+        this.buildings = layout.buildings();
 
         new LevelInstructions(interfaceLayer, streetPositionX, 0, 'LevelInstructions', level);
         new Inventory(interfaceLayer, streetPositionX + 600, 0, 'Inventory', this.street.player());
@@ -138,6 +170,11 @@ export default class Play extends Phaser.State
         if (this.street.isEmpty()) {
             this.nextLevel();
         }
+
+        this.game.physics.arcade.collide(this.topBoundMargin, this.street.player());
+        this.game.physics.arcade.collide(this.topBoundMargin, this.street.citizens().all());
+        this.game.physics.arcade.collide(this.topBoundMargin, this.street.cops().all());
+        this.game.physics.arcade.collide(this.topBoundMargin, this.street.swats().all());
 
         this.game.physics.arcade.collide(this.leftBoundMargin, this.street.player());
         this.game.physics.arcade.collide(this.leftBoundMargin, this.street.citizens().all());
@@ -160,6 +197,30 @@ export default class Play extends Phaser.State
         }
 
         this.characterLayer.sort('y', Phaser.Group.SORT_ASCENDING);
+
+        if (this.street.player().isDead()) {
+            const hospital = this.buildings.hospital();
+            if (hospital && this.street.player().money() >= hospital.nurseCost()) {
+                this.street.player().nurse(hospital);
+                this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
+                    this.game.state.start(
+                        'Play',
+                        true,
+                        false,
+                        this.controllerType,
+                        this.levelNumber,
+                        this.buildInventory(),
+                        this.street.player().equippedGun().identifier(),
+                        new Phaser.Point(hospital.entranceX(), hospital.entranceY())
+                    );
+                    this.street.player().pastGameEvents().register(new HeroNursed(this.game.time.now));
+                }, this);
+            } else {
+                this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
+                    this.game.state.start('Play', true, false, this.controllerType, 1);
+                }, this);
+            }
+        }
     }
 
     public render()
@@ -206,18 +267,23 @@ export default class Play extends Phaser.State
                         false,
                         this.controllerType,
                         this.levelNumber,
-                        {
-                            'gunAmno': this.street.player().gunAmno(),
-                            'shotgunAmno': this.street.player().shotgunAmno(),
-                            'machinegunAmno': this.street.player().machinegunAmno(),
-                            'money': this.street.player().money(),
-                            'currentGun': this.street.player().equippedGun().identifier() // TODO: should not be passed in backbag
-                        }
+                        this.buildInventory(),
+                        this.street.player().equippedGun().identifier()
                     );
                 } else {
                     this.game.state.start('Menu');
                 }
             }, this);
         }
+    }
+
+    private buildInventory()
+    {
+        return {
+            'gunAmno': this.street.player().gunAmno(),
+            'shotgunAmno': this.street.player().shotgunAmno(),
+            'machinegunAmno': this.street.player().machinegunAmno(),
+            'money': this.street.player().money(),
+        };
     }
 }

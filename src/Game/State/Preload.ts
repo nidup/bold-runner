@@ -41,6 +41,7 @@ export default class Preload extends Phaser.State
         this.load.spritesheet('ControllerIndicator', 'assets/controllers/controller-indicator.png', 16,16);
         this.load.atlas('xbox360', 'assets/controllers/xbox360.png', 'assets/controllers/xbox360.json');
 
+        this.load.spritesheet('Top', 'assets/sprites/top.png', 1, 1);
         this.load.spritesheet('Side', 'assets/sprites/side.png', 12, 12);
         this.load.spritesheet('sky', 'assets/sprites/sky.png', 800, 600);
         this.load.spritesheet('background', 'assets/sprites/background.png', 800, 600);

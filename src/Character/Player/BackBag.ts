@@ -5,15 +5,13 @@ export class BackBag
     private shotgunAmnoAmount: number;
     private machinegunAmnoAmount: number;
     private moneyAmount: number;
-    private currentGun: string;
 
-    public constructor(data: {'gunAmno': number, 'shotgunAmno': number, 'machinegunAmno': number, 'money': number, 'currentGun': string})
+    public constructor(data: {'gunAmno': number, 'shotgunAmno': number, 'machinegunAmno': number, 'money': number})
     {
         this.gunAmnoAmount = data.gunAmno;
         this.shotgunAmnoAmount = data.shotgunAmno;
         this.machinegunAmnoAmount = data.machinegunAmno;
         this.moneyAmount = data.money;
-        this.currentGun = data.currentGun;
     }
 
     public gunAmno(): number
@@ -29,11 +27,6 @@ export class BackBag
     public machinegunAmno(): number
     {
         return this.machinegunAmnoAmount;
-    }
-
-    public currentGunIdentifier(): string
-    {
-        return this.currentGun;
     }
 
     public money(): number

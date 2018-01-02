@@ -6,7 +6,7 @@ import {ShotGun} from "../../Weapon/ShotGun";
 import {BaseGun} from "../../Weapon/BaseGun";
 import {BackBag} from "./BackBag";
 import {
-    GameEvents, GunPicked, HeroKilled, MachineGunPicked, MoneyPicked,
+    GameEvents, GunPicked, HeroKilled, HeroNursed, MachineGunPicked, MoneyPicked,
     ShotGunPicked
 } from "./Events";
 import {MachineGun} from "../../Weapon/MachineGun";
@@ -18,6 +18,7 @@ import {BulletHits} from "./BulletHits";
 import {Config} from "../../Config";
 import {Controller} from "../../Game/Controller";
 import {AggressivenessGauge} from "./AggressivenessGauge";
+import {Hospital} from "../../Building/Hospital";
 
 export class Hero extends Phaser.Sprite implements CanBeHurt
 {
@@ -28,7 +29,6 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private shotgun: ShotGun;
     private machinegun: MachineGun;
     private switchedTime: number = 0;
-    private street: Street;
     private dead: boolean = false;
     private moneyAmount: number = 0;
     private cameraFx: HeroCamera;
@@ -38,10 +38,17 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
     private controller: Controller;
     private agressivenessGauge: AggressivenessGauge;
 
-    constructor(group: Phaser.Group, x: number, y: number, key: string, street: Street, backbag: BackBag, controller: Controller)
-    {
+    constructor(
+        group: Phaser.Group,
+        x: number,
+        y: number,
+        key: string,
+        street: Street,
+        backbag: BackBag,
+        controller: Controller,
+        gunIdentifier: string
+    ) {
         super(group.game, x, y, key, 0);
-        this.street = street;
         group.game.physics.enable(this, Phaser.Physics.ARCADE);
         group.add(this);
         this.group = group;
@@ -75,7 +82,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
 
         this.controller = controller;
 
-        switch (backbag.currentGunIdentifier()) {
+        switch (gunIdentifier) {
             case 'Gun':
                 this.switchToGun();
                 break;
@@ -86,12 +93,12 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
                 this.switchToMachineGun();
                 break;
             default:
-                throw new Error("Gun identifier "+backbag.currentGunIdentifier()+" is unknown");
+                throw new Error("Gun identifier "+gunIdentifier+" is unknown");
         }
 
         this.cameraFx = new HeroCamera(group.game.camera);
         this.gameEvents = new GameEvents();
-        this.bulletHits = new BulletHits(this, this.street);
+        this.bulletHits = new BulletHits(this, street);
         this.agressivenessGauge = new AggressivenessGauge(this.game.time);
     }
 
@@ -239,6 +246,11 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
         item.kill();
     }
 
+    nurse(hospital: Hospital)
+    {
+        this.moneyAmount -= hospital.nurseCost();
+    }
+
     pastGameEvents(): GameEvents
     {
         return this.gameEvents;
@@ -275,7 +287,7 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
                 this.machinegun.turnToTheRight();
             }
 
-            if (this.controller.goingUp() && (this.street.minY() + 10) <= this.position.y ) {
+            if (this.controller.goingUp()) {
                 this.body.velocity.y = -this.speed;
                 this.animations.play('walk-'+this.currentGun.identifier());
 
@@ -331,9 +343,6 @@ export class Hero extends Phaser.Sprite implements CanBeHurt
             this.body.velocity.y = 0;
             this.animations.play('die-'+this.currentGun.identifier());
             this.gameEvents.register(new HeroKilled(this.game.time.now));
-            this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
-                this.game.state.start('Play', true, false, this.controller.identifier(), 1);
-            }, this);
         }
     }
 }

@@ -90,7 +90,12 @@ export class BuildingLayout
 
     private addHospital(): Hospital
     {
-        return this.addBuilding(new Hospital(this.group, this.buildPositionX(), this.buildingY));
+        const building = new Hospital(this.group, this.buildPositionX(), this.buildingY);
+        this.previousBuilding = building;
+        this.group.sort('x', Phaser.Group.SORT_DESCENDING);
+        this.buildingsRepository.add(building);
+
+        return building;
     }
 
     private addBuilding(building: Building): Building

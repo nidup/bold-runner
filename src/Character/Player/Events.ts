@@ -77,6 +77,10 @@ export class HeroKilled extends BaseEvent
 {
 }
 
+export class HeroNursed extends BaseEvent
+{
+}
+
 export class MoneyPicked extends BaseEvent
 {
     private picked: number;

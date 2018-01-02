@@ -15,4 +15,19 @@ export class Hospital extends Phaser.Sprite implements Building
         this.animations.add('idle', [0, 1, 2], 3, true);
         this.animations.play('idle');
     }
+
+    public nurseCost(): number
+    {
+        return 200;
+    }
+
+    public entranceX(): number
+    {
+        return this.x + this.width / 2;
+    }
+
+    public entranceY(): number
+    {
+        return this.y + this.height;
+    }
 }
