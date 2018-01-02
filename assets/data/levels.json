@@ -1,6 +1,6 @@
 [
   {
-    "tutorial": "Replicants are hidden in the population\n\nNo choice, you need to kill'em all.\n\nUse arrows to move and space bar to shot.",
+    "tutorial": "Androids are hidden in the population, no way to recognize human and android. You have no choice, you need to kill'em all.",
     "characters": {
       "cops_with_gun": 0,
       "cops_with_shotgun": 0,
@@ -17,12 +17,12 @@
     ]
   },
   {
-    "tutorial": "Cops can be replicant too.\n\nThey have guns and can shoot you.\n\nOnce killed, you can pick-up extra amno.",
+    "tutorial": "Cops can be android too. They have guns and can shoot you. Once killed, you can pick-up extra amno.",
     "characters": {
-      "cops_with_gun": 2,
+      "cops_with_gun": 1,
       "cops_with_shotgun": 0,
       "swats": 0,
-      "citizens": 10,
+      "citizens": 6,
       "replicants": 4
     },
     "buildings": [
@@ -34,12 +34,29 @@
     ]
   },
   {
-    "tutorial": "When seing you're agressive, a cop shoot\n\nat you. He may hurts citizen or other cops\n\nhelping you to clear the stage.",
+    "tutorial": "Citizen flee away when you're aggressive, when they don't see you anymore, they go back to their normal behavior",
     "characters": {
-      "cops_with_gun": 5,
+      "cops_with_gun": 2,
       "cops_with_shotgun": 0,
       "swats": 0,
-      "citizens": 24,
+      "citizens": 6,
+      "replicants": 4
+    },
+    "buildings": [
+      "Big",
+      "Medium",
+      "Pub",
+      "Small",
+      "ElectricSheep"
+    ]
+  },
+  {
+    "tutorial": "When seing you're agressive, a cop shoots at you. He may hurts citizen or other cops helping you to clear the stage.",
+    "characters": {
+      "cops_with_gun": 6,
+      "cops_with_shotgun": 0,
+      "swats": 0,
+      "citizens": 12,
       "replicants": 8
     },
     "buildings": [
@@ -51,13 +68,13 @@
     ]
   },
   {
-    "tutorial": "Cops can be equipped with shotgun and bullet\n\nproof jacket that make them more resistant.\n\nUse S key to switch weapon.",
+    "tutorial": "Cops can be equipped with shotgun and bullet proof jacket that make them more resistant. Use the relevant weapon.",
     "characters": {
       "cops_with_gun": 3,
       "cops_with_shotgun": 2,
       "swats": 0,
       "citizens": 10,
-      "replicants": 4
+      "replicants": 6
     },
     "buildings": [
       "Pub",
@@ -68,13 +85,13 @@
     ]
   },
   {
-    "tutorial": "Shotgun is super efficient to clean crowdy\n\nplace, however it's not accurate and\n\nthe range is shorter than gun.",
+    "tutorial": "Shotgun is efficient to clean crowdy place, however it's not accurate and the range is shorter than gun.",
     "characters": {
-      "cops_with_gun": 3,
-      "cops_with_shotgun": 2,
+      "cops_with_gun": 2,
+      "cops_with_shotgun": 4,
       "swats": 0,
-      "citizens": 20,
-      "replicants": 4
+      "citizens": 16,
+      "replicants": 7
     },
     "buildings": [
       "Medium",
@@ -85,13 +102,30 @@
     ]
   },
   {
-    "tutorial": "SWAT units are patrolling. They're super\n\nresistant with their armor and they're\n\nequipped with automatic rifle.",
+    "tutorial": "Keep in mind that friendly fire is your best friend forever! ",
     "characters": {
-      "cops_with_gun": 3,
-      "cops_with_shotgun": 2,
+      "cops_with_gun": 5,
+      "cops_with_shotgun": 5,
+      "swats": 0,
+      "citizens": 12,
+      "replicants": 9
+    },
+    "buildings": [
+      "Small",
+      "ElectricSheep",
+      "Pub",
+      "Medium",
+      "Big"
+    ]
+  },
+  {
+    "tutorial": "SWAT units are patrolling. They're super resistant with their armor and they're equipped with automatic rifle.",
+    "characters": {
+      "cops_with_gun": 2,
+      "cops_with_shotgun": 0,
       "swats": 2,
-      "citizens": 14,
-      "replicants": 4
+      "citizens": 10,
+      "replicants": 6
     },
     "buildings": [
       "Pub",
@@ -102,20 +136,75 @@
     ]
   },
   {
-    "tutorial": "Last level.",
+    "tutorial": "Keep in mind that each weapon behaves differently and inaccurate shots can be a drawback as well as an advantage.",
     "characters": {
       "cops_with_gun": 4,
       "cops_with_shotgun": 4,
       "swats": 2,
-      "citizens": 20,
+      "citizens": 16,
       "replicants": 8
     },
     "buildings": [
       "Big",
+      "Pub",
+      "ElectricSheep",
+      "Medium",
+      "Small",
+      "Medium"
+    ]
+  },
+  {
+    "tutorial": "Amno are not unlimited, use them wisely but use them :)",
+    "characters": {
+      "cops_with_gun": 10,
+      "cops_with_shotgun": 1,
+      "swats": 0,
+      "citizens": 14,
+      "replicants": 9
+    },
+    "buildings": [
       "ElectricSheep",
       "Pub",
       "Medium",
-      "Small"
+      "Small",
+      "Big"
+    ]
+  },
+  {
+    "tutorial": "Sometimes, it's a lot of work for very few androids...",
+    "characters": {
+      "cops_with_gun": 7,
+      "cops_with_shotgun": 4,
+      "swats": 2,
+      "citizens": 12,
+      "replicants": 1
+    },
+    "buildings": [
+      "ElectricSheep",
+      "Pub",
+      "Small",
+      "Big",
+      "Medium"
+    ]
+  },
+  {
+    "tutorial": "Street can be long... super long...",
+    "characters": {
+      "cops_with_gun": 12,
+      "cops_with_shotgun": 7,
+      "swats": 4,
+      "citizens": 23,
+      "replicants": 12
+    },
+    "buildings": [
+      "Pub",
+      "Medium",
+      "Big",
+      "Small",
+      "Medium",
+      "ElectricSheep",
+      "Big",
+      "Medium"
     ]
   }
 ]

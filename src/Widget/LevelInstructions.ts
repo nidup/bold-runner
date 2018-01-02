@@ -19,7 +19,26 @@ export class LevelInstructions extends Phaser.Sprite
         levelText.fixedToCamera = true;
         levelText.setText("Level " + level.number());
 
-        const tutorialText = this.game.add.bitmapText(this.x + 225, 50, 'carrier-command', level.tutorial(), fontTutorialSize, group);
+        const lineLength = 42;
+        const fullText = level.tutorial();
+        const tokens = fullText.split(' ');
+        let lines = [];
+        let line = "";
+        tokens.forEach(function(token: string) {
+            if ((line + token).length >= lineLength) {
+                lines.push(line);
+                line = "";
+            }
+            line += " " + token;
+        });
+        lines.push(line);
+        let formattedText = "";
+        lines.forEach(function(line: string) {
+            formattedText += line + "\n\n";
+        });
+
+
+        const tutorialText = this.game.add.bitmapText(this.x + 225, 50, 'carrier-command', formattedText, fontTutorialSize, group);
         tutorialText.fixedToCamera = true;
     }
 }
